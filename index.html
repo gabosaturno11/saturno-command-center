@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATURNO COMMAND CENTER | Victory Belt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { background: #0a0a0a; color: #a1a1aa; font-family: 'Monaco', 'Menlo', monospace; }
+        .tab-active { background: #18181b; border-bottom: 2px solid #fff; color: #fff; }
+        .panel { border: 1px solid #27272a; background: #0f0f0f; }
+        .panel-header { background: #18181b; border-bottom: 1px solid #27272a; cursor: move; }
+        .toc-item { border: 1px solid #27272a; cursor: grab; transition: all 0.2s; }
+        .toc-item:hover { border-color: #52525b; background: #18181b; }
+        .toc-item.dragging { opacity: 0.5; border-color: #fff; }
+        .ghost { opacity: 0.4; background: #27272a !important; }
+        .ql-toolbar { background: #18181b !important; border-color: #27272a !important; }
+        .ql-container { border-color: #27272a !important; background: #0f0f0f !important; color: #e4e4e7 !important; min-height: 300px; }
+        .ql-editor { font-family: 'Georgia', serif; font-size: 14px; line-height: 1.8; }
+        .ql-snow .ql-stroke { stroke: #71717a !important; }
+        .ql-snow .ql-fill { fill: #71717a !important; }
+        .ql-snow .ql-picker { color: #71717a !important; }
+        .html-preview { border: 1px solid #27272a; background: #fff; }
+        .research-card { border: 1px solid #27272a; transition: all 0.2s; }
+        .research-card:hover { border-color: #52525b; transform: translateY(-2px); }
+        .mismatch { background: #7f1d1d; border-color: #991b1b; }
+        .resizable { resize: both; overflow: auto; min-width: 200px; min-height: 100px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+        .collapse-btn { transition: transform 0.2s; }
+        .collapsed .collapse-btn { transform: rotate(-90deg); }
+        .collapsed .panel-content { display: none; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+    <!-- TOP NAVIGATION BAR -->
+    <header class="h-12 border-b border-zinc-800 bg-black flex items-center justify-between px-4">
+        <div class="flex items-center gap-6">
+            <h1 class="text-white text-sm font-bold tracking-wider">SATURNO_COMMAND_CENTER</h1>
+            <nav class="flex gap-1 text-[10px] uppercase tracking-widest">
+                <button onclick="switchTab('toc')" id="tab-toc" class="px-4 py-3 tab-active">TOC</button>
+                <button onclick="switchTab('writing')" id="tab-writing" class="px-4 py-3 hover:bg-zinc-900">Writing</button>
+                <button onclick="switchTab('htmls')" id="tab-htmls" class="px-4 py-3 hover:bg-zinc-900">HTMLs</button>
+                <button onclick="switchTab('research')" id="tab-research" class="px-4 py-3 hover:bg-zinc-900">Research</button>
+                <button onclick="switchTab('workout')" id="tab-workout" class="px-4 py-3 hover:bg-zinc-900">Workout</button>
+                <button onclick="switchTab('mindmap')" id="tab-mindmap" class="px-4 py-3 hover:bg-zinc-900">MindMap</button>
+            </nav>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-[10px] text-zinc-500">VB Deadline: 10 Days</span>
+            <button onclick="openInternalSection()" class="w-6 h-6 border border-zinc-700 rounded flex items-center justify-center text-[10px] hover:border-white" title="Internal Section">S</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow flex overflow-hidden">
+
+        <!-- ============ TOC TAB ============ -->
+        <section id="view-toc" class="w-full h-full flex">
+            <!-- TOC Version Selector -->
+            <div class="w-48 border-r border-zinc-800 p-4 flex flex-col gap-2">
+                <p class="text-[9px] uppercase tracking-widest text-zinc-500 mb-2">TOC Versions</p>
+                <select id="toc-version-left" onchange="loadTOC('left')" class="bg-zinc-900 border border-zinc-700 text-xs p-2 mb-2">
+                    <option value="v1">TOC v1 (Original)</option>
+                    <option value="v2">TOC v2 (Revised)</option>
+                    <option value="v3">TOC v3 (Final)</option>
+                </select>
+                <select id="toc-version-right" onchange="loadTOC('right')" class="bg-zinc-900 border border-zinc-700 text-xs p-2 mb-4">
+                    <option value="v2" selected>TOC v2 (Revised)</option>
+                    <option value="v1">TOC v1 (Original)</option>
+                    <option value="v3">TOC v3 (Final)</option>
+                </select>
+                <button onclick="addTOCVersion()" class="text-[10px] border border-zinc-700 p-2 hover:border-white">+ New Version</button>
+                <button onclick="compareTOCs()" class="text-[10px] border border-zinc-700 p-2 hover:border-white mt-2">Compare TOCs</button>
+                <button onclick="exportTOC()" class="text-[10px] border border-zinc-700 p-2 hover:border-white mt-2">Export TOC</button>
+                <div class="mt-auto">
+                    <p class="text-[9px] text-zinc-600">Drag items to reorder</p>
+                    <p class="text-[9px] text-zinc-600">Red = Mismatch</p>
+                </div>
+            </div>
+
+            <!-- TOC Panel Left -->
+            <div class="flex-1 border-r border-zinc-800 p-4 overflow-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-400">TOC v1</p>
+                    <button onclick="addChapter('left')" class="text-[10px] border border-zinc-700 px-2 py-1 hover:border-white">+ Chapter</button>
+                </div>
+                <div id="toc-left" class="space-y-2">
+                    <!-- TOC items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- TOC Panel Right -->
+            <div class="flex-1 p-4 overflow-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-400">TOC v2</p>
+                    <button onclick="addChapter('right')" class="text-[10px] border border-zinc-700 px-2 py-1 hover:border-white">+ Chapter</button>
+                </div>
+                <div id="toc-right" class="space-y-2">
+                    <!-- TOC items will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ WRITING TAB ============ -->
+        <section id="view-writing" class="w-full h-full hidden flex">
+            <!-- TOC Sidebar -->
+            <div class="w-64 border-r border-zinc-800 p-4 overflow-auto">
+                <p class="text-[9px] uppercase tracking-widest text-zinc-500 mb-4">Document Structure</p>
+                <div id="writing-toc" class="space-y-1">
+                    <!-- Document TOC -->
+                </div>
+                <div class="mt-6 pt-4 border-t border-zinc-800">
+                    <p class="text-[9px] uppercase tracking-widest text-zinc-500 mb-2">Export As</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="exportAs('md')" class="text-[10px] border border-zinc-700 p-2 hover:border-white">MD</button>
+                        <button onclick="exportAs('txt')" class="text-[10px] border border-zinc-700 p-2 hover:border-white">TXT</button>
+                        <button onclick="exportAs('word')" class="text-[10px] border border-zinc-700 p-2 hover:border-white">Word</button>
+                        <button onclick="exportAs('pdf')" class="text-[10px] border border-zinc-700 p-2 hover:border-white">PDF</button>
+                        <button onclick="exportAs('yaml')" class="text-[10px] border border-zinc-700 p-2 hover:border-white">YAML</button>
+                        <button onclick="exportAs('html')" class="text-[10px] border border-zinc-700 p-2 hover:border-white">HTML</button>
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-zinc-800">
+                    <p class="text-[9px] uppercase tracking-widest text-zinc-500 mb-2">Send To</p>
+                    <button onclick="sendTo('dropbox')" class="w-full text-[10px] border border-zinc-700 p-2 hover:border-white mb-2 flex items-center gap-2">
+                        <span class="w-4 h-4 bg-blue-600 rounded text-[8px] flex items-center justify-center">D</span> Dropbox
+                    </button>
+                    <button onclick="sendTo('onedrive')" class="w-full text-[10px] border border-zinc-700 p-2 hover:border-white flex items-center gap-2">
+                        <span class="w-4 h-4 bg-blue-500 rounded text-[8px] flex items-center justify-center">O</span> OneDrive
+                    </button>
+                </div>
+            </div>
+
+            <!-- Rich Text Editor -->
+            <div class="flex-1 p-4 flex flex-col">
+                <div class="flex items-center justify-between mb-4">
+                    <input type="text" id="doc-title" value="Chapter 1: The Art of Calisthenics" class="bg-transparent text-white text-lg font-bold outline-none border-b border-transparent hover:border-zinc-700 focus:border-white">
+                    <div class="flex gap-2">
+                        <button onclick="saveDocument()" class="text-[10px] bg-white text-black px-4 py-2 font-bold">Save</button>
+                    </div>
+                </div>
+                <div id="editor-container" class="flex-grow">
+                    <div id="editor"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ HTMLS TAB ============ -->
+        <section id="view-htmls" class="w-full h-full hidden flex">
+            <!-- HTML File List -->
+            <div class="w-64 border-r border-zinc-800 p-4 overflow-auto">
+                <p class="text-[9px] uppercase tracking-widest text-zinc-500 mb-4">HTML Collection</p>
+                <div class="mb-4">
+                    <input type="text" placeholder="Search HTMLs..." class="w-full bg-zinc-900 border border-zinc-700 text-xs p-2">
+                </div>
+                <div id="html-list" class="space-y-2">
+                    <!-- HTML files will be listed here -->
+                </div>
+                <button onclick="addHTML()" class="w-full text-[10px] border border-zinc-700 p-2 hover:border-white mt-4">+ Add HTML</button>
+            </div>
+
+            <!-- HTML Preview Panels -->
+            <div class="flex-1 flex">
+                <div class="flex-1 p-4 border-r border-zinc-800">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-[10px] uppercase tracking-widest text-zinc-400">Preview 1</p>
+                        <div class="flex gap-2">
+                            <button onclick="togglePanel('html-panel-1')" class="text-[10px] border border-zinc-700 px-2 py-1">Collapse</button>
+                            <button onclick="openInNewTab('html-panel-1')" class="text-[10px] border border-zinc-700 px-2 py-1">Open</button>
+                        </div>
+                    </div>
+                    <div id="html-panel-1" class="html-preview h-full rounded">
+                        <iframe id="html-iframe-1" class="w-full h-full" srcdoc="<html><body style='display:flex;align-items:center;justify-content:center;height:100vh;color:#666;font-family:sans-serif;'>Select an HTML to preview</body></html>"></iframe>
+                    </div>
+                </div>
+                <div class="flex-1 p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-[10px] uppercase tracking-widest text-zinc-400">Preview 2 (Compare)</p>
+                        <div class="flex gap-2">
+                            <button onclick="togglePanel('html-panel-2')" class="text-[10px] border border-zinc-700 px-2 py-1">Collapse</button>
+                            <button onclick="openInNewTab('html-panel-2')" class="text-[10px] border border-zinc-700 px-2 py-1">Open</button>
+                        </div>
+                    </div>
+                    <div id="html-panel-2" class="html-preview h-full rounded">
+                        <iframe id="html-iframe-2" class="w-full h-full" srcdoc="<html><body style='display:flex;align-items:center;justify-content:center;height:100vh;color:#666;font-family:sans-serif;'>Select an HTML to compare</body></html>"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ RESEARCH TAB ============ -->
+        <section id="view-research" class="w-full h-full hidden p-4 overflow-auto">
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-[10px] uppercase tracking-widest text-zinc-400">Research Frameworks</p>
+                <div class="flex gap-2">
+                    <select id="research-filter" class="bg-zinc-900 border border-zinc-700 text-xs p-2">
+                        <option value="all">All Categories</option>
+                        <option value="psychology">Psychology</option>
+                        <option value="movement">Movement</option>
+                        <option value="neuroscience">Neuroscience</option>
+                        <option value="training">Training</option>
+                    </select>
+                    <button onclick="addResearchCard()" class="text-[10px] border border-zinc-700 px-3 py-2 hover:border-white">+ Add Card</button>
+                </div>
+            </div>
+            <div id="research-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Research cards will be loaded here -->
+            </div>
+        </section>
+
+        <!-- ============ WORKOUT TAB ============ -->
+        <section id="view-workout" class="w-full h-full hidden flex">
+            <!-- Exercise Library -->
+            <div class="w-72 border-r border-zinc-800 p-4 overflow-auto">
+                <p class="text-[9px] uppercase tracking-widest text-zinc-500 mb-4">Exercise Library</p>
+                <input type="text" id="exercise-search" placeholder="Search exercises..." class="w-full bg-zinc-900 border border-zinc-700 text-xs p-2 mb-4">
+                <select id="pattern-filter" class="w-full bg-zinc-900 border border-zinc-700 text-xs p-2 mb-4">
+                    <option value="all">All Patterns</option>
+                    <option value="horizontal-push">Horizontal Push</option>
+                    <option value="horizontal-pull">Horizontal Pull</option>
+                    <option value="vertical-push">Vertical Push</option>
+                    <option value="vertical-pull">Vertical Pull</option>
+                    <option value="knee-dominant">Knee Dominant</option>
+                    <option value="hip-dominant">Hip Dominant</option>
+                    <option value="core">Core</option>
+                </select>
+                <div id="exercise-library" class="space-y-2">
+                    <!-- Exercise list -->
+                </div>
+            </div>
+
+            <!-- Workout Builder -->
+            <div class="flex-1 p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <input type="text" id="workout-name" value="New Workout" class="bg-transparent text-white text-lg font-bold outline-none border-b border-transparent hover:border-zinc-700 focus:border-white">
+                    <div class="flex gap-2">
+                        <button onclick="exportWorkout('excel')" class="text-[10px] border border-zinc-700 px-3 py-2 hover:border-white">Export Excel</button>
+                        <button onclick="exportWorkout('pdf')" class="text-[10px] border border-zinc-700 px-3 py-2 hover:border-white">Export PDF</button>
+                        <button onclick="saveWorkout()" class="text-[10px] bg-white text-black px-4 py-2 font-bold">Save</button>
+                    </div>
+                </div>
+                <div id="workout-builder" class="space-y-2 min-h-96 border border-zinc-800 border-dashed p-4 rounded">
+                    <p class="text-zinc-600 text-sm">Drag exercises here to build your workout</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ MINDMAP TAB ============ -->
+        <section id="view-mindmap" class="w-full h-full hidden">
+            <div class="p-4 border-b border-zinc-800 flex justify-between items-center">
+                <div class="flex gap-4">
+                    <button onclick="addMindmapNode()" class="text-[10px] border border-zinc-700 px-3 py-2 hover:border-white">+ Add Node</button>
+                    <button onclick="addMindmapConnection()" class="text-[10px] border border-zinc-700 px-3 py-2 hover:border-white">+ Connection</button>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportMindmap('png')" class="text-[10px] border border-zinc-700 px-3 py-2 hover:border-white">Export PNG</button>
+                    <button onclick="exportMindmap('json')" class="text-[10px] border border-zinc-700 px-3 py-2 hover:border-white">Export JSON</button>
+                </div>
+            </div>
+            <div id="mindmap-canvas" class="w-full h-full bg-zinc-950 relative overflow-auto" style="height: calc(100% - 56px);">
+                <svg id="mindmap-svg" class="absolute inset-0 w-full h-full pointer-events-none"></svg>
+                <div id="mindmap-nodes">
+                    <!-- Mindmap nodes will be rendered here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- INTERNAL SECTION MODAL -->
+    <div id="internal-modal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
+        <div class="bg-zinc-900 border border-zinc-700 p-8 rounded-lg w-96">
+            <h2 class="text-white text-lg font-bold mb-4">Internal Section</h2>
+            <input type="password" id="internal-password" placeholder="Enter password..." class="w-full bg-zinc-800 border border-zinc-700 p-3 mb-4">
+            <div class="flex gap-2">
+                <button onclick="validatePassword()" class="flex-1 bg-white text-black p-2 font-bold">Enter</button>
+                <button onclick="closeInternalModal()" class="flex-1 border border-zinc-700 p-2">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTERNAL DEPLOYMENT SECTION (Hidden until password) -->
+    <div id="internal-section" class="hidden fixed inset-0 bg-black z-50 overflow-auto">
+        <header class="h-12 border-b border-zinc-800 flex items-center justify-between px-4">
+            <h1 class="text-white text-sm font-bold">INTERNAL DEPLOYMENT FORGE</h1>
+            <button onclick="exitInternalSection()" class="text-[10px] border border-zinc-700 px-3 py-2">Exit</button>
+        </header>
+        <div class="p-8">
+            <div class="grid grid-cols-3 gap-6">
+                <div class="panel p-4">
+                    <h3 class="text-white text-sm font-bold mb-4">Quick Deploy</h3>
+                    <button onclick="deployToGitHub()" class="w-full border border-zinc-700 p-3 mb-2 hover:border-white text-left">
+                        <span class="text-white">GitHub Pages</span>
+                        <span class="text-[10px] text-zinc-500 block">Deploy to gabosaturno11.github.io</span>
+                    </button>
+                    <button onclick="deployToVercel()" class="w-full border border-zinc-700 p-3 hover:border-white text-left">
+                        <span class="text-white">Vercel</span>
+                        <span class="text-[10px] text-zinc-500 block">Deploy to Vercel project</span>
+                    </button>
+                </div>
+                <div class="panel p-4">
+                    <h3 class="text-white text-sm font-bold mb-4">Storage</h3>
+                    <div class="mb-4">
+                        <div class="flex justify-between text-[10px] mb-1">
+                            <span>Used</span>
+                            <span id="storage-used">0 MB / 5 GB</span>
+                        </div>
+                        <div class="h-2 bg-zinc-800 rounded">
+                            <div id="storage-bar" class="h-full bg-white rounded" style="width: 5%"></div>
+                        </div>
+                    </div>
+                    <button onclick="clearStorage()" class="w-full border border-zinc-700 p-2 text-[10px] hover:border-white">Clear Cache</button>
+                </div>
+                <div class="panel p-4">
+                    <h3 class="text-white text-sm font-bold mb-4">MCP Status</h3>
+                    <div class="space-y-2 text-[10px]">
+                        <div class="flex justify-between"><span>Context7</span><span class="text-green-500">Active</span></div>
+                        <div class="flex justify-between"><span>Filesystem</span><span class="text-green-500">Active</span></div>
+                        <div class="flex justify-between"><span>Fetch</span><span class="text-green-500">Active</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ STATE MANAGEMENT ============
+        const state = {
+            currentTab: 'toc',
+            tocs: {
+                v1: [
+                    { id: 1, title: 'Introduction', type: 'chapter' },
+                    { id: 2, title: 'Part 1: Foundation', type: 'part' },
+                    { id: 3, title: 'Chapter 1: The Weight Lie', type: 'chapter', parent: 2 },
+                    { id: 4, title: 'Chapter 2: Movement DNA', type: 'chapter', parent: 2 },
+                    { id: 5, title: 'Part 2: The 7 Patterns', type: 'part' },
+                    { id: 6, title: 'Chapter 3: Horizontal Push', type: 'chapter', parent: 5 },
+                    { id: 7, title: 'Chapter 4: Horizontal Pull', type: 'chapter', parent: 5 },
+                ],
+                v2: [
+                    { id: 1, title: 'Introduction', type: 'chapter' },
+                    { id: 2, title: 'Part 1: Foundation', type: 'part' },
+                    { id: 3, title: 'Chapter 1: The Art of Movement', type: 'chapter', parent: 2 },
+                    { id: 4, title: 'Chapter 2: Movement DNA', type: 'chapter', parent: 2 },
+                    { id: 5, title: 'Part 2: The 7 Patterns', type: 'part' },
+                    { id: 6, title: 'Chapter 3: Push Patterns', type: 'chapter', parent: 5 },
+                    { id: 7, title: 'Chapter 4: Pull Patterns', type: 'chapter', parent: 5 },
+                ],
+                v3: []
+            },
+            htmlFiles: [
+                { id: 1, name: 'SATURNO MASTER OS v1', tag: 'AOC v1', path: '/htmls/master-os-v1.html' },
+                { id: 2, name: 'TITAN v1.2', tag: 'AOC v1', path: '/htmls/titan-v1.2.html' },
+                { id: 3, name: 'UNIFIED OS HUB', tag: 'AOC v2', path: '/htmls/unified-os-hub.html' },
+                { id: 4, name: 'DEPLOYMENT FORGE', tag: 'Internal', path: '/htmls/deployment-forge.html' },
+                { id: 5, name: 'LIVING CANVAS V3', tag: 'AOC v1', path: '/htmls/living-canvas-v3.html' },
+                { id: 6, name: 'Solar System App', tag: 'Deployed', path: 'https://gabosaturno11.github.io/saturno-solar-system/' },
+            ],
+            researchCards: [
+                { id: 1, name: 'Movement as First Language', category: 'movement', claim: 'The body learns like language: repetition with variation wires fluency', mechanism: 'Contextual interference improves differential learning', evidence: 'Schmidt & Lee, 2019', placement: 'Introduction', used: false },
+                { id: 2, name: 'Procrastination as Emotion Regulation', category: 'psychology', claim: 'Procrastination is an emotion problem, not time problem', mechanism: 'Anticipated negative affect drives delay', evidence: 'Pychyl & Sirois, 2016', placement: 'Ch1: Barriers sidebar', used: true },
+                { id: 3, name: 'Neural Plasticity in Adults', category: 'neuroscience', claim: 'Adult brains remain plastic and capable of reorganization', mechanism: 'Myelination responds to deliberate practice', evidence: 'Pascual-Leone neuroimaging', placement: 'Part 1', used: false },
+                { id: 4, name: 'Progressive Overload Principle', category: 'training', claim: 'Adaptation requires systematic increase in stress', mechanism: 'Supercompensation follows stress-recovery', evidence: 'Selye, 1956', placement: 'Part 4', used: false },
+            ],
+            exercises: [
+                { id: 1, name: 'Push-Up', pattern: 'horizontal-push', stage: 'foundation' },
+                { id: 2, name: 'Diamond Push-Up', pattern: 'horizontal-push', stage: 'mastery' },
+                { id: 3, name: 'Archer Push-Up', pattern: 'horizontal-push', stage: 'mastery' },
+                { id: 4, name: 'Inverted Row', pattern: 'horizontal-pull', stage: 'foundation' },
+                { id: 5, name: 'Pull-Up', pattern: 'vertical-pull', stage: 'foundation' },
+                { id: 6, name: 'Dip', pattern: 'vertical-push', stage: 'foundation' },
+                { id: 7, name: 'Squat', pattern: 'knee-dominant', stage: 'foundation' },
+                { id: 8, name: 'Pistol Squat', pattern: 'knee-dominant', stage: 'elite' },
+                { id: 9, name: 'Hip Bridge', pattern: 'hip-dominant', stage: 'foundation' },
+                { id: 10, name: 'Hollow Body', pattern: 'core', stage: 'foundation' },
+            ],
+            mindmapNodes: [
+                { id: 1, x: 400, y: 200, text: 'Art of Calisthenics', color: '#fff' },
+                { id: 2, x: 200, y: 100, text: '7 Patterns', color: '#3b82f6' },
+                { id: 3, x: 600, y: 100, text: '6 Disciplines', color: '#22c55e' },
+                { id: 4, x: 200, y: 300, text: 'Mobility Big 7', color: '#f59e0b' },
+                { id: 5, x: 600, y: 300, text: 'Stages', color: '#8b5cf6' },
+            ],
+            mindmapConnections: [
+                { from: 1, to: 2 },
+                { from: 1, to: 3 },
+                { from: 1, to: 4 },
+                { from: 1, to: 5 },
+            ],
+            documents: {},
+            workouts: [],
+            internalPassword: 'saturno2026'
+        };
+
+        // ============ TAB SWITCHING ============
+        function switchTab(tab) {
+            state.currentTab = tab;
+            document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.remove('tab-active'));
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('tab-active');
+
+            if (tab === 'toc') initTOC();
+            if (tab === 'writing') initWriting();
+            if (tab === 'htmls') initHTMLs();
+            if (tab === 'research') initResearch();
+            if (tab === 'workout') initWorkout();
+            if (tab === 'mindmap') initMindmap();
+        }
+
+        // ============ TOC MANAGEMENT ============
+        function initTOC() {
+            loadTOC('left');
+            loadTOC('right');
+        }
+
+        function loadTOC(side) {
+            const version = document.getElementById(`toc-version-${side}`).value;
+            const container = document.getElementById(`toc-${side}`);
+            const items = state.tocs[version] || [];
+
+            container.innerHTML = items.map(item => `
+                <div class="toc-item p-3 ${item.type === 'part' ? 'bg-zinc-900' : ''}" data-id="${item.id}">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] text-zinc-500">${item.type === 'part' ? 'P' : 'C'}</span>
+                            <span class="text-sm ${item.type === 'part' ? 'text-white font-bold' : ''}">${item.title}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="editTOCItem(${item.id}, '${side}')" class="text-[10px] text-zinc-500 hover:text-white px-1">Edit</button>
+                            <button onclick="deleteTOCItem(${item.id}, '${side}')" class="text-[10px] text-zinc-500 hover:text-red-500 px-1">X</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            new Sortable(container, {
+                animation: 150,
+                ghostClass: 'ghost',
+                onEnd: () => saveTOCOrder(side)
+            });
+        }
+
+        function compareTOCs() {
+            const leftVersion = document.getElementById('toc-version-left').value;
+            const rightVersion = document.getElementById('toc-version-right').value;
+            const leftItems = state.tocs[leftVersion] || [];
+            const rightItems = state.tocs[rightVersion] || [];
+
+            // Find mismatches
+            const leftContainer = document.getElementById('toc-left');
+            const rightContainer = document.getElementById('toc-right');
+
+            leftItems.forEach((item, i) => {
+                const rightItem = rightItems[i];
+                const leftEl = leftContainer.children[i];
+                const rightEl = rightContainer.children[i];
+
+                if (!rightItem || item.title !== rightItem.title) {
+                    if (leftEl) leftEl.classList.add('mismatch');
+                    if (rightEl) rightEl.classList.add('mismatch');
+                } else {
+                    if (leftEl) leftEl.classList.remove('mismatch');
+                    if (rightEl) rightEl.classList.remove('mismatch');
+                }
+            });
+
+            alert('Mismatches highlighted in red');
+        }
+
+        function addChapter(side) {
+            const version = document.getElementById(`toc-version-${side}`).value;
+            const title = prompt('Enter chapter/part title:');
+            if (!title) return;
+
+            const type = confirm('Is this a Part? (OK=Part, Cancel=Chapter)') ? 'part' : 'chapter';
+            const newId = Math.max(...state.tocs[version].map(i => i.id), 0) + 1;
+
+            state.tocs[version].push({ id: newId, title, type });
+            loadTOC(side);
+            saveToStorage();
+        }
+
+        function deleteTOCItem(id, side) {
+            const version = document.getElementById(`toc-version-${side}`).value;
+            state.tocs[version] = state.tocs[version].filter(i => i.id !== id);
+            loadTOC(side);
+            saveToStorage();
+        }
+
+        function editTOCItem(id, side) {
+            const version = document.getElementById(`toc-version-${side}`).value;
+            const item = state.tocs[version].find(i => i.id === id);
+            const newTitle = prompt('Edit title:', item.title);
+            if (newTitle) {
+                item.title = newTitle;
+                loadTOC(side);
+                saveToStorage();
+            }
+        }
+
+        function saveTOCOrder(side) {
+            // Save drag-drop order
+            saveToStorage();
+        }
+
+        function addTOCVersion() {
+            const name = prompt('Version name (e.g., v4):');
+            if (name && !state.tocs[name]) {
+                state.tocs[name] = [];
+                // Add to dropdowns
+                const opt = `<option value="${name}">TOC ${name}</option>`;
+                document.getElementById('toc-version-left').innerHTML += opt;
+                document.getElementById('toc-version-right').innerHTML += opt;
+                saveToStorage();
+            }
+        }
+
+        function exportTOC() {
+            const version = document.getElementById('toc-version-left').value;
+            const data = JSON.stringify(state.tocs[version], null, 2);
+            downloadFile(`toc-${version}.json`, data, 'application/json');
+        }
+
+        // ============ WRITING HUB ============
+        let quillEditor = null;
+
+        function initWriting() {
+            if (!quillEditor) {
+                quillEditor = new Quill('#editor', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['link', 'blockquote', 'code-block'],
+                            ['clean']
+                        ]
+                    },
+                    placeholder: 'Start writing your chapter...'
+                });
+
+                // Load saved content
+                const saved = localStorage.getItem('saturno_document');
+                if (saved) {
+                    quillEditor.root.innerHTML = saved;
+                }
+            }
+
+            // Build writing TOC
+            const tocContainer = document.getElementById('writing-toc');
+            const version = document.getElementById('toc-version-left')?.value || 'v1';
+            tocContainer.innerHTML = (state.tocs[version] || []).map(item => `
+                <div class="text-[11px] p-2 hover:bg-zinc-800 cursor-pointer ${item.type === 'part' ? 'text-white font-bold' : 'text-zinc-400 pl-4'}">
+                    ${item.title}
+                </div>
+            `).join('');
+        }
+
+        function saveDocument() {
+            const content = quillEditor.root.innerHTML;
+            localStorage.setItem('saturno_document', content);
+            alert('Document saved!');
+        }
+
+        function exportAs(format) {
+            const content = quillEditor.getText();
+            const html = quillEditor.root.innerHTML;
+            const title = document.getElementById('doc-title').value;
+
+            switch(format) {
+                case 'md':
+                    downloadFile(`${title}.md`, `# ${title}\n\n${content}`, 'text/markdown');
+                    break;
+                case 'txt':
+                    downloadFile(`${title}.txt`, content, 'text/plain');
+                    break;
+                case 'html':
+                    downloadFile(`${title}.html`, `<!DOCTYPE html><html><head><title>${title}</title></head><body>${html}</body></html>`, 'text/html');
+                    break;
+                case 'yaml':
+                    downloadFile(`${title}.yaml`, `title: "${title}"\ncontent: |\n  ${content.replace(/\n/g, '\n  ')}`, 'text/yaml');
+                    break;
+                case 'word':
+                case 'pdf':
+                    alert(`${format.toUpperCase()} export requires additional library. Use HTML export and convert.`);
+                    break;
+            }
+        }
+
+        function sendTo(service) {
+            alert(`Opening ${service} folder location...`);
+            // In real implementation, would use file system API or electron
+        }
+
+        // ============ HTML VISUALIZATION ============
+        function initHTMLs() {
+            const container = document.getElementById('html-list');
+            container.innerHTML = state.htmlFiles.map(file => `
+                <div class="p-2 border border-zinc-800 hover:border-zinc-600 cursor-pointer" onclick="previewHTML(${file.id}, 1)">
+                    <div class="text-sm text-white">${file.name}</div>
+                    <div class="text-[10px] text-zinc-500">${file.tag}</div>
+                </div>
+            `).join('');
+        }
+
+        function previewHTML(id, panel) {
+            const file = state.htmlFiles.find(f => f.id === id);
+            const iframe = document.getElementById(`html-iframe-${panel}`);
+
+            if (file.path.startsWith('http')) {
+                iframe.src = file.path;
+            } else {
+                iframe.srcdoc = `<html><body style="display:flex;align-items:center;justify-content:center;height:100vh;color:#666;font-family:sans-serif;">
+                    <div style="text-align:center">
+                        <h2>${file.name}</h2>
+                        <p>Local file: ${file.path}</p>
+                    </div>
+                </body></html>`;
+            }
+        }
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('hidden');
+        }
+
+        function openInNewTab(panelId) {
+            const iframe = document.getElementById(panelId.replace('panel', 'iframe'));
+            if (iframe.src) window.open(iframe.src, '_blank');
+        }
+
+        // ============ RESEARCH CARDS ============
+        function initResearch() {
+            renderResearchCards();
+        }
+
+        function renderResearchCards(filter = 'all') {
+            const cards = filter === 'all' ? state.researchCards : state.researchCards.filter(c => c.category === filter);
+            const container = document.getElementById('research-grid');
+
+            container.innerHTML = cards.map(card => `
+                <div class="research-card p-4 ${card.used ? 'opacity-50' : ''}">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[10px] uppercase tracking-wider text-${getCategoryColor(card.category)}-500">${card.category}</span>
+                        <button onclick="toggleUsed(${card.id})" class="text-[10px] ${card.used ? 'text-green-500' : 'text-zinc-500'}">${card.used ? 'Used' : 'Mark Used'}</button>
+                    </div>
+                    <h3 class="text-white font-bold mb-2">${card.name}</h3>
+                    <p class="text-sm mb-2">${card.claim}</p>
+                    <div class="text-[10px] text-zinc-500 mb-2">
+                        <div><strong>Mechanism:</strong> ${card.mechanism}</div>
+                        <div><strong>Evidence:</strong> ${card.evidence}</div>
+                        <div><strong>Placement:</strong> ${card.placement}</div>
+                    </div>
+                    <button onclick="copyCard(${card.id})" class="text-[10px] border border-zinc-700 px-2 py-1 hover:border-white w-full">Copy to Clipboard</button>
+                </div>
+            `).join('');
+        }
+
+        function getCategoryColor(cat) {
+            const colors = { psychology: 'yellow', movement: 'blue', neuroscience: 'purple', training: 'green' };
+            return colors[cat] || 'zinc';
+        }
+
+        function copyCard(id) {
+            const card = state.researchCards.find(c => c.id === id);
+            const text = `**${card.name}**\n\nCore Claim: ${card.claim}\nMechanism: ${card.mechanism}\nEvidence: ${card.evidence}\nBook Placement: ${card.placement}`;
+            navigator.clipboard.writeText(text);
+            alert('Copied to clipboard!');
+        }
+
+        function toggleUsed(id) {
+            const card = state.researchCards.find(c => c.id === id);
+            card.used = !card.used;
+            renderResearchCards();
+            saveToStorage();
+        }
+
+        // ============ WORKOUT CREATOR ============
+        function initWorkout() {
+            renderExerciseLibrary();
+
+            new Sortable(document.getElementById('workout-builder'), {
+                animation: 150,
+                group: 'exercises'
+            });
+        }
+
+        function renderExerciseLibrary() {
+            const container = document.getElementById('exercise-library');
+            container.innerHTML = state.exercises.map(ex => `
+                <div class="p-2 border border-zinc-800 cursor-grab" draggable="true" data-id="${ex.id}">
+                    <div class="text-sm">${ex.name}</div>
+                    <div class="text-[10px] text-zinc-500">${ex.pattern} | ${ex.stage}</div>
+                </div>
+            `).join('');
+
+            new Sortable(container, {
+                animation: 150,
+                group: { name: 'exercises', pull: 'clone', put: false },
+                sort: false
+            });
+        }
+
+        function exportWorkout(format) {
+            const name = document.getElementById('workout-name').value;
+            alert(`Exporting ${name} as ${format.toUpperCase()}...`);
+        }
+
+        // ============ MINDMAP ============
+        function initMindmap() {
+            renderMindmap();
+        }
+
+        function renderMindmap() {
+            const nodesContainer = document.getElementById('mindmap-nodes');
+            const svg = document.getElementById('mindmap-svg');
+
+            // Render connections
+            let lines = '';
+            state.mindmapConnections.forEach(conn => {
+                const from = state.mindmapNodes.find(n => n.id === conn.from);
+                const to = state.mindmapNodes.find(n => n.id === conn.to);
+                if (from && to) {
+                    lines += `<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" stroke="#27272a" stroke-width="2"/>`;
+                }
+            });
+            svg.innerHTML = lines;
+
+            // Render nodes
+            nodesContainer.innerHTML = state.mindmapNodes.map(node => `
+                <div class="absolute p-3 border border-zinc-700 bg-zinc-900 rounded cursor-move"
+                     style="left: ${node.x - 50}px; top: ${node.y - 20}px; color: ${node.color}"
+                     draggable="true"
+                     ondragend="moveMindmapNode(${node.id}, event)">
+                    ${node.text}
+                </div>
+            `).join('');
+        }
+
+        function moveMindmapNode(id, event) {
+            const node = state.mindmapNodes.find(n => n.id === id);
+            const canvas = document.getElementById('mindmap-canvas').getBoundingClientRect();
+            node.x = event.clientX - canvas.left + 50;
+            node.y = event.clientY - canvas.top + 20;
+            renderMindmap();
+        }
+
+        function addMindmapNode() {
+            const text = prompt('Node text:');
+            if (!text) return;
+            const newId = Math.max(...state.mindmapNodes.map(n => n.id), 0) + 1;
+            state.mindmapNodes.push({ id: newId, x: 400, y: 200, text, color: '#fff' });
+            renderMindmap();
+        }
+
+        function addMindmapConnection() {
+            const from = parseInt(prompt('From node ID:'));
+            const to = parseInt(prompt('To node ID:'));
+            if (from && to) {
+                state.mindmapConnections.push({ from, to });
+                renderMindmap();
+            }
+        }
+
+        function exportMindmap(format) {
+            if (format === 'json') {
+                const data = JSON.stringify({ nodes: state.mindmapNodes, connections: state.mindmapConnections }, null, 2);
+                downloadFile('mindmap.json', data, 'application/json');
+            } else {
+                alert('PNG export requires html2canvas library');
+            }
+        }
+
+        // ============ INTERNAL SECTION ============
+        function openInternalSection() {
+            document.getElementById('internal-modal').classList.remove('hidden');
+        }
+
+        function closeInternalModal() {
+            document.getElementById('internal-modal').classList.add('hidden');
+        }
+
+        function validatePassword() {
+            const password = document.getElementById('internal-password').value;
+            if (password === state.internalPassword) {
+                closeInternalModal();
+                document.getElementById('internal-section').classList.remove('hidden');
+                updateStorageDisplay();
+            } else {
+                alert('Invalid password');
+            }
+        }
+
+        function exitInternalSection() {
+            document.getElementById('internal-section').classList.add('hidden');
+        }
+
+        function updateStorageDisplay() {
+            // Calculate localStorage usage
+            let total = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    total += localStorage[key].length * 2; // UTF-16
+                }
+            }
+            const mb = (total / 1024 / 1024).toFixed(2);
+            document.getElementById('storage-used').textContent = `${mb} MB / 5 GB`;
+            document.getElementById('storage-bar').style.width = `${(total / (5 * 1024 * 1024 * 1024)) * 100}%`;
+        }
+
+        function deployToGitHub() {
+            alert('GitHub Pages deployment: Run "npx gh-pages -d dist" in terminal');
+        }
+
+        function deployToVercel() {
+            alert('Vercel deployment: Push to GitHub and Vercel will auto-deploy');
+        }
+
+        function clearStorage() {
+            if (confirm('Clear all cached data?')) {
+                localStorage.clear();
+                updateStorageDisplay();
+            }
+        }
+
+        // ============ UTILITIES ============
+        function downloadFile(filename, content, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('saturno_state', JSON.stringify(state));
+        }
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('saturno_state');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                Object.assign(state, parsed);
+            }
+        }
+
+        // ============ INITIALIZATION ============
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFromStorage();
+            initTOC();
+
+            // Filter event
+            document.getElementById('research-filter')?.addEventListener('change', (e) => {
+                renderResearchCards(e.target.value);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "name": "saturno-command-center",
+  "version": "1.0.0",
+  "description": "Internal Command Center for The Art of Calisthenics book project",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site - no build needed'",
+    "deploy": "npx gh-pages -d ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gabosaturno11/saturno-command-center"
+  },
+  "author": "Gabo Saturno | Saturno Movement",
+  "license": "ISC",
+  "devDependencies": {
+    "gh-pages": "^6.1.1",
+    "serve": "^14.2.1"
+  },
+  "keywords": [
+    "calisthenics",
+    "book",
+    "command-center",
+    "victory-belt",
+    "saturno"
+  ]
+}
