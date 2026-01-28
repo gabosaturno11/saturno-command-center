@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handstand - Exercise Layout Example</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+        
+        .exercise-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 250px 1fr 250px;
+            min-height: 800px;
+        }
+        
+        /* Left Sidebar - Foundation Zone */
+        .foundation-zone {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 25px 20px;
+        }
+        
+        .zone-title {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 8px;
+        }
+        
+        .foundation-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .foundation-item h4 {
+            margin: 0 0 5px 0;
+            font-size: 12px;
+            color: #ecf0f1;
+        }
+        
+        .foundation-item p {
+            margin: 0;
+            font-size: 10px;
+            opacity: 0.8;
+            line-height: 1.3;
+        }
+        
+        /* Center Zone - Main Exercise */
+        .main-content {
+            padding: 30px;
+            position: relative;
+        }
+        
+        .exercise-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .exercise-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+        }
+        
+        .discipline-primary {
+            display: inline-block;
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .exercise-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            border: 3px solid #9b59b6;
+        }
+        
+        .technique-steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #ecf0f1;
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover {
+            border-color: #9b59b6;
+            transform: translateY(-2px);
+        }
+        
+        .step-number {
+            background: #9b59b6;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .step h4 {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            color: #2c3e50;
+        }
+        
+        .step p {
+            margin: 0;
+            font-size: 10px;
+            color: #7f8c8d;
+            line-height: 1.4;
+        }
+        
+        /* Right Sidebar - Evolution Zone */
+        .evolution-zone {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            padding: 25px 20px;
+        }
+        
+        .discipline-connection {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .discipline-connection::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+        
+        .hand-balancing::before { background: #9b59b6; }
+        .power-free::before { background: #e74c3c; }
+        .freestyle::before { background: #f39c12; }
+        .bodybuilding::before { background: #34495e; }
+        .mobility::before { background: #1abc9c; }
+        .movement::before { background: #e67e22; }
+        
+        .discipline-name {
+            font-size: 11px;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .intensity-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        
+        .intensity-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+        
+        .intensity-high { width: 95%; background: #e74c3c; }
+        .intensity-medium { width: 60%; background: #f39c12; }
+        .intensity-low { width: 25%; background: #95a5a6; }
+        
+        .connection-note {
+            font-size: 9px;
+            opacity: 0.8;
+            line-height: 1.3;
+            margin: 5px 0 0 0;
+        }
+        
+        /* Philosophy Box */
+        .philosophy-box {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        .philosophy-box::before {
+            content: '"';
+            font-size: 40px;
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            opacity: 0.3;
+        }
+        
+        .philosophy-text {
+            font-style: italic;
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 0;
+        }
+        
+        /* Interconnection Indicators */
+        .connection-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #9b59b6, transparent);
+            opacity: 0.3;
+            animation: pulse 3s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .exercise-page {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+            }
+            
+            .foundation-zone, .evolution-zone {
+                padding: 20px;
+            }
+            
+            .technique-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="exercise-page">
+        <!-- Left Sidebar - Foundation Zone -->
+        <div class="foundation-zone">
+            <div class="zone-title">🏗️ Foundation Requirements</div>
+            
+            <div class="foundation-item">
+                <h4>Hollow Body Hold</h4>
+                <p>Core strength foundation - Page 89</p>
+            </div>
+            
+            <div class="foundation-item">
+                <h4>Wrist Preparation</h4>
+                <p>Joint mobility & strength - Page 67</p>
+            </div>
+            
+            <div class="foundation-item">
+                <h4>Shoulder Flexibility</h4>
+                <p>Overhead mobility - Page 134</p>
+            </div>
+            
+            <div class="foundation-item">
+                <h4>Wall Handstand</h4>
+                <p>Initial learning progression - Page 156</p>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <div class="zone-title">🧠 Neurological Benefits</div>
+                <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; font-size: 11px; line-height: 1.4;">
+                    Develops proprioception, spatial awareness, and body control that transfers to all advanced static holds like planche and front lever.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Center Zone - Main Exercise Content -->
+        <div class="main-content">
+            <div class="connection-lines">
+                <div class="connection-line" style="top: 20%; left: 10%; width: 80%;"></div>
+                <div class="connection-line" style="top: 60%; left: 15%; width: 70%;"></div>
+                <div class="connection-line" style="top: 80%; left: 5%; width: 90%;"></div>
+            </div>
+            
+            <div class="exercise-header">
+                <h1 class="exercise-title">HANDSTAND</h1>
+                <div class="discipline-primary">Hand-Balancing Primary</div>
+                <p style="color: #7f8c8d; font-size: 14px; margin: 0;">The foundational inversion that opens doors across all calisthenics disciplines</p>
+            </div>
+            
+            <div class="exercise-image">
+                [HIGH-QUALITY HANDSTAND DEMONSTRATION PHOTO]<br>
+                Perfect line from wrists to heels
+            </div>
+            
+            <div class="technique-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Setup Position</h4>
+                    <p>Hands shoulder-width apart, fingers spread, strong hollow body</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Entry Method</h4>
+                    <p>Kick up with control, leading leg reaches toward vertical</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Balance Point</h4>
+                    <p>Find equilibrium through micro-adjustments in fingers and shoulders</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>Exit Control</h4>
+                    <p>Controlled descent, same leg that led up leads the exit</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <h4>Breathing</h4>
+                    <p>Maintain steady breath pattern throughout the hold</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">6</div>
+                    <h4>Progressive Hold</h4>
+                    <p>Build from 3-second holds to 60+ seconds over months</p>
+                </div>
+            </div>
+            
+            <div class="philosophy-box">
+                <p class="philosophy-text">In the handstand, we discover that falling is not failing - it's learning. Each attempt teaches us something new about balance, both physical and mental. The handstand is a meditation in motion, requiring complete presence and trust in our body's intelligence.</p>
+            </div>
+        </div>
+        
+        <!-- Right Sidebar - Evolution Zone -->
+        <div class="evolution-zone">
+            <div class="zone-title">🌟 Discipline Applications</div>
+            
+            <div class="discipline-connection hand-balancing">
+                <div class="discipline-name">Hand-Balancing</div>
+                <div class="intensity-bar">
+                    <div class="intensity-fill intensity-high"></div>
+                </div>
+                <div class="connection-note">Primary skill - requires 100+ hours for mastery. Focus on perfect form, various entries, one-arm progressions.</div>
+            </div>
+            
+            <div class="discipline-connection power-free">
+                <div class="discipline-name">Power Free / Statics</div>
+                <div class="intensity-bar">
+                    <div class="intensity-fill intensity-medium"></div>
+                </div>
+                <div class="connection-note">3-second competition hold. Form less critical than in hand-balancing. Prerequisite for handstand push-ups.</div>
+            </div>
+            
+            <div class="discipline-connection freestyle">
+                <div class="discipline-name">Freestyle</div>
+                <div class="intensity-bar">
+                    <div class="intensity-fill intensity-medium"></div>
+                </div>
+                <div class="connection-note">Transitional element for flow sequences. Combined with spins, one-handed variations, creative entries.</div>
+            </div>
+            
+            <div class="discipline-connection bodybuilding">
+                <div class="discipline-name">Bodybuilding</div>
+                <div class="intensity-bar">
+                    <div class="intensity-fill intensity-low"></div>
+                </div>
+                <div class="connection-note">Minimal muscle building but excellent for shoulder stability and core endurance.</div>
+            </div>
+            
+            <div class="discipline-connection mobility">
+                <div class="discipline-name">Mobility Support</div>
+                <div class="intensity-bar">
+                    <div class="intensity-fill intensity-medium"></div>
+                </div>
+                <div class="connection-note">Middle splits improve straddle handstands. Shoulder flexibility essential for straight-line handstands.</div>
+            </div>
+            
+            <div class="discipline-connection movement">
+                <div class="discipline-name">Movement/Flow</div>
+                <div class="intensity-bar">
+                    <div class="intensity-fill intensity-medium"></div>
+                </div>
+                <div class="connection-note">Key transition in breakdancing, yoga flows, and movement sequences. Gateway to press-ups and flow states.</div>
+            </div>
+            
+            <div style="margin-top: 25px;">
+                <div class="zone-title">➡️ Next Steps</div>
+                <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; font-size: 11px;">
+                    <strong>Handstand Push-Up</strong> (Page 189)<br>
+                    <strong>One-Arm Handstand</strong> (Page 267)<br>
+                    <strong>Planche Progression</strong> (Page 201)<br>
+                    <strong>Press to Handstand</strong> (Page 245)
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

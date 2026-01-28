@@ -383,19 +383,182 @@
       "path": "ICLOUD-VISUAL_unified-writing-hub-master.html",
       "source": "iCloud Visual",
       "priority": "HIGH"
+    },
+    {
+      "id": 49,
+      "name": "EXERCISE CONSTELLATION BUILDER",
+      "tag": "Perplexity",
+      "path": "htmls/exercise_constellation_builder.html",
+      "source": "Perplexity",
+      "priority": "TOP"
+    },
+    {
+      "id": 50,
+      "name": "THREE CIRCLE MASTERY MANDALA",
+      "tag": "Perplexity",
+      "path": "htmls/three_circle_mastery_mandala.html",
+      "source": "Perplexity",
+      "priority": "HIGH"
+    },
+    {
+      "id": 51,
+      "name": "ALPHA INTELLIGENCE INFINITY LOOP",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /alpha_intelligence_infinity_loop.html",
+      "source": "Perplexity",
+      "priority": "HIGH"
+    },
+    {
+      "id": 52,
+      "name": "ARC LINE VARIATIONS",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /arc-line-variations.html",
+      "source": "Perplexity",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 53,
+      "name": "CALISTHENICS FRAMEWORK SYSTEM",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /calisthenics_framework_system.html",
+      "source": "Perplexity",
+      "priority": "HIGH"
+    },
+    {
+      "id": 54,
+      "name": "CALISTHENICS MASTERY MAP",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /calisthenics_mastery_map.html",
+      "source": "Perplexity",
+      "priority": "HIGH"
+    },
+    {
+      "id": 55,
+      "name": "COMPLETE TOC VISUAL",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /calisthenics-complete-toc-visual.html",
+      "source": "Perplexity",
+      "priority": "HIGH"
+    },
+    {
+      "id": 56,
+      "name": "CHAPTER CARD VARIATIONS",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /chapter_card_variations.html",
+      "source": "Perplexity",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 57,
+      "name": "CREATIVE PROGRESSION ROADMAP",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /creative-progression-roadmap.html",
+      "source": "Perplexity",
+      "priority": "HIGH"
+    },
+    {
+      "id": 58,
+      "name": "HANDSTAND EXERCISE LAYOUT",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /handstand_exercise_layout.html",
+      "source": "Perplexity",
+      "priority": "HIGH"
+    },
+    {
+      "id": 59,
+      "name": "JOURNEY FLOW VARIATIONS",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /journey_flow_variations.html",
+      "source": "Perplexity",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 60,
+      "name": "MINI HEATMAP VARIATIONS",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /mini-heatmap-variations.html",
+      "source": "Perplexity",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 61,
+      "name": "MOVEMENT GALAXY HUB",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /movement_galaxy_hub.html",
+      "source": "Perplexity",
+      "priority": "HIGH"
+    },
+    {
+      "id": 62,
+      "name": "PLANETARY PROGRESSION SYSTEM",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /planetary_progression_system.html",
+      "source": "Perplexity",
+      "priority": "HIGH"
+    },
+    {
+      "id": 63,
+      "name": "PUSHUP INTERLOCKING GEARS",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /pushup_interlocking_gears_complete.html",
+      "source": "Perplexity",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 64,
+      "name": "PUSHUP PERFECT SERIES",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /pushup_perfect_series.html",
+      "source": "Perplexity",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 65,
+      "name": "RING ORB VARIATIONS",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /ring-orb-variations.html",
+      "source": "Perplexity",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 66,
+      "name": "TOC PROGRESS ADAPTATIONS",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /toc_progress_adaptations.html",
+      "source": "Perplexity",
+      "priority": "HIGH"
+    },
+    {
+      "id": 67,
+      "name": "VERTICAL LIFT VARIATIONS",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /vertical-lift-variations.html",
+      "source": "Perplexity",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 68,
+      "name": "WISDOM BOXES DESIGN",
+      "tag": "Perplexity",
+      "path": "htmls/MORE HTMLS /wisdom-boxes-design.html",
+      "source": "Perplexity",
+      "priority": "MEDIUM"
     }
   ],
   "tags": [
     "AOC v1",
     "AOC v2",
+    "Book",
     "Book Content",
     "Book Visual",
+    "Course",
     "Dashboard",
     "Docs",
     "Infographic",
     "Internal",
     "Life OS",
     "Mindmap",
+    "Perplexity",
     "Reference",
     "TOC",
     "Tool",
@@ -415,7 +578,8 @@
     "iCloud",
     "iCloud Archive",
     "iCloud Life OS",
-    "iCloud Visual"
+    "iCloud Visual",
+    "Perplexity"
   ],
-  "totalCount": 48
+  "totalCount": 68
 }
