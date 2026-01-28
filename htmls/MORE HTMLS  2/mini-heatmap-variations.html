@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini-Heatmap Variations - The Art of Calisthenics</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'SF Pro Display', sans-serif;
+            padding: 20px;
+        }
+        .variation {
+            margin-bottom: 60px;
+            padding: 30px;
+            background: rgba(138, 43, 226, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        h2 {
+            color: #8a2be2;
+            margin-bottom: 20px;
+        }
+        .heatmap-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+        }
+        .grid {
+            display: grid;
+            gap: 4px;
+        }
+        .cell {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+        .cell:hover {
+            transform: scale(1.1);
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; background: linear-gradient(45deg, #8a2be2, #00bcd4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Mini-Heatmap Grid Variations</h1>
+
+    <div class="variation">
+        <h2>1. Chapter Completion Matrix</h2>
+        <p>5x5 grid where each cell is a chapter. Color intensity shows reading depth: skimmed, read, studied, mastered, teaching.</p>
+        <div class="heatmap-container">
+            <div style="text-align: center;">
+                <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="cell" style="background: #ff6b6b;">1</div>
+                    <div class="cell" style="background: #ff6b6b;">2</div>
+                    <div class="cell" style="background: #8a2be2;">3</div>
+                    <div class="cell" style="background: #8a2be2;">4</div>
+                    <div class="cell" style="background: #4169e1;">5</div>
+                    <div class="cell" style="background: #4169e1;">6</div>
+                    <div class="cell" style="background: #00bcd4;">7</div>
+                    <div class="cell" style="background: #00bcd4;">8</div>
+                    <div class="cell" style="background: #4caf50;">9</div>
+                    <div class="cell" style="background: #4caf50;">10</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.3);">11</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.3);">12</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.3);">13</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.2);">14</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.2);">15</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.1);">16</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.1);">17</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.1);">18</div>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.1);">19</div>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.1);">20</div>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.05);">21</div>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.05);">22</div>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.05);">23</div>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.05);">24</div>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.05);">25</div>
+                </div>
+                <div style="margin-top: 20px; font-size: 12px; color: #666;">
+                    <span style="color: #4caf50;">■ Mastered</span>
+                    <span style="color: #00bcd4; margin-left: 10px;">■ Studied</span>
+                    <span style="color: #8a2be2; margin-left: 10px;">■ Read</span>
+                    <span style="color: #ff6b6b; margin-left: 10px;">■ Current</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="variation">
+        <h2>2. Weekly Training Consistency</h2>
+        <p>Each row is a week, each column a day. Color shows training quality: missed, light, moderate, intense, perfect.</p>
+        <div class="heatmap-container">
+            <div>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 10px;">
+                    <div style="font-size: 10px; text-align: center;">M</div>
+                    <div style="font-size: 10px; text-align: center;">T</div>
+                    <div style="font-size: 10px; text-align: center;">W</div>
+                    <div style="font-size: 10px; text-align: center;">T</div>
+                    <div style="font-size: 10px; text-align: center;">F</div>
+                    <div style="font-size: 10px; text-align: center;">S</div>
+                    <div style="font-size: 10px; text-align: center;">S</div>
+                </div>
+                <div class="grid" style="grid-template-columns: repeat(7, 1fr);">
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1);">-</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #ffa726;">~</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1);">-</div>
+                    
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #f44336;">✗</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #ffa726;">~</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    
+                    <div class="cell" style="background: #ffa726;">~</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #f44336;">✗</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1);">-</div>
+                    
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #ffa726;">~</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓</div>
+                </div>
+                <div style="margin-top: 10px; font-size: 10px; color: #666; text-align: center;">
+                    Week 1 → Week 4
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="variation">
+        <h2>3. Muscle Group Activation Map</h2>
+        <p>Body divided into zones on a 5x5 grid. Heat shows which muscles were worked in recent sessions.</p>
+        <div class="heatmap-container">
+            <div style="position: relative;">
+                <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="cell" style="background: rgba(255,255,255,0.1);"></div>
+                    <div class="cell" style="background: #ff6b6b;">N</div>
+                    <div class="cell" style="background: #ff6b6b;">N</div>
+                    <div class="cell" style="background: #ff6b6b;">N</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1);"></div>
+                    
+                    <div class="cell" style="background: #8a2be2;">S</div>
+                    <div class="cell" style="background: #00bcd4;">C</div>
+                    <div class="cell" style="background: #00bcd4;">C</div>
+                    <div class="cell" style="background: #00bcd4;">C</div>
+                    <div class="cell" style="background: #8a2be2;">S</div>
+                    
+                    <div class="cell" style="background: #4169e1;">B</div>
+                    <div class="cell" style="background: #ffa726;">CR</div>
+                    <div class="cell" style="background: #ffa726;">CR</div>
+                    <div class="cell" style="background: #ffa726;">CR</div>
+                    <div class="cell" style="background: #4169e1;">B</div>
+                    
+                    <div class="cell" style="background: rgba(255,255,255,0.2);">H</div>
+                    <div class="cell" style="background: #4caf50;">Q</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.2);">G</div>
+                    <div class="cell" style="background: #4caf50;">Q</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.2);">H</div>
+                    
+                    <div class="cell" style="background: rgba(255,255,255,0.2);">C</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.2);">C</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1);"></div>
+                    <div class="cell" style="background: rgba(255,255,255,0.2);">C</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.2);">C</div>
+                </div>
+                <div style="position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-size: 12px;">Human Figure</div>
+                <div style="margin-top: 10px; font-size: 9px; color: #666;">
+                    N=Neck, S=Shoulder, C=Chest, B=Bicep, CR=Core, H=Hip, Q=Quad, G=Glute, C=Calf
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="variation">
+        <h2>4. Skill Prerequisites Checker</h2>
+        <p>Grid shows prerequisites for advanced moves. Green = mastered, yellow = working, red = not started.</p>
+        <div class="heatmap-container">
+            <div>
+                <div style="text-align: center; margin-bottom: 10px; font-size: 14px; color: #8a2be2;">Prerequisites for: PLANCHE</div>
+                <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="cell" style="background: #4caf50; font-size: 8px;">Push<br>Up</div>
+                    <div class="cell" style="background: #4caf50; font-size: 8px;">Hollow<br>Body</div>
+                    <div class="cell" style="background: #4caf50; font-size: 8px;">L-Sit</div>
+                    <div class="cell" style="background: #ffa726; font-size: 8px;">PPU</div>
+                    <div class="cell" style="background: #ffa726; font-size: 8px;">Lean</div>
+                    
+                    <div class="cell" style="background: #4caf50; font-size: 8px;">Dip</div>
+                    <div class="cell" style="background: #4caf50; font-size: 8px;">Support</div>
+                    <div class="cell" style="background: #ffa726; font-size: 8px;">Tuck<br>PL</div>
+                    <div class="cell" style="background: #f44336; font-size: 8px;">Adv<br>Tuck</div>
+                    <div class="cell" style="background: #f44336; font-size: 8px;">Strad</div>
+                    
+                    <div class="cell" style="background: #4caf50; font-size: 8px;">Wrist<br>Prep</div>
+                    <div class="cell" style="background: #4caf50; font-size: 8px;">Scap<br>Dep</div>
+                    <div class="cell" style="background: #ffa726; font-size: 8px;">Band<br>Assist</div>
+                    <div class="cell" style="background: #f44336; font-size: 8px;">½ Lay</div>
+                    <div class="cell" style="background: #f44336; font-size: 8px;">Full</div>
+                    
+                    <div class="cell" style="background: rgba(255,255,255,0.1); font-size: 8px;">+5s</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1); font-size: 8px;">+10s</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1); font-size: 8px;">+15s</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1); font-size: 8px;">+20s</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1); font-size: 8px;">+30s</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="variation">
+        <h2>5. Movement Pattern Balance</h2>
+        <p>Shows balance across movement patterns. Identifies weak areas needing attention for complete development.</p>
+        <div class="heatmap-container">
+            <div>
+                <div class="grid" style="grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr);">
+                    <div class="cell" style="background: #0a0a0a; border: 1px solid #333;"></div>
+                    <div class="cell" style="background: #0a0a0a; font-size: 9px;">Push</div>
+                    <div class="cell" style="background: #0a0a0a; font-size: 9px;">Pull</div>
+                    <div class="cell" style="background: #0a0a0a; font-size: 9px;">Squat</div>
+                    <div class="cell" style="background: #0a0a0a; font-size: 9px;">Hinge</div>
+                    <div class="cell" style="background: #0a0a0a; font-size: 9px;">Core</div>
+                    
+                    <div class="cell" style="background: #0a0a0a; font-size: 9px;">Horiz</div>
+                    <div class="cell" style="background: #4caf50;">✓✓</div>
+                    <div class="cell" style="background: #4caf50;">✓✓</div>
+                    <div class="cell" style="background: #ffa726;">✓</div>
+                    <div class="cell" style="background: #f44336;">✗</div>
+                    <div class="cell" style="background: #4caf50;">✓✓</div>
+                    
+                    <div class="cell" style="background: #0a0a0a; font-size: 9px;">Vert</div>
+                    <div class="cell" style="background: #ffa726;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓✓</div>
+                    <div class="cell" style="background: #4caf50;">✓✓</div>
+                    <div class="cell" style="background: #ffa726;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓✓</div>
+                    
+                    <div class="cell" style="background: #0a0a0a; font-size: 9px;">Uni</div>
+                    <div class="cell" style="background: #f44336;">✗</div>
+                    <div class="cell" style="background: #ffa726;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓✓</div>
+                    <div class="cell" style="background: #f44336;">✗</div>
+                    <div class="cell" style="background: #ffa726;">✓</div>
+                    
+                    <div class="cell" style="background: #0a0a0a; font-size: 9px;">Rot</div>
+                    <div class="cell" style="background: #f44336;">✗</div>
+                    <div class="cell" style="background: #f44336;">✗</div>
+                    <div class="cell" style="background: #ffa726;">✓</div>
+                    <div class="cell" style="background: #ffa726;">✓</div>
+                    <div class="cell" style="background: #4caf50;">✓✓</div>
+                    
+                    <div class="cell" style="background: #0a0a0a; font-size: 9px;">Power</div>
+                    <div class="cell" style="background: #ffa726;">✓</div>
+                    <div class="cell" style="background: #f44336;">✗</div>
+                    <div class="cell" style="background: #ffa726;">✓</div>
+                    <div class="cell" style="background: #f44336;">✗</div>
+                    <div class="cell" style="background: #ffa726;">✓</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="variation">
+        <h2>6. Recovery Status Dashboard</h2>
+        <p>Each cell represents a body system. Colors indicate recovery: red = needs rest, green = ready to train.</p>
+        <div class="heatmap-container">
+            <div style="text-align: center;">
+                <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="cell" style="background: #4caf50;">CNS<br>95%</div>
+                    <div class="cell" style="background: #ffa726;">Upper<br>Push<br>75%</div>
+                    <div class="cell" style="background: #4caf50;">Upper<br>Pull<br>90%</div>
+                    <div class="cell" style="background: #f44336;">Core<br>60%</div>
+                    <div class="cell" style="background: #4caf50;">Grip<br>85%</div>
+                    
+                    <div class="cell" style="background: #ffa726;">Shld<br>70%</div>
+                    <div class="cell" style="background: #4caf50;">Elbow<br>90%</div>
+                    <div class="cell" style="background: #4caf50;">Wrist<br>88%</div>
+                    <div class="cell" style="background: #ffa726;">Hip<br>75%</div>
+                    <div class="cell" style="background: #4caf50;">Knee<br>92%</div>
+                    
+                    <div class="cell" style="background: #4caf50;">Quad<br>85%</div>
+                    <div class="cell" style="background: #f44336;">Ham<br>55%</div>
+                    <div class="cell" style="background: #ffa726;">Glute<br>70%</div>
+                    <div class="cell" style="background: #4caf50;">Calf<br>95%</div>
+                    <div class="cell" style="background: #4caf50;">Ankle<br>90%</div>
+                    
+                    <div class="cell" style="background: #4caf50;">Sleep<br>8h</div>
+                    <div class="cell" style="background: #4caf50;">HRV<br>65</div>
+                    <div class="cell" style="background: #ffa726;">Mood<br>7/10</div>
+                    <div class="cell" style="background: #4caf50;">Energy<br>8/10</div>
+                    <div class="cell" style="background: #f44336;">Stress<br>High</div>
+                    
+                    <div class="cell" style="background: #0a0a0a; border: 2px solid #8a2be2; color: #8a2be2;">Overall<br>78%</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1);">Day 1</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1);">Day 2</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1);">Day 3</div>
+                    <div class="cell" style="background: rgba(255,255,255,0.1);">REST</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="variation">
+        <h2>7. Philosophy Integration Grid</h2>
+        <p>Maps how philosophical concepts connect to physical practices. Brighter cells show stronger mind-body connections.</p>
+        <div class="heatmap-container">
+            <div>
+                <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.9); color: #fff; font-size: 9px;">Present<br>Moment</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.7); color: #fff; font-size: 9px;">Non-<br>Attach</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.5); color: #fff; font-size: 9px;">Flow<br>State</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.8); color: #fff; font-size: 9px;">Breath<br>Work</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.6); color: #fff; font-size: 9px;">Unity</div>
+                    
+                    <div class="cell" style="background: rgba(65, 105, 225, 0.8); color: #fff; font-size: 9px;">Discip<br>line</div>
+                    <div class="cell" style="background: rgba(65, 105, 225, 0.9); color: #fff; font-size: 9px;">Patience</div>
+                    <div class="cell" style="background: rgba(65, 105, 225, 0.7); color: #fff; font-size: 9px;">Accept<br>ance</div>
+                    <div class="cell" style="background: rgba(65, 105, 225, 0.6); color: #fff; font-size: 9px;">Struggle</div>
+                    <div class="cell" style="background: rgba(65, 105, 225, 0.8); color: #fff; font-size: 9px;">Growth</div>
+                    
+                    <div class="cell" style="background: rgba(0, 188, 212, 0.7); color: #fff; font-size: 9px;">Body<br>Aware</div>
+                    <div class="cell" style="background: rgba(0, 188, 212, 0.9); color: #fff; font-size: 9px;">Mind<br>Control</div>
+                    <div class="cell" style="background: rgba(0, 188, 212, 0.8); color: #fff; font-size: 9px;">Energy<br>Flow</div>
+                    <div class="cell" style="background: rgba(0, 188, 212, 0.6); color: #fff; font-size: 9px;">Balance</div>
+                    <div class="cell" style="background: rgba(0, 188, 212, 0.7); color: #fff; font-size: 9px;">Center</div>
+                    
+                    <div class="cell" style="background: rgba(255, 107, 107, 0.8); color: #fff; font-size: 9px;">Purpose</div>
+                    <div class="cell" style="background: rgba(255, 107, 107, 0.7); color: #fff; font-size: 9px;">Intent</div>
+                    <div class="cell" style="background: rgba(255, 107, 107, 0.9); color: #fff; font-size: 9px;">Focus</div>
+                    <div class="cell" style="background: rgba(255, 107, 107, 0.6); color: #fff; font-size: 9px;">Commit</div>
+                    <div class="cell" style="background: rgba(255, 107, 107, 0.8); color: #fff; font-size: 9px;">Master</div>
+                    
+                    <div class="cell" style="background: rgba(255, 167, 38, 0.7); color: #fff; font-size: 9px;">Serve</div>
+                    <div class="cell" style="background: rgba(255, 167, 38, 0.8); color: #fff; font-size: 9px;">Teach</div>
+                    <div class="cell" style="background: rgba(255, 167, 38, 0.9); color: #fff; font-size: 9px;">Inspire</div>
+                    <div class="cell" style="background: rgba(255, 167, 38, 0.8); color: #fff; font-size: 9px;">Connect</div>
+                    <div class="cell" style="background: rgba(255, 167, 38, 0.9); color: #fff; font-size: 9px;">Legacy</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="variation">
+        <h2>8. Time Allocation Matrix</h2>
+        <p>Shows how training time is distributed across different aspects. Helps identify imbalances in practice.</p>
+        <div class="heatmap-container">
+            <div>
+                <div style="text-align: center; margin-bottom: 10px; font-size: 12px; color: #666;">Weekly Time Distribution (Hours)</div>
+                <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="cell" style="background: rgba(255, 107, 107, 0.8); color: #fff;">Skill<br>3h</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.9); color: #fff;">Strength<br>4h</div>
+                    <div class="cell" style="background: rgba(65, 105, 225, 0.6); color: #fff;">Mobility<br>2h</div>
+                    <div class="cell" style="background: rgba(0, 188, 212, 0.4); color: #fff;">Cardio<br>1h</div>
+                    <div class="cell" style="background: rgba(255, 167, 38, 0.7); color: #fff;">Recovery<br>2.5h</div>
+                    
+                    <div class="cell" style="background: rgba(255, 107, 107, 0.5); color: #fff;">Hand<br>stand<br>1.5h</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.7); color: #fff;">Pull<br>1.5h</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.8); color: #fff;">Push<br>2h</div>
+                    <div class="cell" style="background: rgba(65, 105, 225, 0.4); color: #fff;">Legs<br>1h</div>
+                    <div class="cell" style="background: rgba(0, 188, 212, 0.6); color: #fff;">Core<br>1.5h</div>
+                    
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.1); color: #888;">Plan<br>0.5h</div>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.1); color: #888;">Video<br>0.5h</div>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.2); color: #888;">Study<br>1h</div>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.1); color: #888;">Social<br>0.5h</div>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.1); color: #888;">Track<br>0.5h</div>
+                    
+                    <div class="cell" style="background: #0a0a0a; border: 2px solid #8a2be2; grid-column: span 5; color: #8a2be2; font-size: 14px;">Total Weekly: 20.5 hours</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="variation">
+        <h2>9. Progression Speed Indicator</h2>
+        <p>Tracks learning velocity across different skills. Helps identify natural strengths and areas needing patience.</p>
+        <div class="heatmap-container">
+            <div>
+                <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="cell" style="background: #4caf50; position: relative;">
+                        <span style="font-size: 20px;">🚀</span>
+                        <span style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 8px;">Push</span>
+                    </div>
+                    <div class="cell" style="background: #8bc34a; position: relative;">
+                        <span style="font-size: 20px;">✈️</span>
+                        <span style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 8px;">Pull</span>
+                    </div>
+                    <div class="cell" style="background: #ffa726; position: relative;">
+                        <span style="font-size: 20px;">🚗</span>
+                        <span style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 8px;">Core</span>
+                    </div>
+                    <div class="cell" style="background: #ff7043; position: relative;">
+                        <span style="font-size: 20px;">🚲</span>
+                        <span style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 8px;">Balance</span>
+                    </div>
+                    <div class="cell" style="background: #f44336; position: relative;">
+                        <span style="font-size: 20px;">🚶</span>
+                        <span style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 8px;">Flex</span>
+                    </div>
+                    
+                    <div class="cell" style="background: #4caf50; font-size: 9px;">L-Sit<br>2wk</div>
+                    <div class="cell" style="background: #8bc34a; font-size: 9px;">Pull-up<br>4wk</div>
+                    <div class="cell" style="background: #ffa726; font-size: 9px;">Flag<br>12wk</div>
+                    <div class="cell" style="background: #ff7043; font-size: 9px;">HS<br>20wk</div>
+                    <div class="cell" style="background: #f44336; font-size: 9px;">Split<br>52wk</div>
+                    
+                    <div class="cell" style="background: rgba(255,255,255,0.1); grid-column: span 5; text-align: center; padding: 10px; font-size: 10px;">
+                        🚀 Rapid (1-4 weeks) | ✈️ Fast (1-2 months) | 🚗 Moderate (3-6 months) | 🚲 Slow (6-12 months) | 🚶 Patient (1+ year)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="variation">
+        <h2>10. Community Impact Heatmap</h2>
+        <p>Shows your influence rippling through the community. Center is you, outer cells represent people you've inspired.</p>
+        <div class="heatmap-container">
+            <div>
+                <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.2);">👤</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.3);">👤</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.4);">👤</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.3);">👤</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.2);">👤</div>
+                    
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.3);">👥</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.6);">👥</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.8);">👥</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.6);">👥</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.3);">👥</div>
+                    
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.4);">👥</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.8);">👥</div>
+                    <div class="cell" style="background: #8a2be2; color: #fff; font-weight: bold;">YOU</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.8);">👥</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.4);">👥</div>
+                    
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.3);">👤</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.6);">👥</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.8);">👥</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.6);">👥</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.3);">👤</div>
+                    
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.2);">🌍</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.3);">🌍</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.4);">🌍</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.3);">🌍</div>
+                    <div class="cell" style="background: rgba(138, 43, 226, 0.2);">🌍</div>
+                </div>
+                <div style="text-align: center; margin-top: 10px; font-size: 10px; color: #666;">
+                    👤 Individual Impact | 👥 Group Impact | 🌍 Global Reach
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

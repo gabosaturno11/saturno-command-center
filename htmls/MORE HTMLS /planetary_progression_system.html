@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetary Progression System</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            width: 1200px;
+            height: 800px;
+            position: relative;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin: 0 auto;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 16px;
+            color: #a0a0a0;
+            margin-bottom: 40px;
+        }
+
+        .solar-system {
+            position: relative;
+            width: 100%;
+            height: 650px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #ffd700 0%, #ff8c00 50%, #ff4500 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            box-shadow: 0 0 50px #ffd700;
+            z-index: 10;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            animation: rotate 120s linear infinite;
+        }
+
+        .orbit-inner {
+            width: 250px;
+            height: 250px;
+        }
+
+        .orbit-gas {
+            width: 350px;
+            height: 350px;
+        }
+
+        .orbit-ice {
+            width: 450px;
+            height: 450px;
+        }
+
+        .orbit-kuiper {
+            width: 550px;
+            height: 550px;
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .planet {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 10px;
+            color: white;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .planet:hover {
+            transform: scale(1.3);
+        }
+
+        .planet-label {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+            background: rgba(0,0,0,0.7);
+            padding: 4px 8px;
+            border-radius: 6px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Inner Planets */
+        .mercury {
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #8c7853;
+            box-shadow: 0 0 15px #8c7853;
+        }
+
+        .venus {
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #ffc649;
+            box-shadow: 0 0 15px #ffc649;
+        }
+
+        .earth {
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #6b93d6;
+            box-shadow: 0 0 15px #6b93d6;
+        }
+
+        .mars {
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #c1440e;
+            box-shadow: 0 0 15px #c1440e;
+        }
+
+        /* Gas Giants */
+        .jupiter {
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #d8ca9d;
+            box-shadow: 0 0 20px #d8ca9d;
+            width: 50px;
+            height: 50px;
+        }
+
+        .saturn {
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fad5a5;
+            box-shadow: 0 0 20px #fad5a5;
+            width: 45px;
+            height: 45px;
+        }
+
+        /* Ice Giants */
+        .uranus {
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #4fd0e7;
+            box-shadow: 0 0 20px #4fd0e7;
+        }
+
+        .neptune {
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #4b70dd;
+            box-shadow: 0 0 20px #4b70dd;
+        }
+
+        /* Kuiper Belt */
+        .pluto {
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #906060;
+            box-shadow: 0 0 15px #906060;
+            width: 30px;
+            height: 30px;
+        }
+
+        .eris {
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #c4c4c4;
+            box-shadow: 0 0 15px #c4c4c4;
+            width: 28px;
+            height: 28px;
+        }
+
+        .phase-labels {
+            position: absolute;
+        }
+
+        .foundation-label {
+            top: 50px;
+            left: 100px;
+            background: rgba(255, 100, 100, 0.2);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid #ff6464;
+        }
+
+        .expansion-label {
+            top: 150px;
+            right: 80px;
+            background: rgba(255, 200, 100, 0.2);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid #ffc864;
+        }
+
+        .transformation-label {
+            bottom: 100px;
+            left: 80px;
+            background: rgba(100, 200, 255, 0.2);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid #64c8ff;
+        }
+
+        .skill-constellation {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .constellation-1 { top: 100px; left: 200px; }
+        .constellation-2 { top: 150px; right: 180px; }
+        .constellation-3 { bottom: 120px; right: 200px; }
+        .constellation-4 { bottom: 150px; left: 180px; }
+        .constellation-5 { top: 200px; left: 150px; }
+        .constellation-6 { top: 250px; right: 150px; }
+
+        .legend {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            font-size: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .description {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #a0a0a0;
+            font-size: 14px;
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">PLANETARY PROGRESSION SYSTEM</div>
+        <div class="subtitle">17-Level Journey from Foundation to Transformation</div>
+        
+        <div class="solar-system">
+            <div class="sun">
+                CORE<br>MOVEMENT<br>PATTERNS
+            </div>
+            
+            <!-- Orbital Rings -->
+            <div class="orbit orbit-inner">
+                <div class="planet mercury">
+                    <div class="planet-label">MERCURY<br>Building Base</div>
+                </div>
+                <div class="planet venus">
+                    <div class="planet-label">VENUS<br>First Handstand</div>
+                </div>
+                <div class="planet earth">
+                    <div class="planet-label">EARTH<br>Refining Skills</div>
+                </div>
+                <div class="planet mars">
+                    <div class="planet-label">MARS<br>1-Min Handstand</div>
+                </div>
+            </div>
+            
+            <div class="orbit orbit-gas">
+                <div class="planet jupiter">
+                    <div class="planet-label">JUPITER<br>Jumps & Head-In</div>
+                </div>
+                <div class="planet saturn">
+                    <div class="planet-label">SATURN<br>Press World</div>
+                </div>
+            </div>
+            
+            <div class="orbit orbit-ice">
+                <div class="planet uranus">
+                    <div class="planet-label">URANUS<br>Hollow Back</div>
+                </div>
+                <div class="planet neptune">
+                    <div class="planet-label">NEPTUNE<br>Advanced Flows</div>
+                </div>
+            </div>
+            
+            <div class="orbit orbit-kuiper">
+                <div class="planet pluto">
+                    <div class="planet-label">PLUTO<br>The Flag</div>
+                </div>
+                <div class="planet eris">
+                    <div class="planet-label">ERIS<br>Sky Limit</div>
+                </div>
+            </div>
+            
+            <!-- Skill Constellations -->
+            <div class="skill-constellation constellation-1"></div>
+            <div class="skill-constellation constellation-2"></div>
+            <div class="skill-constellation constellation-3"></div>
+            <div class="skill-constellation constellation-4"></div>
+            <div class="skill-constellation constellation-5"></div>
+            <div class="skill-constellation constellation-6"></div>
+            
+            <!-- Phase Labels -->
+            <div class="phase-labels foundation-label">
+                <strong>FOUNDATION</strong><br>
+                Inner Planets<br>
+                Mercury → Mars
+            </div>
+            
+            <div class="phase-labels expansion-label">
+                <strong>EXPANSION</strong><br>
+                Gas Giants<br>
+                Jupiter → Saturn
+            </div>
+            
+            <div class="phase-labels transformation-label">
+                <strong>TRANSFORMATION</strong><br>
+                Outer Realms<br>
+                Uranus → Beyond
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff6464;"></div>
+                Foundation Phase
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ffc864;"></div>
+                Expansion Phase
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #64c8ff;"></div>
+                Transformation Phase
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgba(255,255,255,0.6);"></div>
+                Skill Constellations
+            </div>
+        </div>
+        
+        <div class="description">
+            Natural gravitational progression where each planet represents increasing complexity and mastery. Inner planets provide frequent practice, outer planets require longer orbital periods and deeper integration.
+        </div>
+    </div>
+</body>
+</html>

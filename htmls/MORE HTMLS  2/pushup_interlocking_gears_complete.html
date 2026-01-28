@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push-Up: Interlocking Gears System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #2d1b69 75%, #0f0f23 100%);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .gear-system {
+            display: flex;
+            width: 200vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .page {
+            width: 50%;
+            height: 100%;
+            padding: 40px;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .left-page {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #2d1b69 100%);
+            border-right: 2px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .right-page {
+            background: linear-gradient(135deg, #16213e 0%, #2d1b69 50%, #8b5fbf 100%);
+        }
+
+        /* Header Styling */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(138, 43, 226, 0.4);
+            padding-bottom: 20px;
+        }
+
+        .movement-title {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #8a2be2, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .concept-subtitle {
+            font-size: 1.2rem;
+            color: #a855f7;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        /* Movement DNA Indicator */
+        .movement-dna {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(138, 43, 226, 0.2);
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 2px solid rgba(138, 43, 226, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .dna-label {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 3px;
+        }
+
+        .dna-type {
+            font-weight: bold;
+            color: #8a2be2;
+            font-size: 14px;
+        }
+
+        /* Central Gear System */
+        .gear-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            margin: 20px 0;
+        }
+
+        .gear {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(138, 43, 226, 0.1);
+            border: 3px solid rgba(138, 43, 226, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .gear:hover {
+            transform: scale(1.05);
+            background: rgba(138, 43, 226, 0.2);
+            border-color: rgba(138, 43, 226, 0.8);
+        }
+
+        /* Gear Sizes & Positions */
+        .gear-main {
+            width: 220px;
+            height: 220px;
+            top: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(138, 43, 226, 0.2);
+            border-color: #8a2be2;
+            border-width: 4px;
+        }
+
+        .gear-setup {
+            width: 130px;
+            height: 130px;
+            top: 40px;
+            left: 12%;
+        }
+
+        .gear-descent {
+            width: 140px;
+            height: 140px;
+            top: 60px;
+            right: 12%;
+        }
+
+        .gear-bottom {
+            width: 135px;
+            height: 135px;
+            bottom: 90px;
+            left: 18%;
+        }
+
+        .gear-ascent {
+            width: 140px;
+            height: 140px;
+            bottom: 70px;
+            right: 18%;
+        }
+
+        /* Gear Content */
+        .gear-number {
+            background: linear-gradient(45deg, #8a2be2, #a855f7);
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .gear-title {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: #a855f7;
+        }
+
+        .gear-cue {
+            font-size: 11px;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+
+        /* Main Gear Special Styling */
+        .gear-main .gear-number {
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+        }
+
+        .gear-main .gear-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .gear-main .gear-cue {
+            font-size: 13px;
+        }
+
+        /* Connection Lines */
+        .connection-line {
+            position: absolute;
+            background: linear-gradient(90deg, rgba(138, 43, 226, 0.3), rgba(138, 43, 226, 0.6), rgba(138, 43, 226, 0.3));
+            height: 2px;
+            z-index: -1;
+        }
+
+        .line-1 {
+            top: 120px;
+            left: 25%;
+            width: 28%;
+            transform: rotate(-25deg);
+        }
+
+        .line-2 {
+            top: 120px;
+            right: 25%;
+            width: 28%;
+            transform: rotate(25deg);
+        }
+
+        .line-3 {
+            bottom: 160px;
+            left: 30%;
+            width: 22%;
+            transform: rotate(35deg);
+        }
+
+        .line-4 {
+            bottom: 160px;
+            right: 30%;
+            width: 22%;
+            transform: rotate(-35deg);
+        }
+
+        /* Foundation Zone */
+        .foundation-zone {
+            position: absolute;
+            bottom: 60px;
+            left: 40px;
+            background: rgba(138, 43, 226, 0.1);
+            border: 2px solid rgba(138, 43, 226, 0.4);
+            border-radius: 15px;
+            padding: 18px;
+            width: 220px;
+        }
+
+        .zone-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #8a2be2;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .prerequisite {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .prerequisite-icon {
+            width: 8px;
+            height: 8px;
+            background: #8a2be2;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* Evolution Zone */
+        .evolution-zone {
+            position: absolute;
+            top: 60px;
+            right: 40px;
+            background: rgba(138, 43, 226, 0.1);
+            border: 2px solid rgba(138, 43, 226, 0.4);
+            border-radius: 15px;
+            padding: 18px;
+            width: 220px;
+        }
+
+        /* Right Page: Key Principles */
+        .principles-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #a855f7;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .principle-card {
+            background: rgba(138, 43, 226, 0.1);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .principle-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #8a2be2;
+            margin-bottom: 10px;
+        }
+
+        .principle-description {
+            font-size: 14px;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+
+        .cue-highlight {
+            background: rgba(138, 43, 226, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #a855f7;
+        }
+
+        /* Philosophy Quote */
+        .philosophy-quote {
+            position: absolute;
+            bottom: 20px;
+            left: 40px;
+            right: 40px;
+            text-align: center;
+            font-style: italic;
+            opacity: 0.8;
+            font-size: 14px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .gear-system {
+                width: 100vw;
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .page {
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            .movement-title {
+                font-size: 2.5rem;
+            }
+
+            .gear-container {
+                height: 400px;
+            }
+
+            .gear-main {
+                width: 180px;
+                height: 180px;
+            }
+
+            .foundation-zone, .evolution-zone {
+                position: relative;
+                margin: 20px 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gear-system">
+        <!-- LEFT PAGE: Interlocking Gears System -->
+        <div class="page left-page">
+            <div class="movement-dna">
+                <div class="dna-label">Movement DNA</div>
+                <div class="dna-type">PUSHING</div>
+            </div>
+
+            <div class="header">
+                <h1 class="movement-title">Push-Up</h1>
+                <p class="concept-subtitle">"Systems in Motion"</p>
+            </div>
+
+            <div class="gear-container">
+                <!-- Connection Lines -->
+                <div class="connection-line line-1"></div>
+                <div class="connection-line line-2"></div>
+                <div class="connection-line line-3"></div>
+                <div class="connection-line line-4"></div>
+
+                <!-- Setup Gear -->
+                <div class="gear gear-setup">
+                    <div class="gear-number">1</div>
+                    <div class="gear-title">Hand Position</div>
+                    <div class="gear-cue">Slightly wider than shoulders, "eye of bicep" forward</div>
+                </div>
+
+                <!-- Descent Gear -->
+                <div class="gear gear-descent">
+                    <div class="gear-number">2</div>
+                    <div class="gear-title">Scapular Control</div>
+                    <div class="gear-cue">Retract as you lower, shoulders depressed</div>
+                </div>
+
+                <!-- Main Movement Gear (Center) -->
+                <div class="gear gear-main">
+                    <div class="gear-number">3</div>
+                    <div class="gear-title">Core Movement</div>
+                    <div class="gear-cue">Body moves as one single piece</div>
+                </div>
+
+                <!-- Bottom Position Gear -->
+                <div class="gear gear-bottom">
+                    <div class="gear-number">4</div>
+                    <div class="gear-title">Bottom Range</div>
+                    <div class="gear-cue">Chest to floor, maintain body line</div>
+                </div>
+
+                <!-- Ascent Gear -->
+                <div class="gear gear-ascent">
+                    <div class="gear-number">5</div>
+                    <div class="gear-title">Push Phase</div>
+                    <div class="gear-cue">"Push the ground away" to return</div>
+                </div>
+            </div>
+
+            <!-- Foundation Zone -->
+            <div class="foundation-zone">
+                <div class="zone-title">Foundation Zone</div>
+                <div class="prerequisite">
+                    <div class="prerequisite-icon"></div>
+                    Plank Hold (30+ seconds)
+                </div>
+                <div class="prerequisite">
+                    <div class="prerequisite-icon"></div>
+                    Incline Push-Ups
+                </div>
+                <div class="prerequisite">
+                    <div class="prerequisite-icon"></div>
+                    Scapular Protraction
+                </div>
+            </div>
+
+            <!-- Evolution Zone -->
+            <div class="evolution-zone">
+                <div class="zone-title">Evolution Zone</div>
+                <div class="prerequisite">
+                    <div class="prerequisite-icon"></div>
+                    Archer Push-Ups
+                </div>
+                <div class="prerequisite">
+                    <div class="prerequisite-icon"></div>
+                    One-Arm Push-Up
+                </div>
+                <div class="prerequisite">
+                    <div class="prerequisite-icon"></div>
+                    Planche Progression
+                </div>
+            </div>
+
+            <div class="philosophy-quote">
+                "No movement stands alone. Each is a gear in the engine of your progress." — Gabo Saturno
+            </div>
+        </div>
+
+        <!-- RIGHT PAGE: Key Principles -->
+        <div class="page right-page">
+            <div class="header">
+                <h2 class="section-title">The So-Called Basics</h2>
+            </div>
+
+            <div class="principles-section">
+                <div class="principle-card">
+                    <div class="principle-title">Technique Before Reps</div>
+                    <div class="principle-description">
+                        Master the correct, standardized technique for each basic movement. This allows for accurate self-assessment and ensures that progress is built on a solid, effective, and safe foundation, rather than reinforcing poor movement patterns.
+                    </div>
+                </div>
+
+                <div class="principle-card">
+                    <div class="principle-title">Key Movement Cues</div>
+                    <div class="principle-description">
+                        <span class="cue-highlight">"Push the ground away"</span> - Primary cue for scapular protraction and creating stability. 
+                        <span class="cue-highlight">"Tuck the pelvis in"</span> - Maintain core tension. 
+                        <span class="cue-highlight">"Eye of the bicep forward"</span> - Proper external shoulder rotation.
+                    </div>
+                </div>
+
+                <div class="principle-card">
+                    <div class="principle-title">Find Your Progression</div>
+                    <div class="principle-description">
+                        It is crucial to find the right progression for your current strength level. Whether using a high incline for push-ups, the goal is to select a variation that allows for 7-15 controlled repetitions, creating a clear starting point for long-term development.
+                    </div>
+                </div>
+
+                <div class="principle-card">
+                    <div class="principle-title">Foundation First</div>
+                    <div class="principle-description">
+                        You cannot jump to skills like the planche or front lever without first mastering your push-ups, dips, pull-ups, and rows. Building a strong foundation in the basics is the most critical and non-negotiable part of the journey.
+                    </div>
+                </div>
+
+                <div class="principle-card">
+                    <div class="principle-title">Sensation Over Intensity</div>
+                    <div class="principle-description">
+                        A core principle that dictates the how of progression selection. Focus on quality of movement and proper muscle activation rather than forcing through repetitions with poor form.
+                    </div>
+                </div>
+            </div>
+
+            <div class="philosophy-quote">
+                "How you perform your basics is how you're going to perform your advanced movements." — Gabo Saturno
+            </div>
+        </div>
+    </div>
+</body>
+</html>

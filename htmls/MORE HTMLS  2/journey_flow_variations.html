@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey Flow Indicator Variations</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f23 100%);
+            color: #ffffff;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            background: linear-gradient(45deg, #8a2be2, #4169e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .variation {
+            margin-bottom: 80px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .variation-title {
+            font-size: 1.8rem;
+            color: #8a2be2;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .variation-description {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Variation 1: Arc Timeline */
+        .journey-arc {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .arc-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .arc-path {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(45deg, rgba(138, 43, 226, 0.3), rgba(65, 105, 225, 0.3));
+            clip-path: ellipse(80% 100% at 50% 100%);
+            border: 2px solid rgba(138, 43, 226, 0.5);
+        }
+
+        .journey-stage-arc {
+            background: rgba(138, 43, 226, 0.2);
+            border: 2px solid #8a2be2;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            color: #ffffff;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .journey-stage-arc:hover {
+            background: #8a2be2;
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .stage-label-arc {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+            white-space: nowrap;
+        }
+
+        /* Variation 2: Constellation Map */
+        .journey-constellation {
+            position: relative;
+            padding: 60px 40px;
+            min-height: 300px;
+            background: radial-gradient(circle at center, rgba(138, 43, 226, 0.1), transparent);
+        }
+
+        .constellation-stage {
+            position: absolute;
+            background: conic-gradient(from 0deg, #8a2be2, #4169e1, #00bcd4, #8a2be2);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .constellation-stage:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.6);
+        }
+
+        .constellation-line {
+            position: absolute;
+            background: linear-gradient(90deg, rgba(138, 43, 226, 0.6), rgba(65, 105, 225, 0.4));
+            height: 2px;
+            transform-origin: left center;
+        }
+
+        .stage-1 { top: 80%; left: 5%; }
+        .stage-2 { top: 60%; left: 25%; }
+        .stage-3 { top: 30%; left: 45%; }
+        .stage-4 { top: 20%; left: 65%; }
+        .stage-5 { top: 40%; left: 80%; }
+        .stage-6 { top: 10%; left: 90%; }
+
+        /* Variation 3: Mountain Path */
+        .journey-mountain {
+            position: relative;
+            padding: 40px;
+            height: 250px;
+            background: linear-gradient(to top, rgba(139, 69, 19, 0.2), rgba(135, 206, 235, 0.1));
+        }
+
+        .mountain-path {
+            position: absolute;
+            bottom: 20px;
+            left: 10%;
+            right: 10%;
+            height: 200px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0,100 Q20,80 25,60 T50,40 T75,20 T100,10' stroke='%238a2be2' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .mountain-stage {
+            position: absolute;
+            background: linear-gradient(45deg, #8a2be2, #ab47bc);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .mountain-stage:hover {
+            transform: scale(1.15);
+            border-color: #ffffff;
+        }
+
+        /* Variation 4: Element Flow */
+        .journey-elements {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px;
+            background: linear-gradient(90deg, 
+                rgba(139, 69, 19, 0.1) 0%, 
+                rgba(255, 69, 0, 0.1) 25%, 
+                rgba(135, 206, 235, 0.1) 50%, 
+                rgba(0, 191, 255, 0.1) 75%, 
+                rgba(138, 43, 226, 0.1) 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .element-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        .element-stage:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .element-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .earth-icon { background: linear-gradient(45deg, #8b4513, #a0522d); }
+        .fire-icon { background: linear-gradient(45deg, #ff4500, #ff8c00); }
+        .air-icon { background: linear-gradient(45deg, #87ceeb, #b0c4de); }
+        .water-icon { background: linear-gradient(45deg, #00bfff, #1e90ff); }
+        .spirit-icon { background: linear-gradient(45deg, #8a2be2, #ab47bc); }
+        .master-icon { background: conic-gradient(from 0deg, #8a2be2, #ff6b6b, #00bcd4, #ffa726, #8a2be2); }
+
+        .element-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .element-sublabel {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        /* Variation 5: Vertical Progress Tower */
+        .journey-tower {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .tower-container {
+            position: relative;
+            height: 400px;
+            width: 100px;
+        }
+
+        .tower-spine {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to top, #8a2be2, #00bcd4);
+            border-radius: 2px;
+        }
+
+        .tower-stage {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(138, 43, 226, 0.2);
+            border: 2px solid #8a2be2;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tower-stage:hover {
+            background: #8a2be2;
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        .tower-label {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 200px;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .tower-label-item {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
+        /* Variation 6: Ripple Effect */
+        .journey-ripple {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            position: relative;
+        }
+
+        .ripple-center {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ripple-ring {
+            position: absolute;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 50%;
+            animation: ripple 4s infinite ease-out;
+        }
+
+        .ripple-ring:nth-child(1) { width: 100px; height: 100px; animation-delay: 0s; }
+        .ripple-ring:nth-child(2) { width: 180px; height: 180px; animation-delay: 0.5s; }
+        .ripple-ring:nth-child(3) { width: 260px; height: 260px; animation-delay: 1s; }
+        .ripple-ring:nth-child(4) { width: 340px; height: 340px; animation-delay: 1.5s; }
+
+        @keyframes ripple {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+        .ripple-stage {
+            position: absolute;
+            background: #8a2be2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ripple-stage:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.8);
+        }
+
+        @media (max-width: 768px) {
+            .journey-elements {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .tower-container {
+                height: 300px;
+            }
+            
+            .ripple-center {
+                width: 300px;
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Journey Flow Indicator Variations</h1>
+
+        <div class="variation">
+            <h2 class="variation-title">Variation 1: Arc Timeline</h2>
+            <p class="variation-description">A curved path that rises with progression, creating a visual metaphor for growth and elevation through mastery. Each stage sits on the ascending arc, showing that progress naturally builds upward momentum.</p>
+            <div class="journey-arc">
+                <div class="arc-container">
+                    <div class="arc-path"></div>
+                    <div class="journey-stage-arc">
+                        START
+                        <div class="stage-label-arc">Foundation</div>
+                    </div>
+                    <div class="journey-stage-arc">
+                        PROG
+                        <div class="stage-label-arc">Progression</div>
+                    </div>
+                    <div class="journey-stage-arc">
+                        MAST
+                        <div class="stage-label-arc">Mastery</div>
+                    </div>
+                    <div class="journey-stage-arc">
+                        SPEC
+                        <div class="stage-label-arc">Specialization</div>
+                    </div>
+                    <div class="journey-stage-arc">
+                        WISE
+                        <div class="stage-label-arc">Wisdom</div>
+                    </div>
+                    <div class="journey-stage-arc">
+                        MSTR
+                        <div class="stage-label-arc">Master</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="variation">
+            <h2 class="variation-title">Variation 2: Constellation Map</h2>
+            <p class="variation-description">Inspired by the "constellation forming" concept from the session arc line idea, this design presents the journey as connected stars in the night sky, each stage a bright point in the reader's developing mastery constellation.</p>
+            <div class="journey-constellation">
+                <div class="constellation-stage stage-1">START</div>
+                <div class="constellation-stage stage-2">PROG</div>
+                <div class="constellation-stage stage-3">MAST</div>
+                <div class="constellation-stage stage-4">SPEC</div>
+                <div class="constellation-stage stage-5">WISE</div>
+                <div class="constellation-stage stage-6">MSTR</div>
+                
+                <div class="constellation-line" style="top: 81%; left: 7%; width: 150px; transform: rotate(20deg);"></div>
+                <div class="constellation-line" style="top: 61%; left: 27%; width: 150px; transform: rotate(-15deg);"></div>
+                <div class="constellation-line" style="top: 31%; left: 47%; width: 140px; transform: rotate(10deg);"></div>
+                <div class="constellation-line" style="top: 21%; left: 67%; width: 120px; transform: rotate(45deg);"></div>
+                <div class="constellation-line" style="top: 31%; left: 82%; width: 100px; transform: rotate(-60deg);"></div>
+            </div>
+        </div>
+
+        <div class="variation">
+            <h2 class="variation-title">Variation 3: Mountain Path</h2>
+            <p class="variation-description">Drawing from the journey path animation concept, this design presents mastery as a mountain ascent where each stage represents a new elevation of understanding and capability.</p>
+            <div class="journey-mountain">
+                <div class="mountain-path"></div>
+                <div class="mountain-stage" style="bottom: 20px; left: 10%;">S</div>
+                <div class="mountain-stage" style="bottom: 40px; left: 25%;">P</div>
+                <div class="mountain-stage" style="bottom: 80px; left: 45%;">M</div>
+                <div class="mountain-stage" style="bottom: 100px; left: 65%;">SP</div>
+                <div class="mountain-stage" style="bottom: 80px; left: 80%;">W</div>
+                <div class="mountain-stage" style="bottom: 120px; left: 90%;">MS</div>
+            </div>
+        </div>
+
+        <div class="variation">
+            <h2 class="variation-title">Variation 4: Element Flow Integration</h2>
+            <p class="variation-description">Incorporating the elemental theme concept, this flow represents the journey through different aspects of mastery, each stage embodying a fundamental element of development with appropriate visual theming.</p>
+            <div class="journey-elements">
+                <div class="element-stage">
+                    <div class="element-icon earth-icon">🌱</div>
+                    <div class="element-label">START</div>
+                    <div class="element-sublabel">Foundation (Earth)</div>
+                </div>
+                <div class="element-stage">
+                    <div class="element-icon fire-icon">🔥</div>
+                    <div class="element-label">PROGRESSION</div>
+                    <div class="element-sublabel">Intensity (Fire)</div>
+                </div>
+                <div class="element-stage">
+                    <div class="element-icon air-icon">💨</div>
+                    <div class="element-label">MASTERY</div>
+                    <div class="element-sublabel">Flow (Air)</div>
+                </div>
+                <div class="element-stage">
+                    <div class="element-icon water-icon">🌊</div>
+                    <div class="element-label">SPECIALIZATION</div>
+                    <div class="element-sublabel">Adaptation (Water)</div>
+                </div>
+                <div class="element-stage">
+                    <div class="element-icon spirit-icon">✨</div>
+                    <div class="element-label">WISDOM</div>
+                    <div class="element-sublabel">Integration (Spirit)</div>
+                </div>
+                <div class="element-stage">
+                    <div class="element-icon master-icon">🎯</div>
+                    <div class="element-label">MASTER</div>
+                    <div class="element-sublabel">Legacy (Unity)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="variation">
+            <h2 class="variation-title">Variation 5: Vertical Progress Tower</h2>
+            <p class="variation-description">Inspired by the vertical lift meter concept, this design presents mastery as a tower of achievement, where each level represents a new height of understanding reached through dedicated practice.</p>
+            <div class="journey-tower">
+                <div class="tower-container">
+                    <div class="tower-spine"></div>
+                    <div class="tower-stage" style="bottom: 0px;">
+                        START<br><span style="font-size: 0.6rem;">Foundation</span>
+                    </div>
+                    <div class="tower-stage" style="bottom: 65px;">
+                        PROG<br><span style="font-size: 0.6rem;">Building</span>
+                    </div>
+                    <div class="tower-stage" style="bottom: 130px;">
+                        MAST<br><span style="font-size: 0.6rem;">Skill</span>
+                    </div>
+                    <div class="tower-stage" style="bottom: 195px;">
+                        SPEC<br><span style="font-size: 0.6rem;">Focus</span>
+                    </div>
+                    <div class="tower-stage" style="bottom: 260px;">
+                        WISE<br><span style="font-size: 0.6rem;">Understanding</span>
+                    </div>
+                    <div class="tower-stage" style="bottom: 325px;">
+                        MSTR<br><span style="font-size: 0.6rem;">Legacy</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="variation">
+            <h2 class="variation-title">Variation 6: Ripple Effect Expansion</h2>
+            <p class="variation-description">This design suggests that mastery creates expanding ripples of influence and understanding, with each stage representing a new level of impact that extends beyond the individual practitioner.</p>
+            <div class="journey-ripple">
+                <div class="ripple-center">
+                    <div class="ripple-ring"></div>
+                    <div class="ripple-ring"></div>
+                    <div class="ripple-ring"></div>
+                    <div class="ripple-ring"></div>
+                    
+                    <div class="ripple-stage" style="top: 45%; left: 45%;">MS</div>
+                    <div class="ripple-stage" style="top: 30%; left: 60%;">W</div>
+                    <div class="ripple-stage" style="top: 60%; left: 70%;">SP</div>
+                    <div class="ripple-stage" style="top: 70%; left: 50%;">M</div>
+                    <div class="ripple-stage" style="top: 80%; left: 30%;">P</div>
+                    <div class="ripple-stage" style="top: 65%; left: 15%;">S</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
