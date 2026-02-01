@@ -34,3 +34,34 @@
 ### Files Changed
 - `index.html` — CSS design system overhaul (3507 lines)
 - `CHANGELOG.md` — Created (this file)
+
+---
+
+## PASS 7: Stability & Professional Polish (2026-01-29)
+
+### TOC Hierarchy Redesign
+- Removed all gold/yellow styling from TOC items (user feedback: "noisy and unprofessional")
+- New white-opacity hierarchy: Part (#ffffff bold 14px) → Chapter (75% opacity 12px) → Section (45% opacity 11px)
+- Consistent indentation: Part flush, Chapter +24px, Section +48px
+- Part left-border: 3px solid white at 25% opacity
+- Collapsible tree: solid chevron (▶), default collapsed, state persists in `S._tocCollapse`
+
+### Codex Checkbox Persistence (Bug Fix)
+- Root cause: `buildMatrixFilters()` always set all checkboxes to checked with no persistence
+- Added `S._matrixFilters` state object to persist filter selections across tab switches
+- `persistMatrixFilters()` called on every checkbox change
+- `isChecked()` helper restores saved state when filters rebuild
+- `resetMatrixFilters()` clears persisted state
+- `initMatrix()` now applies saved filters after build
+
+### Workout Creator Inputs
+- Created `buildWoItemHTML()` shared renderer for all workout item display
+- Four labeled columns: Sets, Reps, Rest, Tempo — mono labels, centered inputs
+- Stage color-coded dot + left border per exercise
+- Unified rendering across: drag-and-drop add, saved workout load, template load
+- All exports (CSV, TXT, PDF) now include Tempo field
+- `saveWorkout()` captures Tempo in saved state
+
+### Files Changed
+- `index.html` — TOC, Matrix, Workout stability fixes (3596 lines)
+- `CHANGELOG.md` — Updated (this entry)
