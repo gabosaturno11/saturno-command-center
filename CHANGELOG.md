@@ -1,5 +1,81 @@
 # CHANGELOG — Saturno Command Center V3
 
+## PASS 8: Mind Map V2 — Canvas Engine Rebuild (2026-02-02)
+
+### Viewport Transform System (Phase 1A)
+- Replaced scroll-based panning with CSS `transform: translate() scale()` on `#mm-viewport`
+- `mmScreenToCanvas()` coordinate converter for all interactions
+- Mouse wheel zoom (toward cursor), +/-/0 keyboard zoom, Cmd+/Cmd- zoom
+- Space+drag or middle-click to pan from any tool
+- Fit-to-view button sizes canvas to show all nodes
+
+### Dot Grid Overlay (Phase 1B)
+- Miro-style viewport-locked dot grid (not content-attached)
+- Minor dots (20px, `rgba(255,255,255,0.07)`) + major dots (100px, `rgba(255,255,255,0.18)`)
+- Auto-hides when zoomed out too far (grid spacing < 4px screen)
+- Grid toggle (G key), snap-to-grid toggle (S key)
+
+### Tools & Interaction
+- **Arrow/Select tool**: click-select, box-select (rubber band), multi-drag
+- **Hand tool**: pan canvas, cursor: grab/grabbing
+- **Shape tool**: rectangle, circle, diamond, pill — subpanel picker
+- **Text tool**: pure floating text (no box), auto-delete empty text
+- **Sticky note tool**: 5 color options, auto-place with color
+- **Connect/Line tool**: click source → click target, straight/curved/step styles
+- Auto-return to arrow after placing any shape, text, or sticky
+
+### Undo/Redo
+- `Cmd+Z` undo, `Cmd+Shift+Z` redo, 50-step history
+- Full state snapshot before every mutation (add, delete, move, resize, style change)
+
+### Floating Toolbar (Miro-style)
+- Converted vertical 44px sidebar to horizontal floating top bar
+- Centered at top of canvas with rounded corners + shadow
+- Submenus pop down instead of right
+- Zoom controls + grid/snap toggles inline, separated by vertical dividers
+- All events isolated — toolbar clicks don't trigger canvas actions
+
+### Bug Fixes
+- Node disappearing after switching from hand→arrow (DOM rebuild retarget guard)
+- Accidental node snap-on-click (5px drag threshold)
+- Box-select clearing immediately (mouseup→click race condition flag)
+- Tool switch state cleanup (panning, drag, multi-drag, box-select reset)
+- Node cursor: `move` icon (cross) in select mode, distinct from hand `grab`
+
+### Files Changed
+- `index.html` — Canvas engine rebuild + floating toolbar (4255 lines)
+- `CHANGELOG.md` — Updated (this entry)
+
+---
+
+## ROADMAP — Next Phases
+
+### Phase 2: Enhanced Node Types
+- Image nodes (paste/drag-drop images onto canvas)
+- Container/group nodes (parent frames that hold children)
+- Hexagon, triangle, parallelogram shapes
+
+### Phase 3: Interactions & Polish
+- Copy/paste nodes (`Cmd+C` / `Cmd+V`)
+- Duplicate nodes (`Cmd+D`)
+- Multi-node alignment (align left, center, distribute)
+- Connection labels (text on lines)
+- Minimap navigator (bottom-right corner)
+
+### Phase 4: Collaboration & Export
+- Real-time cursor trails (multi-user prep)
+- PNG/SVG export with proper zoom/bounds
+- JSON import/export for sharing boards
+- Template boards (brainstorm, flow chart, mind map tree)
+
+### Phase 5: Sidebar & Navigation
+- Side-to-side mouse panning (edge scroll)
+- Layers panel (show/hide groups of nodes)
+- Node search/filter
+- Keyboard navigation between nodes (Tab, arrow keys)
+
+---
+
 ## PASS 6: Design Polish (2026-01-29)
 
 ### Spacing System

@@ -73,8 +73,8 @@
         .kernel-label { color: var(--text-tertiary); font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; }
         .kernel-value { color: var(--text-primary); font-weight: 600; }
 
-        .main { flex: 1; overflow: hidden; display: flex; }
-        .section { width: 100%; height: 100%; display: none; }
+        .main { flex: 1; overflow: hidden; display: flex; position: relative; }
+        .section { width: 100%; height: 100%; display: none; position: relative; }
         .section.active { display: flex; }
 
         .sidebar { width: 220px; border-right: 1px solid var(--border-subtle); padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-2); background: var(--bg-deep); overflow-y: auto; flex-shrink: 0; }
@@ -127,8 +127,7 @@
         .toc-chevron { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; cursor: pointer; color: rgba(255,255,255,0.3); font-size: 10px; transition: transform 0.2s; flex-shrink: 0; border-radius: 3px; }
         .toc-chevron:hover { color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.04); }
         .toc-chevron.collapsed { transform: rotate(-90deg); }
-        .toc-children { overflow: hidden; }
-        .toc-children.collapsed { display: none; }
+        .toc-item.toc-collapsed-child { display: none; }
         .ghost { opacity: 0.3; }
         .drag-chosen { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
 
@@ -151,9 +150,81 @@
         .exercise-item { background: var(--bg-deep); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: var(--sp-2) var(--sp-3); cursor: grab; transition: all 0.15s; font-size: 11px; line-height: 1.4; }
         .exercise-item:hover { border-color: var(--border-active); background: var(--bg-surface); }
 
-        .mindmap-canvas { position: relative; width: 100%; height: 100%; background: var(--bg-deep); overflow: auto; }
-        .mindmap-node { position: absolute; padding: var(--sp-3) var(--sp-4); background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: move; font-size: 12px; font-weight: 500; transition: box-shadow 0.2s; user-select: none; }
+        .mindmap-canvas { position: relative; flex:1; min-width:0; height: 100%; background: var(--bg-deep); overflow: hidden; cursor: crosshair; }
+        .mm-viewport { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }
+        .mm-zoom-controls { display:flex;flex-direction:row;align-items:center;gap:2px;margin-left:4px;padding-left:6px;border-left:1px solid var(--border-subtle); }
+        .mm-zoom-btn { width:30px;height:24px;background:transparent;border:none;color:var(--text-tertiary);font-size:13px;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center; }
+        .mm-zoom-btn:hover { background:rgba(255,255,255,0.05);color:var(--text-secondary); }
+        .mm-zoom-pct { font-size:8px;color:var(--text-tertiary);font-family:var(--font-mono);cursor:pointer;user-select:none; }
+        .mm-zoom-pct:hover { color:var(--text-secondary); }
+        .mm-grid { position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0; }
+        .mm-grid-toggle { width:28px;height:28px;background:transparent;border:none;color:var(--text-tertiary);font-size:10px;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);letter-spacing:-0.5px; }
+        .mm-grid-toggle:hover { background:rgba(255,255,255,0.05);color:var(--text-secondary); }
+        .mm-grid-toggle.active { color:var(--accent-gold);background:rgba(255,170,0,0.06); }
+        .mindmap-node { position: absolute; padding: 8px 14px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: move; font-size: 12px; font-weight: 500; transition: box-shadow 0.15s, border-color 0.15s; user-select: none; min-width: 60px; max-width: 300px; text-align: center; overflow-wrap: break-word; word-break: break-word; }
         .mindmap-node:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-color: var(--border-hover); }
+        .mindmap-node.mm-selected { border-color: var(--accent-gold) !important; box-shadow: 0 0 0 1px var(--accent-gold), 0 4px 16px rgba(255,170,0,0.15); }
+        .mindmap-node .mm-del { position:absolute;top:-8px;right:-8px;width:18px;height:18px;border-radius:50%;background:var(--accent-danger);color:#fff;font-size:11px;line-height:18px;text-align:center;cursor:pointer;opacity:0;transition:opacity 0.15s;z-index:2; }
+        .mindmap-node:hover .mm-del { opacity:1; }
+        .mindmap-node .mm-rsz { position:absolute;bottom:-4px;right:-4px;width:10px;height:10px;background:var(--accent-gold);border-radius:2px;cursor:se-resize;opacity:0;transition:opacity 0.15s; }
+        .mindmap-node.mm-selected .mm-rsz { opacity:0.7; }
+        .mindmap-node.mm-selected .mm-rsz:hover { opacity:1; }
+        .mm-ctx { position:fixed;z-index:9999;background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:4px 0;min-width:160px;box-shadow:0 8px 32px rgba(0,0,0,0.5);display:none; }
+        .mm-ctx.open { display:block; }
+        .mm-ctx-item { padding:6px 14px;font-size:11px;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.1s; }
+        .mm-ctx-item:hover { background:rgba(255,255,255,0.05);color:var(--text-primary); }
+        .mm-ctx-sep { height:1px;background:var(--border-subtle);margin:4px 0; }
+        .mm-inline-edit { background:transparent;border:none;color:inherit;font:inherit;text-align:center;outline:none;width:100%;min-width:40px; }
+        .mm-tools { position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:100;background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:12px;display:flex;flex-direction:row;align-items:center;padding:4px 6px;gap:2px;box-shadow:0 4px 24px rgba(0,0,0,0.4); }
+        .mm-tool { width:36px;height:36px;border:none;background:transparent;color:var(--text-tertiary);font-size:15px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;position:relative; }
+        .mm-tool:hover { background:rgba(255,255,255,0.05);color:var(--text-secondary); }
+        .mm-tool.active { background:rgba(255,170,0,0.08);color:var(--accent-gold); }
+        .mm-tool-sep { width:1px;height:24px;background:var(--border-subtle);margin:0 4px; }
+        .mm-tool-sub { position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:8px;padding:4px;display:none;flex-direction:row;gap:2px;box-shadow:0 4px 16px rgba(0,0,0,0.4);z-index:10;white-space:nowrap; }
+        .mm-tool-sub.open { display:flex; }
+        .mm-sub-btn { width:30px;height:30px;background:transparent;color:var(--text-tertiary);font-size:14px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;user-select:none; }
+        .mm-sub-btn:hover { background:rgba(255,255,255,0.08);color:var(--text-primary); }
+        .mm-sub-btn.active { color:var(--accent-gold); }
+        .mindmap-canvas[data-tool="select"] { cursor:default; }
+        .mindmap-canvas[data-tool="hand"] { cursor:grab; }
+        .mindmap-canvas[data-tool="shape"],.mindmap-canvas[data-tool="line"],.mindmap-canvas[data-tool="sticky"] { cursor:crosshair; }
+        .mindmap-canvas[data-tool="text"] { cursor:text; }
+        .mindmap-canvas[data-tool="select"] .mindmap-node { cursor:move; }
+        .mindmap-canvas[data-tool="select"] .mindmap-node:active { cursor:move; }
+        .mindmap-canvas[data-tool="hand"] .mindmap-node { cursor:grab; }
+        .mm-sticky-node { border-radius:4px !important;padding:10px 14px !important; }
+        .mm-text-node { border-color:transparent !important;background:transparent !important;padding:2px 4px !important;min-width:20px !important;max-width:none !important; }
+        .mm-text-node:hover { box-shadow:none !important;border-color:transparent !important; }
+        .mm-text-node.mm-selected { border-color:rgba(255,170,0,0.3) !important;box-shadow:none !important; }
+        .mm-text-node .mm-del { top:-6px;right:-6px;width:14px;height:14px;font-size:9px;line-height:14px; }
+        .mm-text-node .mm-rsz { display:none; }
+        .mm-sel-rect { position:absolute;border:1px solid rgba(255,170,0,0.5);background:rgba(255,170,0,0.06);pointer-events:none;z-index:50;display:none; }
+        .mindmap-node.mm-multi { border-color:var(--accent-gold) !important;box-shadow:0 0 0 1px var(--accent-gold), 0 2px 8px rgba(255,170,0,0.1);cursor:grab !important; }
+        .mindmap-node.mm-multi:active { cursor:grabbing !important; }
+        .mm-ntitle { font-weight:500;font-size:12px;line-height:1.3;overflow-wrap:break-word;word-break:break-word; }
+        .mm-nbody { font-size:10px;line-height:1.6;color:var(--text-secondary);white-space:pre-wrap;word-break:break-word;margin-top:4px;border-top:1px solid rgba(255,255,255,0.06);padding-top:4px;text-align:left; }
+        .mm-nbody:empty { display:none; }
+        .mm-locked { cursor:default !important; opacity:0.85; }
+        .mm-locked .mm-rsz { display:none; }
+        .mm-lock { position:absolute;bottom:-4px;left:-4px;font-size:9px;opacity:0.4;pointer-events:none; }
+        .mm-body-ta { width:100%;height:36px;background:transparent;border:none;color:var(--text-secondary);font-size:10px;line-height:1.6;font-family:var(--font-display);resize:none;outline:none;margin-top:4px;border-top:1px solid rgba(255,255,255,0.06);padding-top:4px;text-align:left;overflow-y:auto;box-sizing:border-box; }
+
+        /* Gradient Notes Panel */
+        .toc-notes-wrap { flex:1;overflow-y:auto;padding:var(--sp-5);display:none; }
+        .toc-notes-wrap.active { display:block; }
+        .toc-part-card { margin-bottom:var(--sp-5);border-radius:var(--radius-lg);overflow:hidden; }
+        .toc-part-header { padding:var(--sp-4) var(--sp-5);font-size:13px;font-weight:700;color:var(--text-primary);letter-spacing:0.5px;text-transform:uppercase;position:relative; }
+        .toc-ch-card { background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);margin:var(--sp-2) var(--sp-3);padding:var(--sp-3) var(--sp-4);transition:border-color 0.2s; }
+        .toc-ch-card:hover { border-color:var(--border-hover); }
+        .toc-ch-title { font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:var(--sp-1);cursor:pointer; }
+        .toc-ch-sections { font-size:10px;color:var(--text-tertiary);line-height:1.8;padding-left:var(--sp-3);border-left:2px solid var(--border-subtle);margin:var(--sp-2) 0; }
+        .toc-ch-note { width:100%;min-height:36px;max-height:160px;background:var(--bg-deep);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);color:var(--text-secondary);font-size:10px;line-height:1.6;padding:var(--sp-2) var(--sp-3);resize:vertical;outline:none;font-family:var(--font-display);transition:border-color 0.2s;margin-top:var(--sp-2); }
+        .toc-ch-note:focus { border-color:var(--border-active);box-shadow:0 0 0 2px var(--accent-glow); }
+        .toc-ch-note::placeholder { color:var(--text-tertiary); }
+        .toc-view-toggle { display:flex;gap:0;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border-subtle); }
+        .toc-view-btn { flex:1;padding:var(--sp-1) var(--sp-2);font-size:9px;font-family:var(--font-display);font-weight:500;color:var(--text-tertiary);background:transparent;border:none;cursor:pointer;text-align:center;transition:all 0.15s; }
+        .toc-view-btn.active { background:var(--accent-glow);color:var(--accent-gold); }
+        .toc-view-btn:hover:not(.active) { color:var(--text-secondary); }
 
         .collapsible-header { display: flex; align-items: center; justify-content: space-between; padding: var(--sp-3) var(--sp-4); cursor: pointer; border-radius: var(--radius-md); transition: background 0.2s; }
         .collapsible-header:hover { background: var(--bg-surface); }
@@ -236,10 +307,19 @@
         .qr-label { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
         .qr-url { font-family: var(--font-mono); font-size: 9px; color: var(--text-tertiary); word-break: break-all; }
 
-        /* Writing mode pills */
-        .wm-pill { padding: var(--sp-2) var(--sp-4); height: 32px; border-radius: var(--radius-sm); border: 1px solid #27272a; background: transparent; color: #52525b; font-size: 10px; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.6px; display: inline-flex; align-items: center; justify-content: center; }
-        .wm-pill:hover { border-color: rgba(255,255,255,0.2); color: var(--text-secondary); background: var(--bg-surface); }
-        .wm-pill.active { background: rgba(255,170,0,0.10); border-color: rgba(255,170,0,0.5); color: var(--accent-gold); box-shadow: 0 0 12px rgba(255,170,0,0.08), inset 0 0 12px rgba(255,170,0,0.04); }
+        /* Writing mode pills — minimal */
+        .wm-bar { display:flex;gap:0; }
+        .wm-sq { width:28px;height:28px;border:1px solid rgba(255,255,255,0.06);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;position:relative;padding:0; }
+        .wm-sq:first-child { border-radius:4px 0 0 4px; }
+        .wm-sq:last-child { border-radius:0 4px 4px 0; }
+        .wm-sq + .wm-sq { border-left:none; }
+        .wm-sq:hover { background:rgba(255,255,255,0.04); }
+        .wm-sq.active { background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15); }
+        .wm-sq .wm-dot { width:6px;height:6px;border-radius:1px;opacity:0.3;transition:opacity 0.15s; }
+        .wm-sq:hover .wm-dot { opacity:0.7; }
+        .wm-sq.active .wm-dot { opacity:1; }
+        /* Legacy pill compat */
+        .wm-pill { display:none; }
         input[type="range"] { -webkit-appearance:none; appearance:none; width:100%; height:4px; background:#27272a; border-radius:2px; outline:none; border:none; padding:0; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:var(--accent-gold); cursor:pointer; box-shadow: 0 0 6px rgba(255,170,0,0.3); }
         input[type="range"]::-moz-range-thumb { width:14px; height:14px; border-radius:50%; background:var(--accent-gold); cursor:pointer; border:none; box-shadow: 0 0 6px rgba(255,170,0,0.3); }
@@ -352,17 +432,21 @@
             <div class="sidebar">
                 <div class="sidebar-label">TOC Versions</div>
                 <select id="toc-v-left" onchange="loadTOC('left')">
-                    <option value="v1">v1 - Original (7 Parts)</option>
-                    <option value="v2">v2 - Compact (25 Ch)</option>
+                    <option value="v1">v1 - Canonical (27 Ch)</option>
+                    <option value="v2">v2 - Parts + Chapters</option>
                     <option value="v3">v3 - Working Draft</option>
                 </select>
                 <select id="toc-v-right" onchange="loadTOC('right')">
-                    <option value="v2" selected>v2 - Compact (25 Ch)</option>
-                    <option value="v1">v1 - Original (7 Parts)</option>
+                    <option value="v2" selected>v2 - Parts + Chapters</option>
+                    <option value="v1">v1 - Canonical (27 Ch)</option>
                     <option value="v3">v3 - Working Draft</option>
                 </select>
                 <div style="border-top:1px solid var(--border-subtle);padding-top:8px;margin-top:4px"></div>
                 <button class="btn w-full" onclick="addTOCVersion()">+ New Version</button>
+                <div class="toc-view-toggle">
+                    <button class="toc-view-btn active" onclick="setTocView('compare')">Compare</button>
+                    <button class="toc-view-btn" onclick="setTocView('notes')">Notes</button>
+                </div>
                 <button class="btn w-full" onclick="compareTOCs()">Compare</button>
                 <button class="btn w-full" onclick="exportTOC()">Export JSON</button>
                 <button class="btn w-full" onclick="exportTOCMarkdown()">Export MD</button>
@@ -379,6 +463,10 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
                         OneDrive
                     </a>
+                    <a class="btn w-full" href="https://github.com/gabosaturno11/toc-interactive" target="_blank" rel="noopener" style="text-decoration:none;justify-content:center;margin-top:4px">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                        TOC Interactive
+                    </a>
                 </div>
                 <div style="border-top:1px solid var(--border-subtle);padding-top:8px;margin-top:8px">
                     <div class="sidebar-label">TOC Analytics</div>
@@ -388,7 +476,7 @@
                     <div style="font-size:9px;color:var(--text-tertiary);line-height:1.5">Drag items to reorder.<br>Red = mismatch between versions.</div>
                 </div>
             </div>
-            <div class="content-split">
+            <div class="content-split" id="toc-compare-view">
                 <div class="content-half">
                     <div class="flex items-center justify-between mb-3">
                         <span class="sidebar-label" style="margin:0" id="toc-left-label">TOC v1</span>
@@ -404,6 +492,7 @@
                     <div id="toc-right" class="space-y"></div>
                 </div>
             </div>
+            <div class="toc-notes-wrap" id="toc-notes-view"></div>
         </section>
 
         <!-- === WRITING TAB === -->
@@ -447,13 +536,16 @@
                 </div>
                 <!-- U1: Voice mode selector (simplified) -->
                 <div class="voice-modes" style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                    <button class="wm-pill active" data-mode="raw" onclick="setWritingMode('raw')">Raw</button>
-                    <button class="wm-pill" data-mode="teacher" onclick="setWritingMode('teacher')">Teacher</button>
-                    <button class="wm-pill" data-mode="philosopher" onclick="setWritingMode('philosopher')">Philosopher</button>
-                    <button class="wm-pill" data-mode="prophet" onclick="setWritingMode('prophet')">Prophet</button>
-                    <button class="wm-pill" data-mode="mystic" onclick="setWritingMode('mystic')">Mystic</button>
-                    <button class="wm-pill" data-mode="companion" onclick="setWritingMode('companion')">Companion</button>
-                    <button class="wm-pill" data-mode="rebel" onclick="setWritingMode('rebel')">Rebel</button>
+                    <div class="wm-bar">
+                        <button class="wm-sq active" data-mode="raw" onclick="setWritingMode('raw')" title="Raw — Unfiltered, stream of consciousness"><span class="wm-dot" style="background:#ef4444"></span></button>
+                        <button class="wm-sq" data-mode="teacher" onclick="setWritingMode('teacher')" title="Teacher — Clear, structured, patient"><span class="wm-dot" style="background:#22c55e"></span></button>
+                        <button class="wm-sq" data-mode="philosopher" onclick="setWritingMode('philosopher')" title="Philosopher — Deep, reflective, questioning"><span class="wm-dot" style="background:#3b82f6"></span></button>
+                        <button class="wm-sq" data-mode="prophet" onclick="setWritingMode('prophet')" title="Prophet — Bold, visionary, declarative"><span class="wm-dot" style="background:#eab308"></span></button>
+                        <button class="wm-sq" data-mode="mystic" onclick="setWritingMode('mystic')" title="Mystic — Poetic, metaphorical, layered"><span class="wm-dot" style="background:#a855f7"></span></button>
+                        <button class="wm-sq" data-mode="companion" onclick="setWritingMode('companion')" title="Companion — Warm, conversational, supportive"><span class="wm-dot" style="background:#f97316"></span></button>
+                        <button class="wm-sq" data-mode="confessor" onclick="setWritingMode('confessor')" title="Confessor — Honest, vulnerable, authentic"><span class="wm-dot" style="background:#6b7280"></span></button>
+                        <button class="wm-sq" data-mode="rebel" onclick="setWritingMode('rebel')" title="Rebel — Provocative, challenging, sharp"><span class="wm-dot" style="background:#e5e7eb"></span></button>
+                    </div>
                     <span id="wm-status" style="font-size:9px;color:var(--text-tertiary);margin-left:auto;font-style:italic"></span>
                 </div>
                 <div style="flex:1;display:flex;gap:0;overflow:hidden">
@@ -496,7 +588,6 @@
                     </div>
                     <div class="btn-group">
                         <button class="btn btn-primary" onclick="addDecision()">+ Decision</button>
-                        <button class="btn" onclick="addBottleneck()">+ Bottleneck</button>
                     </div>
                 </div>
                 <div class="grid grid-2">
@@ -504,9 +595,17 @@
                         <div class="card-header"><span class="card-title flex items-center gap-2"><span class="kernel-dot" style="background:var(--accent-success)"></span> Decisions Made</span></div>
                         <div id="decisions-list" class="space-y"></div>
                     </div>
-                    <div class="card">
-                        <div class="card-header"><span class="card-title flex items-center gap-2"><span class="kernel-dot" style="background:var(--accent-warning)"></span> Bottlenecks</span></div>
-                        <div id="bottlenecks-list" class="space-y"></div>
+                    <div class="card" style="display:flex;flex-direction:column">
+                        <div class="card-header"><span class="card-title flex items-center gap-2"><span class="kernel-dot" style="background:var(--accent-warning)"></span> Notes</span></div>
+                        <div style="display:flex;gap:0;flex:1;min-height:200px">
+                            <div style="flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border-subtle)">
+                                <textarea id="bn-scratchpad" placeholder="Write a note..." style="flex:1;background:transparent;border:none;color:var(--text-primary);font-size:11px;line-height:1.6;padding:10px;resize:none;outline:none;font-family:var(--font-display)"></textarea>
+                                <div style="padding:4px 10px;border-top:1px solid var(--border-subtle)">
+                                    <button class="btn btn-sm" onclick="saveNote()" style="font-size:9px;width:100%">Save Note</button>
+                                </div>
+                            </div>
+                            <div id="bottlenecks-list" class="space-y" style="flex:1;overflow-y:auto;padding:8px;max-height:320px"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -714,12 +813,8 @@
 
         <!-- === MINDMAP TAB === -->
         <section id="sec-mindmap" class="section" style="flex-direction:column">
-            <div style="padding:10px 16px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-                <div class="btn-group">
-                    <button class="btn" onclick="addMindmapNode()">+ Node</button>
-                    <button class="btn" onclick="addMindmapNodeShaped()">+ Shaped</button>
-                    <button class="btn" id="mm-connect-btn" onclick="toggleConnectMode()">Connect Mode</button>
-                </div>
+            <div style="padding:5px 16px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+                <span style="font-size:9px;color:var(--text-tertiary);font-family:var(--font-mono)" id="mm-hint">Click to select &middot; Drag to move &middot; Dbl-click to write</span>
                 <div class="flex items-center gap-2">
                     <select id="mm-saved" onchange="loadNamedMindmap()" style="width:130px;font-size:10px">
                         <option value="">— Current —</option>
@@ -733,9 +828,59 @@
                     </div>
                 </div>
             </div>
-            <div class="mindmap-canvas" id="mm-canvas">
-                <svg id="mm-svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></svg>
-                <div id="mm-nodes"></div>
+            <div style="flex:1;overflow:hidden;position:relative">
+                <div class="mindmap-canvas" id="mm-canvas" data-tool="select" oncontextmenu="mmContextMenu(event)" ondblclick="mmCanvasDblClick(event)" onclick="mmCanvasClick(event)" onmousedown="mmCanvasDown(event)">
+                    <div class="mm-tools" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ondblclick="event.stopPropagation()" oncontextmenu="event.stopPropagation()" onwheel="event.stopPropagation()">
+                        <div class="mm-tool active" data-tool="select" onclick="setMmTool('select')" title="Select (V)"><span style="font-size:16px">&#8598;</span></div>
+                        <div class="mm-tool" data-tool="hand" onclick="setMmTool('hand')" title="Hand (H)"><span style="font-size:14px">&#9995;</span></div>
+                        <div class="mm-tool-sep"></div>
+                        <div class="mm-tool" data-tool="shape" onclick="setMmTool('shape')" title="Shape (R)">
+                            <span style="font-size:16px">&#9645;</span>
+                            <div class="mm-tool-sub" id="mm-sub-shape">
+                                <div class="mm-sub-btn active" onclick="event.stopPropagation();mmSetSub('shape','rectangle',this)" title="Rectangle">&#9645;</div>
+                                <div class="mm-sub-btn" onclick="event.stopPropagation();mmSetSub('shape','circle',this)" title="Circle">&#9679;</div>
+                                <div class="mm-sub-btn" onclick="event.stopPropagation();mmSetSub('shape','diamond',this)" title="Diamond">&#9670;</div>
+                                <div class="mm-sub-btn" onclick="event.stopPropagation();mmSetSub('shape','pill',this)" title="Pill">&#9644;</div>
+                            </div>
+                        </div>
+                        <div class="mm-tool" data-tool="line" onclick="setMmTool('line')" title="Connect (L)">
+                            <span style="font-size:18px;transform:rotate(-45deg);display:inline-block">&#8594;</span>
+                            <div class="mm-tool-sub" id="mm-sub-line">
+                                <div class="mm-sub-btn active" onclick="event.stopPropagation();mmSetArr('triangle',this)" title="Triangle" style="font-size:11px">▶</div>
+                                <div class="mm-sub-btn" onclick="event.stopPropagation();mmSetArr('open',this)" title="Open" style="font-size:13px">›</div>
+                                <div class="mm-sub-btn" onclick="event.stopPropagation();mmSetArr('diamond',this)" title="Diamond" style="font-size:11px">◆</div>
+                                <div class="mm-sub-btn" onclick="event.stopPropagation();mmSetArr('circle',this)" title="Dot" style="font-size:10px">●</div>
+                            </div>
+                        </div>
+                        <div class="mm-tool" data-tool="text" onclick="setMmTool('text')" title="Text (T)"><span style="font-weight:700;font-size:14px;font-family:serif">T</span></div>
+                        <div class="mm-tool" data-tool="sticky" onclick="setMmTool('sticky')" title="Sticky Note (N)">
+                            <span style="font-size:16px;color:#ffaa00">&#9632;</span>
+                            <div class="mm-tool-sub" id="mm-sub-sticky">
+                                <div class="mm-sub-btn active" onclick="event.stopPropagation();mmSetSub('sticky','#ffaa00',this)" style="color:#ffaa00" title="Gold">&#9632;</div>
+                                <div class="mm-sub-btn" onclick="event.stopPropagation();mmSetSub('sticky','#55efc4',this)" style="color:#55efc4" title="Green">&#9632;</div>
+                                <div class="mm-sub-btn" onclick="event.stopPropagation();mmSetSub('sticky','#74b9ff',this)" style="color:#74b9ff" title="Blue">&#9632;</div>
+                                <div class="mm-sub-btn" onclick="event.stopPropagation();mmSetSub('sticky','#ff7675',this)" style="color:#ff7675" title="Red">&#9632;</div>
+                                <div class="mm-sub-btn" onclick="event.stopPropagation();mmSetSub('sticky','#a29bfe',this)" style="color:#a29bfe" title="Purple">&#9632;</div>
+                            </div>
+                        </div>
+                        <div class="mm-zoom-controls">
+                            <div class="mm-zoom-btn" onclick="mmZoomIn()" title="Zoom In (+ or &#8984;+)">+</div>
+                            <div class="mm-zoom-pct" id="mm-zoom-pct" onclick="mmResetZoom()" title="Reset Zoom (0)">100%</div>
+                            <div class="mm-zoom-btn" onclick="mmZoomOut()" title="Zoom Out (&minus; or &#8984;&minus;)">&minus;</div>
+                            <div class="mm-zoom-btn" onclick="mmFitView()" title="Fit to View" style="font-size:10px">&#8862;</div>
+                            <div class="mm-zoom-btn" onclick="mmCenterView()" title="Center View (C)" style="font-size:12px">&#8982;</div>
+                            <div class="mm-tool-sep" style="width:1px;height:20px;margin:0 2px"></div>
+                            <div class="mm-grid-toggle" id="mm-grid-btn" onclick="mmToggleGrid()" title="Toggle Grid (G)">&#9638;</div>
+                            <div class="mm-grid-toggle" id="mm-snap-btn" onclick="mmToggleSnap()" title="Toggle Snap (S)" style="font-size:9px">&#8689;</div>
+                        </div>
+                    </div>
+                    <canvas id="mm-grid" class="mm-grid"></canvas>
+                    <div id="mm-sel-rect" class="mm-sel-rect"></div>
+                    <div id="mm-viewport" class="mm-viewport">
+                        <svg id="mm-svg" style="position:absolute;top:0;left:0;width:10000px;height:10000px;pointer-events:none;overflow:visible"></svg>
+                        <div id="mm-nodes"></div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -991,6 +1136,7 @@
             </div>
         </section>
     </div>
+    <div class="mm-ctx" id="mm-ctx"></div>
 
     <!-- INTERNAL SECTION MODAL (for S button) -->
     <!-- EDGE MODAL -->
@@ -1137,6 +1283,10 @@
             { id:20, name:'TOC Progress Adaptations', tag:'TOC', path:'htmls/MORE HTMLS  2/toc_progress_adaptations.html' },
             { id:21, name:'Vertical Lift Variations', tag:'Exercise', path:'htmls/MORE HTMLS  2/vertical-lift-variations.html' },
             { id:22, name:'Wisdom Boxes Design', tag:'Visual', path:'htmls/MORE HTMLS  2/wisdom-boxes-design.html' },
+            { id:23, name:'TITAN V1.2 — Writing Synthesizer', tag:'Deployed', path:'https://gabosaturno11.github.io/titan-forge/titan.html' },
+            { id:24, name:'Saturno Forge — Dashboard', tag:'Deployed', path:'https://gabosaturno11.github.io/titan-forge/' },
+            { id:25, name:'Apoapsis Writer', tag:'Deployed', path:'https://gabosaturno11.github.io/titan-forge/writer.html' },
+            { id:26, name:'Batch Generator', tag:'Deployed', path:'https://gabosaturno11.github.io/titan-forge/batch-generator.html' },
         ],
         research: [
             { id:1, name:'Movement as First Language', cat:'movement', claim:'The body learns like language: repetition with variation wires fluency', mechanism:'Contextual interference improves differential learning', evidence:'Schmidt & Lee, 2019', placement:'Introduction', used:false, blockA:'', blockB:'', blockC:'', blockD:'' },
@@ -1230,7 +1380,145 @@
     });
 
     // TOC
-    function initTOC() { if(!S.tocs.v3) S.tocs.v3=[]; loadTOC('left'); loadTOC('right'); updateTOCAnalytics(); }
+    function initTOC() { if(!S.tocs.v3) S.tocs.v3=[]; if(!S.tocNotes) S.tocNotes={}; loadTOC('left'); loadTOC('right'); updateTOCAnalytics(); }
+
+    // TOC view toggle: Compare vs Notes
+    let tocViewMode = 'compare';
+    function setTocView(mode) {
+        tocViewMode = mode;
+        document.querySelectorAll('.toc-view-btn').forEach(b => b.classList.toggle('active', b.textContent.trim().toLowerCase() === mode));
+        const cmp = document.getElementById('toc-compare-view');
+        const nts = document.getElementById('toc-notes-view');
+        if (mode === 'notes') {
+            if(cmp) cmp.style.display='none';
+            if(nts) { nts.classList.add('active'); renderTocNotes(); }
+        } else {
+            if(cmp) cmp.style.display='';
+            if(nts) nts.classList.remove('active');
+        }
+    }
+
+    // Gradient palette per part index
+    const tocPartGrads = [
+        'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+        'linear-gradient(135deg, rgba(255,170,0,0.08) 0%, rgba(255,170,0,0.02) 100%)',
+        'linear-gradient(135deg, rgba(255,170,0,0.07) 0%, rgba(255,107,53,0.02) 100%)',
+        'linear-gradient(135deg, rgba(255,170,0,0.06) 0%, rgba(168,85,247,0.03) 100%)',
+        'linear-gradient(135deg, rgba(0,207,255,0.06) 0%, rgba(0,255,136,0.02) 100%)',
+        'linear-gradient(135deg, rgba(168,85,247,0.06) 0%, rgba(0,207,255,0.02) 100%)',
+        'linear-gradient(135deg, rgba(0,255,136,0.06) 0%, rgba(255,170,0,0.02) 100%)',
+        'linear-gradient(135deg, rgba(255,68,102,0.06) 0%, rgba(255,107,53,0.02) 100%)',
+        'linear-gradient(135deg, rgba(255,170,0,0.08) 0%, rgba(255,215,0,0.03) 100%)',
+    ];
+    const tocPartBorders = ['rgba(255,255,255,0.08)','#ffaa00','#ff8c00','#a855f7','#00cfff','#a855f7','#00ff88','#ff4466','#ffaa00'];
+
+    function renderTocNotes() {
+        const v = document.getElementById('toc-v-left').value;
+        const items = S.tocs[v] || [];
+        if (!S.tocNotes) S.tocNotes = {};
+        const el = document.getElementById('toc-notes-view');
+        if (!el) return;
+        // Group items by part
+        let html = '', partIdx = -1, inChapter = false, chapterId = null;
+        items.forEach((item, idx) => {
+            if (item.type === 'part') {
+                if (inChapter) html += '</div>'; // close prev chapter sections
+                if (partIdx >= 0) html += '</div>'; // close prev part card
+                partIdx++;
+                inChapter = false;
+                const grad = tocPartGrads[partIdx % tocPartGrads.length];
+                const bc = tocPartBorders[partIdx % tocPartBorders.length];
+                html += `<div class="toc-part-card" style="border:1px solid ${bc}30">`;
+                html += `<div class="toc-part-header" style="background:${grad};border-left:3px solid ${bc}">${item.title}</div>`;
+            } else if (item.type === 'chapter') {
+                if (inChapter) html += '</div>'; // close prev chapter card
+                inChapter = true;
+                chapterId = item.id;
+                const noteVal = (S.tocNotes[item.id] || '').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+                html += `<div class="toc-ch-card">`;
+                html += `<div class="toc-ch-title">${item.title}</div>`;
+                html += `<div class="toc-ch-sections" id="toc-nsec-${item.id}">`;
+                // Sections will be appended next
+            } else if (item.type === 'section') {
+                if (!inChapter) return;
+                html += `<div style="padding:1px 0">${item.title}</div>`;
+            }
+        });
+        if (inChapter) html += '</div>'; // close last sections div
+        // close last chapter + add note textarea
+        // Actually, let me restructure: close sections, add note, close card
+        // Re-do with better grouping
+        html = ''; partIdx = -1;
+        let openChapter = false, openPart = false;
+        items.forEach((item) => {
+            if (item.type === 'part') {
+                if (openChapter) { html += `</div></div>`; openChapter = false; }
+                if (openPart) { html += `</div>`; openPart = false; }
+                partIdx++;
+                const grad = tocPartGrads[partIdx % tocPartGrads.length];
+                const bc = tocPartBorders[partIdx % tocPartBorders.length];
+                html += `<div class="toc-part-card" style="border:1px solid ${bc}30">`;
+                html += `<div class="toc-part-header" style="background:${grad};border-left:3px solid ${bc}">${item.title}</div>`;
+                openPart = true;
+            } else if (item.type === 'chapter') {
+                if (openChapter) { html += `</div></div>`; openChapter = false; }
+                const noteVal = (S.tocNotes[item.id] || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+                html += `<div class="toc-ch-card"><div class="toc-ch-title">${item.title}</div><div class="toc-ch-sections">`;
+                openChapter = true;
+                // Note textarea comes after sections close
+                html += `</div><textarea class="toc-ch-note" placeholder="Notes for ${item.title.replace(/"/g,'&quot;')}..." onblur="saveTocNote(${item.id},this.value)" oninput="this.style.height='36px';this.style.height=Math.min(this.scrollHeight,160)+'px'" onkeydown="event.stopPropagation()">${noteVal}</textarea>`;
+            } else if (item.type === 'section' && openChapter) {
+                // Insert before the closing sections div — need to restructure
+            }
+        });
+        if (openChapter) html += '</div>';
+        if (openPart) html += '</div>';
+
+        // Better approach: pre-group then render
+        html = '';
+        const groups = []; let curPart = null, curChapter = null;
+        items.forEach(item => {
+            if (item.type === 'part') {
+                curPart = { item, chapters: [] };
+                groups.push(curPart);
+                curChapter = null;
+            } else if (item.type === 'chapter') {
+                curChapter = { item, sections: [] };
+                if (curPart) curPart.chapters.push(curChapter);
+                else groups.push({ item: null, chapters: [curChapter] });
+            } else if (item.type === 'section' && curChapter) {
+                curChapter.sections.push(item);
+            }
+        });
+        groups.forEach((g, pi) => {
+            const grad = tocPartGrads[pi % tocPartGrads.length];
+            const bc = tocPartBorders[pi % tocPartBorders.length];
+            if (g.item) {
+                html += `<div class="toc-part-card" style="border:1px solid ${bc}30">`;
+                html += `<div class="toc-part-header" style="background:${grad};border-left:3px solid ${bc}">${g.item.title}</div>`;
+            }
+            g.chapters.forEach(ch => {
+                const noteVal = (S.tocNotes[ch.item.id] || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+                html += `<div class="toc-ch-card">`;
+                html += `<div class="toc-ch-title">${ch.item.title}</div>`;
+                if (ch.sections.length) {
+                    html += `<div class="toc-ch-sections">${ch.sections.map(s => s.title).join('<br>')}</div>`;
+                }
+                html += `<textarea class="toc-ch-note" placeholder="Notes..." onblur="saveTocNote(${ch.item.id},this.value)" oninput="this.style.height='36px';this.style.height=Math.min(this.scrollHeight,160)+'px'" onkeydown="event.stopPropagation()">${noteVal}</textarea>`;
+                html += `</div>`;
+            });
+            if (g.item) html += `</div>`;
+        });
+        el.innerHTML = html;
+        // Auto-expand textareas with existing content
+        el.querySelectorAll('.toc-ch-note').forEach(ta => { if(ta.value) { ta.style.height='36px'; ta.style.height=Math.min(ta.scrollHeight,160)+'px'; } });
+    }
+    function saveTocNote(chId, val) {
+        if (!S.tocNotes) S.tocNotes = {};
+        if (val.trim()) S.tocNotes[chId] = val;
+        else delete S.tocNotes[chId];
+        save();
+    }
 
     async function loadExternalTOC() {
         try {
@@ -1255,11 +1543,140 @@
 
     function loadDefaultTOC() {
         S.tocs.v1 = [
-            {id:1,title:'FRONT MATTER',type:'part'},{id:2,title:'Dedication',type:'chapter'},{id:3,title:'Foreword',type:'chapter'},
-            {id:4,title:'THE SPARK: INTRODUCTION',type:'part'},{id:5,title:'The Movement Paradox',type:'chapter'},{id:6,title:'Why Calisthenics?',type:'chapter'},
-            {id:7,title:'I: BEGIN',type:'part'},{id:8,title:'Chapter 1: What, How, Why & Who',type:'chapter'},{id:9,title:'Chapter 2: Getting Started',type:'chapter'},
+            // FRONT MATTER
+            {id:1,title:'FRONT MATTER',type:'part'},
+            {id:2,title:'Dedication',type:'chapter'},{id:3,title:'Foreword (by Victory Belt)',type:'chapter'},{id:4,title:'Preface (Your Journey to This Book)',type:'chapter'},
+            {id:5,title:'Disclaimer (Medical/Legal)',type:'chapter'},{id:6,title:'How to Use This Book (Navigation Guide + System Thinking)',type:'chapter'},{id:7,title:'Movement DNA Index (Cross-Reference System)',type:'chapter'},
+            // THE SPARK: INTRODUCTION
+            {id:8,title:'THE SPARK: INTRODUCTION',type:'part'},
+            {id:9,title:'The Movement Paradox',type:'chapter'},{id:10,title:'Why Calisthenics?',type:'chapter'},{id:11,title:'Movement as Humanity\'s First Language',type:'chapter'},
+            {id:12,title:'The Two Lenses of Progress (linear vs spiral)',type:'chapter'},{id:13,title:'Your Journey Begins Here',type:'chapter'},{id:14,title:'The Author\'s Story (2019\u20132025 Evolution)',type:'chapter'},
+            {id:15,title:'The Movement Ecosystem Universe Explained',type:'chapter'},
+            // PART I: BEGIN
+            {id:16,title:'PART I: BEGIN \u2014 Start Here',type:'part'},
+            {id:17,title:'Chapter 1: What, How, Why & Who',type:'chapter'},
+            {id:18,title:'1.1 Why Do You Move? (The Fundamental Question)',type:'section'},{id:19,title:'1.2 The Purpose Formula: Survival\u2192Status\u2192Success\u2192Meaning',type:'section'},
+            {id:20,title:'1.3 What This Book Will Teach You',type:'section'},{id:21,title:'1.4 How to Best Approach This Book (System Thinking)',type:'section'},
+            {id:22,title:'1.5 Who Is This Book For? (The Three Archetypes)',type:'section'},{id:23,title:'1.6 Your Starting Point Assessment',type:'section'},
+            {id:24,title:'Chapter 2: Getting Started',type:'chapter'},
+            {id:25,title:'2.1 More Action, Less Knowledge (80/20 Principle)',type:'section'},{id:26,title:'2.2 Practice, Practice, Practice (Consistency Framework)',type:'section'},
+            {id:27,title:'2.3 Direction Over Speed (Patience Philosophy)',type:'section'},{id:28,title:'2.4 Your First Week Protocol',type:'section'},
+            {id:29,title:'2.5 Common Beginner Mistakes',type:'section'},{id:30,title:'2.6 Building Momentum',type:'section'},
+            // PART II: CRAFT
+            {id:31,title:'PART II: CRAFT \u2014 The Art of Calisthenics',type:'part'},
+            {id:32,title:'Chapter 3: What is Calisthenics?',type:'chapter'},
+            {id:33,title:'3.1 Definition & History',type:'section'},{id:34,title:'3.2 Advantages Over Traditional Training',type:'section'},
+            {id:35,title:'3.3 Disadvantages & Limitations',type:'section'},{id:36,title:'3.4 Foundation For Future Training',type:'section'},
+            {id:37,title:'Chapter 4: Calisthenics vs Gymnastics',type:'chapter'},
+            {id:38,title:'4.1 Historical Divergence',type:'section'},{id:39,title:'4.2 Training Methodology Differences',type:'section'},
+            {id:40,title:'4.3 Accessibility Factors',type:'section'},{id:41,title:'4.4 Skill Transfer Between Disciplines',type:'section'},{id:42,title:'4.5 Crafting Your Practice',type:'section'},
+            {id:43,title:'Chapter 5: Calisthenics Training for the Lower Body',type:'chapter'},
+            {id:44,title:'5.1 The Lower Body Myth',type:'section'},{id:45,title:'5.2 Unilateral Training Superiority',type:'section'},
+            {id:46,title:'5.3 Jump Training & Plyometrics',type:'section'},{id:47,title:'5.4 Weighted Variations',type:'section'},{id:48,title:'5.5 Integration with Upper Body',type:'section'},
+            {id:49,title:'Chapter 6: Calisthenics is for Everyone',type:'chapter'},
+            {id:50,title:'6.1 Then & Now: Evolution of the Discipline',type:'section'},{id:51,title:'6.2 My Training Philosophy',type:'section'},
+            {id:52,title:'6.3 The 3 Archetypes (Seeker, Builder, Practitioner)',type:'section'},{id:53,title:'6.4 Age, Gender, and Background Considerations',type:'section'},
+            {id:54,title:'6.5 Calisthenics in Sports Performance',type:'section'},{id:55,title:'6.6 Adaptive Calisthenics',type:'section'},
+            {id:56,title:'Chapter 7: Is Calisthenics Safe?',type:'chapter'},
+            {id:57,title:'7.1 Injury Statistics vs Traditional Training',type:'section'},{id:58,title:'7.2 Joint Health Benefits',type:'section'},
+            {id:59,title:'7.3 Progressive Overload Principles',type:'section'},{id:60,title:'7.4 Risk Management Strategies',type:'section'},{id:61,title:'7.5 Long-term Sustainability',type:'section'},
+            {id:62,title:'Chapter 8: What to Expect from Calisthenics?',type:'chapter'},
+            {id:63,title:'8.1 Realistic Timeline Expectations',type:'section'},{id:64,title:'8.2 Physical Transformations',type:'section'},
+            {id:65,title:'8.3 Mental & Emotional Changes',type:'section'},{id:66,title:'8.4 Life Demands and Sacrifices',type:'section'},{id:67,title:'8.5 The Compound Effect',type:'section'},
+            {id:68,title:'Chapter 9: Goal Setting',type:'chapter'},
+            {id:69,title:'9.1 SMART Goals Adapted for Calisthenics',type:'section'},{id:70,title:'9.2 Process vs Outcome Goals',type:'section'},
+            {id:71,title:'9.3 Milestone Mapping',type:'section'},{id:72,title:'9.4 Tracking Progress',type:'section'},{id:73,title:'9.5 Adjusting Expectations',type:'section'},
+            {id:74,title:'Chapter 10: Equipment Guide',type:'chapter'},
+            {id:75,title:'10.1 Minimal vs Optimal Equipment Philosophy',type:'section'},{id:76,title:'10.2 Essential Equipment (Pull-up Bar, Parallettes)',type:'section'},
+            {id:77,title:'10.3 Optional Equipment (Rings, Resistance Bands)',type:'section'},{id:78,title:'10.4 Home Gym Setup Guide',type:'section'},
+            {id:79,title:'10.5 Weighted Calisthenics Tools',type:'section'},{id:80,title:'10.6 Integration with Free Weights',type:'section'},
+            // PART III: DEEPEN
+            {id:81,title:'PART III: DEEPEN \u2014 The Mastering Process',type:'part'},
+            {id:82,title:'Chapter 11: Excellence Technique Paradigm',type:'chapter'},
+            {id:83,title:'11.1 Injuries (Learning from Pain)',type:'section'},{id:84,title:'11.2 Effectiveness (Results Measurement)',type:'section'},
+            {id:85,title:'11.3 Efficiency (Energy Economy)',type:'section'},{id:86,title:'11.4 Replicability (Consistency Standards)',type:'section'},
+            {id:87,title:'11.5 Transferability (Skill Connections)',type:'section'},{id:88,title:'11.6 Aesthetics (Form & Function)',type:'section'},{id:89,title:'11.7 Excellence vs. Perfection',type:'section'},
+            {id:90,title:'Chapter 12: The Calisthenics Journey',type:'chapter'},
+            {id:91,title:'12.1 The Growth Mindset',type:'section'},{id:92,title:'12.2 The Beginner\'s Mind',type:'section'},
+            {id:93,title:'12.3 The Approach Philosophy',type:'section'},{id:94,title:'12.4 The Warm-Up Ritual',type:'section'},{id:95,title:'12.5 Mental Models for Progress',type:'section'},
+            {id:96,title:'Chapter 13: The Three Stages',type:'chapter'},
+            {id:97,title:'13.1 Stage 1: Creating the Base (Foundation)',type:'section'},
+            {id:98,title:'Movement Literacy Development',type:'section'},{id:99,title:'Scapular Control Mastering',type:'section'},
+            {id:100,title:'Fundamental Static Positions',type:'section'},{id:101,title:'Core Movement Patterns',type:'section'},
+            {id:102,title:'13.2 Stage 2: Building the Structure (Development)',type:'section'},
+            {id:103,title:'Strength Integration Phase',type:'section'},{id:104,title:'The Big Seven Skills Introduction',type:'section'},{id:105,title:'Power Development',type:'section'},
+            {id:106,title:'13.3 Stage 3: Continuous Mastering (Specialization)',type:'section'},
+            {id:107,title:'Advanced Skill Development',type:'section'},{id:108,title:'Power-Free Movements',type:'section'},
+            {id:109,title:'Dynamic Skill Integration',type:'section'},{id:110,title:'Personal Style Development',type:'section'},
+            {id:111,title:'13.4 Transition Protocols',type:'section'},{id:112,title:'13.5 Stage Assessment Criteria',type:'section'},
+            // PART IV: CHOOSE
+            {id:113,title:'PART IV: CHOOSE \u2014 Your Unique Odyssey',type:'part'},
+            {id:114,title:'Chapter 14: Bodybuilding',type:'chapter'},
+            {id:115,title:'14.1 Aesthetics Philosophy',type:'section'},{id:116,title:'14.2 Hypertrophy Fundamentals',type:'section'},
+            {id:117,title:'14.3 Volume Prescription',type:'section'},{id:118,title:'14.4 Effort & Intensity Management',type:'section'},
+            {id:119,title:'14.5 Nutrition for Muscle Building',type:'section'},{id:120,title:'14.6 Sample Programs',type:'section'},
+            {id:121,title:'Chapter 15: Power Free',type:'chapter'},
+            {id:122,title:'15.1 Static Strength Science',type:'section'},{id:123,title:'15.2 Handstand Push-Up Progression',type:'section'},
+            {id:124,title:'15.3 90-Degree Handstand Push-Up',type:'section'},{id:125,title:'15.4 Planche Development',type:'section'},
+            {id:126,title:'15.5 Front Lever Mastering',type:'section'},{id:127,title:'15.6 One-Arm Pull-Up Journey',type:'section'},{id:128,title:'15.7 Combining Static Skills',type:'section'},
+            {id:129,title:'Chapter 16: Freestyle Calisthenics',type:'chapter'},
+            {id:130,title:'16.1 Competition Standards',type:'section'},{id:131,title:'16.2 Risk vs. Reward Analysis',type:'section'},
+            {id:132,title:'16.3 Flow State Development',type:'section'},{id:133,title:'16.4 Fear Management',type:'section'},
+            {id:134,title:'16.5 Creative Expression',type:'section'},{id:135,title:'16.6 Building Combinations',type:'section'},
+            {id:136,title:'Chapter 17: Street Lifting',type:'chapter'},
+            {id:137,title:'17.1 Understanding Maximal Strength',type:'section'},{id:138,title:'17.2 Competition Rules & Standards',type:'section'},
+            {id:139,title:'17.3 The Weighted Dip',type:'section'},{id:140,title:'17.4 The Weighted Pull-Up',type:'section'},
+            {id:141,title:'17.5 The Weighted Muscle-Up',type:'section'},{id:142,title:'17.6 The Squat',type:'section'},
+            {id:143,title:'Chapter 18: Hand-Balancing',type:'chapter'},
+            {id:144,title:'18.1 The Endless Journey Philosophy',type:'section'},{id:145,title:'18.2 Strength Requirements',type:'section'},
+            {id:146,title:'18.3 Balance Development',type:'section'},{id:147,title:'18.4 Alignment Principles',type:'section'},
+            {id:148,title:'18.5 Mobility Prerequisites',type:'section'},{id:149,title:'18.6 Entry Variations',type:'section'},{id:150,title:'18.7 Training on Different Surfaces',type:'section'},
+            {id:151,title:'Chapter 19: Mobility Skills',type:'chapter'},
+            {id:152,title:'19.1 Mobility vs. Flexibility Distinction',type:'section'},{id:153,title:'19.2 Strength Through Length',type:'section'},
+            {id:154,title:'19.3 The Squat',type:'section'},{id:155,title:'19.4 The Forward Fold',type:'section'},
+            {id:156,title:'19.5 The Pancake',type:'section'},{id:157,title:'19.6 The Splits (Front & Side)',type:'section'},
+            {id:158,title:'19.7 The Bridge',type:'section'},{id:159,title:'19.8 The German Hang',type:'section'},
+            {id:160,title:'Chapter 20: Hybrid Paths',type:'chapter'},
+            {id:161,title:'20.1 The "Well-Rounded" Athlete Myth',type:'section'},{id:162,title:'20.2 Conflicting vs. Complementary Goals',type:'section'},
+            {id:163,title:'20.3 Double Session Strategies',type:'section'},{id:164,title:'20.4 Bodybuilding + Power Free',type:'section'},
+            {id:165,title:'20.5 Bodybuilding + Street Lifting',type:'section'},{id:166,title:'20.6 Power Free + Street Lifting',type:'section'},
+            {id:167,title:'20.7 Adding Handstands to Any Path',type:'section'},{id:168,title:'20.8 Can You Have It All?',type:'section'},
+            // PART V: DESIGN
+            {id:169,title:'PART V: DESIGN \u2014 Building Your Own Program',type:'part'},
+            {id:170,title:'Chapter 21: Program Templates',type:'chapter'},
+            {id:171,title:'21.1 Template Selection Criteria',type:'section'},{id:172,title:'21.2 Bodybuilding Templates',type:'section'},
+            {id:173,title:'21.3 Power Free Templates',type:'section'},{id:174,title:'21.4 Freestyle Templates',type:'section'},
+            {id:175,title:'21.5 Street Lifting Templates',type:'section'},{id:176,title:'21.6 Hand-Balancing Templates',type:'section'},
+            {id:177,title:'21.7 Mobility Templates',type:'section'},{id:178,title:'21.8 Hybrid Templates',type:'section'},
+            {id:179,title:'Chapter 22: Constructing Your Routine',type:'chapter'},
+            {id:180,title:'22.1 Volume Calculations',type:'section'},{id:181,title:'22.2 Frequency Optimization',type:'section'},
+            {id:182,title:'22.3 Intensity Management',type:'section'},{id:183,title:'22.4 Exercise Selection',type:'section'},
+            {id:184,title:'22.5 Workout Split Options',type:'section'},{id:185,title:'22.6 Periodization Models',type:'section'},
+            {id:186,title:'22.7 Deload Protocols',type:'section'},{id:187,title:'22.8 Custom Program Examples',type:'section'},
+            // PART VI: ENDURE
+            {id:188,title:'PART VI: ENDURE \u2014 The Endless Journey',type:'part'},
+            {id:189,title:'Chapter 23: Working Around Injuries',type:'chapter'},
+            {id:190,title:'23.1 Accepting the Risk',type:'section'},{id:191,title:'23.2 Pain Beyond The Body',type:'section'},
+            {id:192,title:'23.3 Knowing is Overrated',type:'section'},{id:193,title:'23.4 Recovery Protocols',type:'section'},
+            {id:194,title:'23.5 Rehabilitation Strategies',type:'section'},{id:195,title:'23.6 Do Not Miss the Lesson',type:'section'},{id:196,title:'23.7 Coming Back Stronger',type:'section'},
+            {id:197,title:'Chapter 24: Patience is a Virtue',type:'chapter'},
+            {id:198,title:'24.1 Do Not Rush (The Slow Cook)',type:'section'},{id:199,title:'24.2 Enjoy the Process',type:'section'},
+            {id:200,title:'24.3 Celebrate Small Wins',type:'section'},{id:201,title:'24.4 You Are One Workout Away',type:'section'},
+            {id:202,title:'24.5 Comparison is the Thief of Joy',type:'section'},{id:203,title:'24.6 Discipline vs. Motivation',type:'section'},{id:204,title:'24.7 The Long Game',type:'section'},
+            // PART VII: LEGACY
+            {id:205,title:'PART VII: LEGACY \u2014 The Endless Mastering Journey',type:'part'},
+            {id:206,title:'Chapter 25: What is Next?',type:'chapter'},
+            {id:207,title:'25.1 Play The Long Game',type:'section'},{id:208,title:'25.2 Remember Why You Started',type:'section'},
+            {id:209,title:'25.3 The Never-Ending Journey',type:'section'},{id:210,title:'25.4 Evolution of Practice',type:'section'},
+            {id:211,title:'Chapter 26: Passing The Torch',type:'chapter'},
+            {id:212,title:'26.1 Teaching Others (Pull Request Philosophy)',type:'section'},{id:213,title:'26.2 Building Community',type:'section'},
+            {id:214,title:'26.3 The Next Generation',type:'section'},{id:215,title:'26.4 Creating Your Legacy',type:'section'},
+            {id:216,title:'Chapter 27: Living the Practice',type:'chapter'},
+            {id:217,title:'27.1 Embodying The Practice',type:'section'},{id:218,title:'27.2 Move Beyond Your Limits',type:'section'},
+            {id:219,title:'27.3 The Eternal Student',type:'section'},{id:220,title:'27.4 Final Wisdom',type:'section'},
         ];
-        S.tocs.v2 = [{id:1,title:'Start Here',type:'part'},{id:2,title:'What, How, Why & Who',type:'chapter'},{id:3,title:'Getting Started',type:'chapter'}];
+        // v2 = condensed view (parts + chapters only)
+        S.tocs.v2 = S.tocs.v1.filter(i => i.type !== 'section').map((i,idx) => ({...i, id:idx+1}));
         initTOC();
     }
 
@@ -1297,18 +1714,49 @@
                 }
             });
         }
-        // Build collapsible tree: group items under their parent Part
-        let html = '';
-        let inPart = false;
-        let inChapter = false;
+        // Flat list with data-driven collapse (no DOM nesting = clean drag-and-drop)
         const collapseState = S._tocCollapse || {};
+        let currentPartId = null;
+        let currentChapterId = null;
+        // Determine which items have children (for chevrons)
+        const hasChildren = {};
+        items.forEach((item, idx) => {
+            if (item.type === 'part') {
+                const next = items[idx+1];
+                if (next && next.type !== 'part') hasChildren[item.id] = true;
+            } else if (item.type === 'chapter') {
+                const next = items[idx+1];
+                if (next && next.type === 'section') hasChildren[item.id] = true;
+            }
+        });
+        let html = '';
         items.forEach((i, idx) => {
             const linked = movLinks[(i.title||'').toLowerCase()] || [];
             const badges = linked.length ? `<div class="movement-badges">${linked.slice(0,3).map(m=>`<span class="movement-badge">${m}</span>`).join('')}${linked.length>3?`<span class="movement-badge">+${linked.length-3}</span>`:''}</div>` : '';
             const typeClass = i.type==='part'?'is-part':i.type==='section'?'is-section':'is-chapter';
-            const itemHTML = `
-                <div class="toc-item ${typeClass}" data-id="${i.id}">
-                    ${i.type==='part'?`<span class="toc-chevron ${collapseState['p_'+i.id]!==false?'collapsed':''}" onclick="event.stopPropagation();toggleTOCCollapse(this,'p_${i.id}')">&#9654;</span>`:''}
+            // Track parent for collapse
+            if (i.type === 'part') { currentPartId = i.id; currentChapterId = null; }
+            else if (i.type === 'chapter') { currentChapterId = i.id; }
+            // Determine if this item should be hidden (parent collapsed)
+            let hiddenClass = '';
+            if (i.type === 'chapter' && currentPartId) {
+                if (collapseState['p_'+currentPartId] !== false) hiddenClass = 'toc-collapsed-child';
+            } else if (i.type === 'section') {
+                if (currentPartId && collapseState['p_'+currentPartId] !== false) hiddenClass = 'toc-collapsed-child';
+                else if (currentChapterId && collapseState['ch_'+currentChapterId] === true) hiddenClass = 'toc-collapsed-child';
+            }
+            // Chevron for parts and chapters with children
+            let chevron = '';
+            if (i.type === 'part' && hasChildren[i.id]) {
+                const isCollapsed = collapseState['p_'+i.id] !== false;
+                chevron = `<span class="toc-chevron ${isCollapsed?'collapsed':''}" onclick="event.stopPropagation();toggleTOCCollapse(this,'p_${i.id}','${side}')">&#9654;</span>`;
+            } else if (i.type === 'chapter' && hasChildren[i.id]) {
+                const isCollapsed = collapseState['ch_'+i.id] === true;
+                chevron = `<span class="toc-chevron ${isCollapsed?'collapsed':''}" onclick="event.stopPropagation();toggleTOCCollapse(this,'ch_${i.id}','${side}')">&#9654;</span>`;
+            }
+            html += `
+                <div class="toc-item ${typeClass} ${hiddenClass}" data-id="${i.id}" data-type="${i.type}">
+                    ${chevron}
                     <span class="type-tag">${typeLabel(i.type)}</span>
                     <div style="flex:1;display:flex;flex-direction:column;gap:2px">
                         <span class="title" ondblclick="editTOCItem(${i.id},'${side}')">${i.title}</span>
@@ -1316,44 +1764,35 @@
                     </div>
                     <button class="btn btn-sm" onclick="delTOCItem(${i.id},'${side}')" style="color:var(--accent-danger);padding:2px 6px" title="Delete">&times;</button>
                 </div>`;
-            if (i.type === 'part') {
-                // Close previous groups
-                if (inChapter) { html += '</div>'; inChapter = false; }
-                if (inPart) { html += '</div>'; inPart = false; }
-                html += itemHTML;
-                const collapsed = collapseState['p_'+i.id] !== false;
-                html += `<div class="toc-children ${collapsed?'collapsed':''}" data-parent="p_${i.id}">`;
-                inPart = true;
-            } else if (i.type === 'chapter') {
-                if (inChapter) { html += '</div>'; inChapter = false; }
-                html += itemHTML;
-                // Check if next items are sections
-                const nextIsSec = items[idx+1] && items[idx+1].type === 'section';
-                if (nextIsSec) {
-                    html += `<div class="toc-children" data-parent="ch_${i.id}">`;
-                    inChapter = true;
-                }
-            } else {
-                html += itemHTML;
-            }
         });
-        if (inChapter) html += '</div>';
-        if (inPart) html += '</div>';
         el.innerHTML = html;
-        new Sortable(el, { animation:150, ghostClass:'ghost', chosenClass:'drag-chosen', onEnd:()=>{reorderTOCFromDOM(side); save();} });
+        new Sortable(el, { animation:150, ghostClass:'ghost', chosenClass:'drag-chosen', draggable:'.toc-item', onEnd:()=>{reorderTOCFromDOM(side); save();} });
     }
-    function toggleTOCCollapse(chevron, key) {
+    function toggleTOCCollapse(chevron, key, side) {
         if (!S._tocCollapse) S._tocCollapse = {};
         const isCollapsed = chevron.classList.contains('collapsed');
+        const nowCollapsed = !isCollapsed;
         chevron.classList.toggle('collapsed');
-        // Find the sibling toc-children div
-        const parent = chevron.closest('.toc-item');
-        const children = parent.nextElementSibling;
-        if (children && children.classList.contains('toc-children')) {
-            children.classList.toggle('collapsed');
+        S._tocCollapse[key] = nowCollapsed;
+        // Toggle visibility of child items in flat list
+        const item = chevron.closest('.toc-item');
+        const isPart = key.startsWith('p_');
+        let sibling = item.nextElementSibling;
+        while (sibling) {
+            const type = sibling.dataset.type;
+            if (isPart) {
+                // Part collapse: hide chapters + sections until next part
+                if (type === 'part') break;
+                if (nowCollapsed) sibling.classList.add('toc-collapsed-child');
+                else sibling.classList.remove('toc-collapsed-child');
+            } else {
+                // Chapter collapse: hide sections until next chapter or part
+                if (type === 'part' || type === 'chapter') break;
+                if (nowCollapsed) sibling.classList.add('toc-collapsed-child');
+                else sibling.classList.remove('toc-collapsed-child');
+            }
+            sibling = sibling.nextElementSibling;
         }
-        S._tocCollapse[key] = isCollapsed ? false : true;
-        // Don't call save() here to avoid re-rendering
     }
 
     function reorderTOCFromDOM(side) {
@@ -1375,12 +1814,25 @@
     function compareTOCs() {
         const lv=document.getElementById('toc-v-left').value, rv=document.getElementById('toc-v-right').value;
         const li=S.tocs[lv]||[], ri=S.tocs[rv]||[];
-        const lc=document.getElementById('toc-left'), rc=document.getElementById('toc-right');
-        li.forEach((item,idx) => {
-            const r=ri[idx], le=lc.children[idx], re=rc.children[idx];
-            if(!r||item.title!==r.title) { le?.classList.add('mismatch'); re?.classList.add('mismatch'); }
-            else { le?.classList.remove('mismatch'); re?.classList.remove('mismatch'); }
-        });
+        const leftItems = document.getElementById('toc-left').querySelectorAll('.toc-item');
+        const rightItems = document.getElementById('toc-right').querySelectorAll('.toc-item');
+        // Clear all mismatch first
+        leftItems.forEach(el => el.classList.remove('mismatch'));
+        rightItems.forEach(el => el.classList.remove('mismatch'));
+        // Normalize: lowercase, trim, strip "part X:", "chapter X:", numbering prefixes
+        const norm = s => s.toLowerCase().trim().replace(/^(part|chapter|section)\s*\d*[\s:—\-.]*/i,'').trim();
+        const leftNorms = li.map(i => norm(i.title));
+        const rightNorms = ri.map(i => norm(i.title));
+        // Match if exact, substring, or keyword overlap
+        function hasMatch(title, otherNorms) {
+            const n = norm(title);
+            if (!n) return true; // empty titles always match
+            return otherNorms.some(o => n === o || n.includes(o) || o.includes(n));
+        }
+        // Mark left items not found in right
+        li.forEach((item,idx) => { if (!hasMatch(item.title, rightNorms) && leftItems[idx]) leftItems[idx].classList.add('mismatch'); });
+        // Mark right items not found in left
+        ri.forEach((item,idx) => { if (!hasMatch(item.title, leftNorms) && rightItems[idx]) rightItems[idx].classList.add('mismatch'); });
     }
 
     function addChapter(side) {
@@ -1502,7 +1954,7 @@
         S.currentWritingMode = mode;
         const m = writingModes[mode];
         if (!m) return;
-        document.querySelectorAll('.wm-pill').forEach(p => {
+        document.querySelectorAll('.wm-sq').forEach(p => {
             p.classList.toggle('active', p.dataset.mode === mode);
         });
         const status = document.getElementById('wm-status');
@@ -1988,10 +2440,12 @@
         document.querySelectorAll('.matrix-filter[data-type="stage"]').forEach(cb => {
             if (saved.stage) cb.checked = saved.stage.includes(cb.dataset.val);
         });
-        document.querySelectorAll('.matrix-filter').forEach(cb => cb.addEventListener('change', () => {
-            persistMatrixFilters();
-            applyMatrixFilters();
-        }));
+        document.querySelectorAll('.matrix-filter').forEach(cb => {
+            cb.onchange = function() {
+                persistMatrixFilters();
+                applyMatrixFilters();
+            };
+        });
     }
     function persistMatrixFilters() {
         const state = {};
@@ -2627,184 +3081,705 @@
         updateWorkoutAnalytics();
     }
 
-    // MINDMAP
+    // ===== MINDMAP WHITEBOARD =====
+    let mmSel = null, mmConn = null, mmConnStyle = 'straight', mmConnDash = false, mmConnNoArr = false, mmArrStyle = 'triangle';
+    let mmDrag = null, mmDragOff = {x:0,y:0}, mmResizing = null, mmRszStart = {};
+    let mmMultiSel = []; // array of selected node IDs for box-select
+    let mmBoxSel = null; // {sx, sy} screen coords where box-select started
+    let mmMultiDragData = null; // {offsets: [{id, dx, dy}]} for multi-drag
+    let mmBoxSelDone = false; // prevents click from clearing selection right after box-select
+    let mmNodeMouseDown = 0; // timestamp guard: prevents canvas click after node mousedown rebuilt DOM
+    let mmUndoStack = [], mmRedoStack = [];
+    const MM_UNDO_MAX = 50;
+    function mmPushUndo() {
+        mmUndoStack.push(JSON.stringify(S.mindmap));
+        if (mmUndoStack.length > MM_UNDO_MAX) mmUndoStack.shift();
+        mmRedoStack = [];
+    }
+    function mmUndo() {
+        if (!mmUndoStack.length) return;
+        mmRedoStack.push(JSON.stringify(S.mindmap));
+        S.mindmap = JSON.parse(mmUndoStack.pop());
+        mmSel = null; mmMultiSel = []; save(); renderMindmap();
+    }
+    function mmRedo() {
+        if (!mmRedoStack.length) return;
+        mmUndoStack.push(JSON.stringify(S.mindmap));
+        S.mindmap = JSON.parse(mmRedoStack.pop());
+        mmSel = null; mmMultiSel = []; save(); renderMindmap();
+    }
+    let mmCtxPos = {x:0, y:0};
+    let mmTool = 'select'; // 'select','hand','shape','line','text','sticky'
+    let mmSubShape = 'rectangle', mmStickyColor = '#ffaa00';
+    let mmEditing = null;
+    let mmPanning = false, mmPanStart = {x:0,y:0,px:0,py:0};
+    let mmZoom = 1, mmPanX = 0, mmPanY = 0;
+    const MM_ZOOM_MIN = 0.1, MM_ZOOM_MAX = 4;
+    let mmGridVisible = false, mmSnapEnabled = false;
+    const MM_GRID_SIZE = 20;
+
+    function mmUpdateTransform() {
+        const vp = document.getElementById('mm-viewport');
+        if (vp) vp.style.transform = `translate(${mmPanX}px,${mmPanY}px) scale(${mmZoom})`;
+        const pct = document.getElementById('mm-zoom-pct');
+        if (pct) pct.textContent = Math.round(mmZoom * 100) + '%';
+        mmDrawGrid();
+    }
+    function mmScreenToCanvas(clientX, clientY) {
+        const cr = document.getElementById('mm-canvas').getBoundingClientRect();
+        return { x: (clientX - cr.left - mmPanX) / mmZoom, y: (clientY - cr.top - mmPanY) / mmZoom };
+    }
+
     function renderMindmap() {
-        const ns=document.getElementById('mm-nodes'), svg=document.getElementById('mm-svg');
-        let lines='';
-        S.mindmap.edges.forEach(e=>{
-            const a=S.mindmap.nodes.find(n=>n.id===e.f), b=S.mindmap.nodes.find(n=>n.id===e.t);
-            if(a&&b) {
-                const style = e.style || 'straight';
-                if (style === 'curved') {
-                    const cx = (a.x+b.x)/2, cy = Math.min(a.y,b.y) - 40;
-                    lines+=`<path d="M${a.x},${a.y} Q${cx},${cy} ${b.x},${b.y}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>`;
-                } else {
-                    lines+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>`;
-                }
-                if (e.bidir) {
-                    lines+=`<circle cx="${a.x}" cy="${a.y}" r="3" fill="rgba(255,170,0,0.5)"/><circle cx="${b.x}" cy="${b.y}" r="3" fill="rgba(255,170,0,0.5)"/>`;
-                }
-                if(e.label) {
-                    const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
-                    lines+=`<text x="${mx}" y="${my-6}" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="middle" font-family="var(--font-mono)">${e.label}</text>`;
-                }
+        const ns = document.getElementById('mm-nodes'), svg = document.getElementById('mm-svg');
+        if (!ns || !svg) return;
+        // Arrow marker defs — multiple arrowhead styles
+        const ac = 'rgba(255,255,255,0.3)';
+        const defs = `<defs>
+            <marker id="mm-arr-triangle" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${ac}"/></marker>
+            <marker id="mm-arr-open" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10" fill="none" stroke="${ac}" stroke-width="1.5"/></marker>
+            <marker id="mm-arr-diamond" viewBox="0 0 12 12" refX="12" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 6L6 0L12 6L6 12z" fill="${ac}"/></marker>
+            <marker id="mm-arr-circle" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><circle cx="5" cy="5" r="4" fill="${ac}"/></marker>
+            <marker id="mm-arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${ac}"/></marker>
+        </defs>`;
+        let lines = '';
+        S.mindmap.edges.forEach((e,idx) => {
+            const a = S.mindmap.nodes.find(n=>n.id===e.f), b = S.mindmap.nodes.find(n=>n.id===e.t);
+            if (!a || !b) return;
+            const sc = 'rgba(255,255,255,0.12)', dash = e.dashed ? ' stroke-dasharray="6 4"' : '';
+            const arrId = 'mm-arr-' + (e.arrStyle || 'triangle');
+            let markers = '';
+            if (e.arrow !== false) markers += ` marker-end="url(#${arrId})"`;
+            if (e.bidir) markers += ` marker-start="url(#${arrId})"`;
+            if ((e.style||'straight') === 'curved') {
+                const cx = (a.x+b.x)/2, cy = Math.min(a.y,b.y) - 50;
+                lines += `<path d="M${a.x},${a.y} Q${cx},${cy} ${b.x},${b.y}" fill="none" stroke="${sc}" stroke-width="2"${dash}${markers}/>`;
+            } else {
+                lines += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${sc}" stroke-width="2"${dash}${markers}/>`;
+            }
+            if (e.label) {
+                const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+                lines += `<text x="${mx}" y="${my-6}" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="middle" font-family="var(--font-mono)">${e.label}</text>`;
             }
         });
-        svg.innerHTML=lines;
-        // S1: Shape palette rendering
-        const shapeStyles = {
-            circle: 'border-radius:50%;min-width:80px;text-align:center;padding:20px 12px',
-            diamond: 'transform:rotate(45deg);min-width:70px;text-align:center;padding:18px 10px',
-            hexagon: 'clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%);min-width:90px;text-align:center;padding:18px 16px',
-            pill: 'border-radius:50px;padding:10px 20px',
-            rectangle: ''
+        if (mmConn) lines += '<line id="mm-cprev" x1="0" y1="0" x2="0" y2="0" stroke="var(--accent-gold)" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.6"/>';
+        svg.innerHTML = defs + lines;
+        // Shape styles
+        const shapeS = {
+            circle:'border-radius:50%;min-width:80px;padding:20px 12px',
+            diamond:'transform:rotate(45deg);min-width:70px;padding:18px 10px',
+            hexagon:'clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%);min-width:90px;padding:18px 16px',
+            pill:'border-radius:50px;padding:10px 20px',
+            rectangle:'',
+            text:'', sticky:''
         };
-        ns.innerHTML=S.mindmap.nodes.map(n=>{
-            const shape = n.shape || 'rectangle';
-            const extra = shapeStyles[shape] || '';
-            const textStyle = shape === 'diamond' ? 'transform:rotate(-45deg);display:block' : '';
-            return `<div class="mindmap-node" style="left:${n.x-50}px;top:${n.y-18}px;color:${n.color};border-color:${n.color}30;${extra}"
-                 onmousedown="startDragNode(event,${n.id})" onclick="mmNodeClick(${n.id})"><span style="${textStyle}">${n.text}</span></div>`;
+        ns.innerHTML = S.mindmap.nodes.map(n => {
+            const sh = n.shape||'rectangle', extra = shapeS[sh]||'';
+            const rot = sh==='diamond' ? 'transform:rotate(-45deg);display:block' : '';
+            const sel = mmMultiSel.includes(n.id) ? ' mm-multi' : mmSel===n.id ? ' mm-selected' : '';
+            const sz = (n.w ? 'width:'+n.w+'px;' : '') + (n.h ? 'height:'+n.h+'px;' : '');
+            const hasBody = n.body || mmEditing===n.id;
+            const bodyW = hasBody ? 'min-width:140px;text-align:left;' : '';
+            const isSticky = sh==='sticky', isText = sh==='text';
+            const nodeClass = isSticky ? ' mm-sticky-node' : isText ? ' mm-text-node' : '';
+            const colorS = isSticky ? `background:${n.color}18;border-color:${n.color}50;color:var(--text-primary)` : `color:${n.color};border-color:${n.color}30`;
+            let bodyHtml = '';
+            if (mmEditing === n.id) {
+                const val = (n.body||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+                bodyHtml = `<textarea class="mm-body-ta" id="mm-bedit-${n.id}" onblur="mmSaveBody(${n.id})" oninput="this.style.height='36px';this.style.height=Math.min(this.scrollHeight,200)+'px'" onkeydown="event.stopPropagation();if(event.key==='Escape'){event.preventDefault();this.blur();}" onmousedown="event.stopPropagation()" onclick="event.stopPropagation()">${val}</textarea>`;
+            } else if (n.body) {
+                bodyHtml = `<div class="mm-nbody">${n.body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>`;
+            }
+            const lockCls = n.locked ? ' mm-locked' : '';
+            const lockIcon = n.locked ? '<span class="mm-lock">&#128274;</span>' : '';
+            return `<div class="mindmap-node${sel}${nodeClass}${lockCls}" data-id="${n.id}" style="left:${n.x-50}px;top:${n.y-18}px;${colorS};${extra};${sz};${bodyW}" onmousedown="mmDown(event,${n.id})" ondblclick="mmDblNode(event,${n.id})" oncontextmenu="mmNodeCtx(event,${n.id})"><span class="mm-ntitle" style="${rot}">${n.text}</span>${bodyHtml}${lockIcon}<span class="mm-del" onclick="event.stopPropagation();mmDelNode(${n.id})">&times;</span><span class="mm-rsz" onmousedown="mmRszDown(event,${n.id})"></span></div>`;
         }).join('');
+        if (mmEditing) { const ta = document.getElementById('mm-bedit-'+mmEditing); if(ta && document.activeElement!==ta){ta.focus(); if(ta.value){ta.style.height='36px';ta.style.height=Math.min(ta.scrollHeight,200)+'px';}} }
+        mmUpdateTransform();
         updateMindmapList();
     }
-    let dragNode=null, dragOff={x:0,y:0};
-    function startDragNode(e,id) {
-        dragNode=S.mindmap.nodes.find(n=>n.id===id);
-        const rect=e.target.getBoundingClientRect(), canvas=document.getElementById('mm-canvas').getBoundingClientRect();
-        dragOff={x:e.clientX-(dragNode.x-50+canvas.left), y:e.clientY-(dragNode.y-18+canvas.top)};
-        document.onmousemove=moveNode; document.onmouseup=stopDrag;
-    }
-    function moveNode(e) {
-        if(!dragNode) return;
-        const canvas=document.getElementById('mm-canvas').getBoundingClientRect();
-        dragNode.x=e.clientX-canvas.left-dragOff.x+50;
-        dragNode.y=e.clientY-canvas.top-dragOff.y+18;
+
+    // Selection
+    function mmSelect(id) { mmSel = id; renderMindmap(); }
+    function mmDeselect() { mmSel = null; mmMultiSel = []; mmConn = null; const c = document.getElementById('mm-canvas'); if(c) c.onmousemove = null; renderMindmap(); }
+
+    // Tool system
+    function setMmTool(tool) {
+        mmTool = tool;
+        if (mmEditing) mmSaveBody(mmEditing);
+        if (mmConn) { mmConn=null; const c=document.getElementById('mm-canvas'); if(c) c.onmousemove=null; }
+        // Clean up any leftover state from previous tool
+        mmPanning = false; mmDrag = null; mmMultiDragData = null; mmBoxSel = null;
+        document.querySelectorAll('.mm-tool').forEach(b => b.classList.toggle('active', b.dataset.tool===tool));
+        document.getElementById('mm-canvas').dataset.tool = tool;
+        // Toggle submenus
+        document.querySelectorAll('.mm-tool-sub').forEach(s => s.classList.remove('open'));
+        if (tool==='shape') document.getElementById('mm-sub-shape').classList.add('open');
+        if (tool==='line') document.getElementById('mm-sub-line').classList.add('open');
+        if (tool==='sticky') document.getElementById('mm-sub-sticky').classList.add('open');
+        const hints = {select:'Click select \u00b7 Drag to box-select \u00b7 Dbl-click write \u00b7 \u2318Z undo', hand:'Drag to pan canvas \u00b7 Space+drag from any tool', shape:'Click canvas to place shape', line:'Click source node \u2192 Click target', text:'Click canvas to place text', sticky:'Click canvas to place note'};
+        const h = document.getElementById('mm-hint'); if(h) h.textContent = hints[tool]||'';
         renderMindmap();
     }
-    function stopDrag() { dragNode=null; document.onmousemove=null; document.onmouseup=null; save(); }
-    function addMindmapNode() {
-        const text=prompt('Node text:'); if(!text) return;
-        S.mindmap.nodes.push({id:Date.now(),x:300+Math.random()*200,y:150+Math.random()*150,text,color:'var(--text-primary)'});
-        renderMindmap(); save();
+    function mmSetSub(type, val, btn) {
+        if (type==='shape') mmSubShape = val;
+        if (type==='sticky') mmStickyColor = val;
+        btn.closest('.mm-tool-sub').querySelectorAll('.mm-sub-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
     }
-    // K3: Connect mode
-    let mmConnectMode = false, mmConnectSource = null;
-    function toggleConnectMode() {
-        mmConnectMode = !mmConnectMode;
-        mmConnectSource = null;
-        const btn = document.getElementById('mm-connect-btn');
-        if (btn) {
-            btn.style.color = mmConnectMode ? 'var(--accent-gold)' : '';
-            btn.textContent = mmConnectMode ? 'Connect: Click 2 Nodes' : 'Connect Mode';
+    function mmSetArr(style, btn) {
+        mmArrStyle = style;
+        btn.closest('.mm-tool-sub').querySelectorAll('.mm-sub-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    // Canvas mousedown — hand panning, middle-click pan, box-select
+    function mmCanvasDown(e) {
+        if (e.target.closest('.mindmap-node')) return;
+        const isHand = mmTool === 'hand' && e.button === 0;
+        const isMiddle = e.button === 1;
+        const isSpace = mmSpaceDown && e.button === 0;
+        const isSelect = mmTool === 'select' && e.button === 0 && !mmSpaceDown;
+        // Pan mode
+        if (isHand || isMiddle || isSpace) {
+            e.preventDefault();
+            const cv = document.getElementById('mm-canvas');
+            mmPanning = true;
+            mmPanStart = {x:e.clientX, y:e.clientY, px:mmPanX, py:mmPanY};
+            cv.style.cursor = 'grabbing';
+            document.onmousemove = function(ev) { if(!mmPanning) return; mmPanX=mmPanStart.px+(ev.clientX-mmPanStart.x); mmPanY=mmPanStart.py+(ev.clientY-mmPanStart.y); mmUpdateTransform(); };
+            document.onmouseup = function() { mmPanning=false; cv.style.cursor=''; document.onmousemove=null; document.onmouseup=null; };
+            return;
+        }
+        // Box-select mode
+        if (isSelect) {
+            e.preventDefault();
+            const cv = document.getElementById('mm-canvas');
+            const cr = cv.getBoundingClientRect();
+            mmBoxSel = { sx: e.clientX, sy: e.clientY, moved: false };
+            const rect = document.getElementById('mm-sel-rect');
+            rect.style.display = 'none';
+            document.onmousemove = function(ev) {
+                if (!mmBoxSel) return;
+                const dx = Math.abs(ev.clientX - mmBoxSel.sx), dy = Math.abs(ev.clientY - mmBoxSel.sy);
+                if (!mmBoxSel.moved && dx < 5 && dy < 5) return;
+                mmBoxSel.moved = true;
+                const cr2 = cv.getBoundingClientRect();
+                const x1 = Math.min(ev.clientX, mmBoxSel.sx) - cr2.left;
+                const y1 = Math.min(ev.clientY, mmBoxSel.sy) - cr2.top;
+                const w = Math.abs(ev.clientX - mmBoxSel.sx);
+                const h = Math.abs(ev.clientY - mmBoxSel.sy);
+                rect.style.display = 'block';
+                rect.style.left = x1 + 'px'; rect.style.top = y1 + 'px';
+                rect.style.width = w + 'px'; rect.style.height = h + 'px';
+            };
+            document.onmouseup = function(ev) {
+                document.onmousemove = null; document.onmouseup = null;
+                rect.style.display = 'none';
+                if (!mmBoxSel || !mmBoxSel.moved) { mmBoxSel = null; return; }
+                // Find nodes inside the selection rectangle (in canvas coords)
+                const p1 = mmScreenToCanvas(Math.min(ev.clientX, mmBoxSel.sx), Math.min(ev.clientY, mmBoxSel.sy));
+                const p2 = mmScreenToCanvas(Math.max(ev.clientX, mmBoxSel.sx), Math.max(ev.clientY, mmBoxSel.sy));
+                mmMultiSel = [];
+                S.mindmap.nodes.forEach(n => {
+                    // Check if node overlaps the selection box
+                    const nl = n.x - 50, nt = n.y - 18, nr = n.x + 50, nb = n.y + 18;
+                    if (nr >= p1.x && nl <= p2.x && nb >= p1.y && nt <= p2.y) {
+                        mmMultiSel.push(n.id);
+                    }
+                });
+                mmBoxSel = null;
+                if (mmMultiSel.length) { mmSel = null; mmBoxSelDone = true; renderMindmap(); }
+            };
         }
     }
-    function mmNodeClick(id) {
-        if (!mmConnectMode) return;
-        if (!mmConnectSource) {
-            mmConnectSource = id;
-            document.getElementById('mm-connect-btn').textContent = 'Connect: Select Target';
-        } else {
-            const label = prompt('Connection label (optional):') || '';
-            S.mindmap.edges.push({ f: mmConnectSource, t: id, label: label });
-            mmConnectSource = null;
-            mmConnectMode = false;
-            const btn = document.getElementById('mm-connect-btn');
-            if (btn) { btn.textContent = 'Connect Mode'; btn.style.color = ''; }
-            renderMindmap(); save();
+    // Tool placement functions
+    function mmPlaceShape(e) {
+        const p = mmScreenToCanvas(e.clientX, e.clientY);
+        const id = Date.now();
+        mmPushUndo();
+        S.mindmap.nodes.push({id, x:p.x+50, y:p.y+18, text:'Shape', color:'var(--text-primary)', shape:mmSubShape});
+        save(); mmSel=id; setMmTool('select'); setTimeout(()=>mmInlineEdit(id),50);
+    }
+    function mmPlaceText(e) {
+        const p = mmScreenToCanvas(e.clientX, e.clientY);
+        const id = Date.now();
+        mmPushUndo();
+        S.mindmap.nodes.push({id, x:p.x+50, y:p.y+18, text:'', color:'var(--text-primary)', shape:'text'});
+        save(); mmSel=id; setMmTool('select'); setTimeout(()=>mmInlineEdit(id),50);
+    }
+    function mmPlaceSticky(e) {
+        const p = mmScreenToCanvas(e.clientX, e.clientY);
+        const id = Date.now();
+        mmPushUndo();
+        S.mindmap.nodes.push({id, x:p.x+50, y:p.y+18, text:'Note', color:mmStickyColor, shape:'sticky', body:''});
+        save(); mmSel=id; mmEditing=id; setMmTool('select');
+    }
+    function mmEditBody(id) {
+        if (mmEditing === id) return;
+        if (mmEditing) mmSaveBody(mmEditing);
+        mmEditing = id; mmSel = id; renderMindmap();
+    }
+    function mmSaveBody(id) {
+        if (mmEditing !== id) return;
+        const ta = document.getElementById('mm-bedit-'+id);
+        const node = S.mindmap.nodes.find(n=>n.id===id);
+        if (ta && node) { node.body = ta.value || ''; save(); }
+        mmEditing = null;
+    }
+
+    // Node drag (single or multi)
+    function mmDown(e, id) {
+        if (e.button === 2) return;
+        if (e.target.tagName === 'TEXTAREA') return;
+        e.stopPropagation();
+        mmNodeMouseDown = Date.now();
+        if (mmEditing && mmEditing !== id) { mmSaveBody(mmEditing); renderMindmap(); }
+        // Line tool: start/finish connection on node click
+        if (mmTool === 'line') { if(mmConn && mmConn!==id){mmFinishConn(id);}else{mmStartConn(id,'straight',false,false);} return; }
+        if (mmConn && mmConn !== id) { mmFinishConn(id); return; }
+        // Multi-drag: if clicking a node that's part of multi-selection
+        if (mmTool === 'select' && mmMultiSel.length > 1 && mmMultiSel.includes(id)) {
+            e.preventDefault();
+            const startMX = e.clientX, startMY = e.clientY;
+            let mDragStarted = false;
+            const p = mmScreenToCanvas(e.clientX, e.clientY);
+            mmMultiDragData = { startX: p.x, startY: p.y, origins: {} };
+            mmMultiSel.forEach(nid => {
+                const nd = S.mindmap.nodes.find(n=>n.id===nid);
+                if (nd) mmMultiDragData.origins[nid] = { x: nd.x, y: nd.y };
+            });
+            document.onmousemove = function(ev) {
+                if (!mDragStarted) {
+                    if (Math.abs(ev.clientX - startMX) < 5 && Math.abs(ev.clientY - startMY) < 5) return;
+                    mDragStarted = true;
+                    mmPushUndo();
+                }
+                mmMultiMove(ev);
+            };
+            document.onmouseup = function() { mmMultiDragData=null; mDragStarted=false; document.onmousemove=null; document.onmouseup=null; save(); };
+            return;
+        }
+        // Single click on node: clear multi-select, select single
+        if (mmMultiSel.length) mmMultiSel = [];
+        mmSelect(id);
+        if (mmTool !== 'select') return; // only select tool drags
+        mmDrag = S.mindmap.nodes.find(n=>n.id===id);
+        if (!mmDrag || mmDrag.locked) { mmDrag=null; return; }
+        const startX = e.clientX, startY = e.clientY;
+        let dragStarted = false;
+        const p0 = mmScreenToCanvas(e.clientX, e.clientY);
+        mmDragOff = { x: p0.x - (mmDrag.x - 50), y: p0.y - (mmDrag.y - 18) };
+        document.onmousemove = function(ev) {
+            if (!dragStarted) {
+                if (Math.abs(ev.clientX - startX) < 5 && Math.abs(ev.clientY - startY) < 5) return;
+                dragStarted = true;
+                mmPushUndo();
+            }
+            mmMove(ev);
+        };
+        document.onmouseup = function() { mmDrag=null; dragStarted=false; document.onmousemove=null; document.onmouseup=null; save(); };
+    }
+    function mmMove(e) {
+        if (!mmDrag) return;
+        const p = mmScreenToCanvas(e.clientX, e.clientY);
+        mmDrag.x = Math.max(50, mmSnap(p.x - mmDragOff.x) + 50);
+        mmDrag.y = Math.max(18, mmSnap(p.y - mmDragOff.y) + 18);
+        renderMindmap();
+    }
+    // Multi-drag movement
+    function mmMultiMove(e) {
+        if (!mmMultiDragData) return;
+        const p = mmScreenToCanvas(e.clientX, e.clientY);
+        const dx = p.x - mmMultiDragData.startX, dy = p.y - mmMultiDragData.startY;
+        mmMultiSel.forEach(nid => {
+            const nd = S.mindmap.nodes.find(n=>n.id===nid); if (nd && nd.locked) return;
+            const orig = mmMultiDragData.origins[nid];
+            if (nd && orig) {
+                nd.x = mmSnap(orig.x + dx - 50) + 50;
+                nd.y = mmSnap(orig.y + dy - 18) + 18;
+            }
+        });
+        renderMindmap();
+    }
+
+    // Resize
+    function mmRszDown(e, id) {
+        e.stopPropagation(); e.preventDefault();
+        const node = S.mindmap.nodes.find(n=>n.id===id); if(!node || node.locked) return;
+        mmResizing = node;
+        const el = document.querySelector('.mindmap-node[data-id="'+id+'"]');
+        mmRszStart = { x:e.clientX, y:e.clientY, w:el.offsetWidth, h:el.offsetHeight };
+        document.onmousemove = mmRszMove; document.onmouseup = mmRszUp;
+    }
+    function mmRszMove(e) {
+        if (!mmResizing) return;
+        mmResizing.w = Math.max(60, mmRszStart.w + e.clientX - mmRszStart.x);
+        mmResizing.h = Math.max(30, mmRszStart.h + e.clientY - mmRszStart.y);
+        renderMindmap();
+    }
+    function mmRszUp() { mmResizing=null; document.onmousemove=null; document.onmouseup=null; save(); }
+
+    // Double-click canvas → new node
+    function mmCanvasDblClick(e) {
+        if (e.target.closest('.mindmap-node')) return;
+        if (Date.now() - mmNodeMouseDown < 300) return;
+        if (mmTool === 'hand') return;
+        if (mmEditing) mmSaveBody(mmEditing);
+        const p = mmScreenToCanvas(e.clientX, e.clientY);
+        const id = Date.now();
+        mmPushUndo();
+        S.mindmap.nodes.push({id, x:p.x+50, y:p.y+18, text:'New Node', color:'var(--text-primary)', shape:'rectangle'});
+        save(); mmSel = id; mmEditing = id; renderMindmap();
+    }
+    // Double-click node → edit
+    function mmDblNode(e, id) { e.stopPropagation(); mmEditBody(id); }
+    function mmInlineEdit(id) {
+        const node = S.mindmap.nodes.find(n=>n.id===id); if(!node) return;
+        const el = document.querySelector('.mindmap-node[data-id="'+id+'"] > span');
+        if (!el) return;
+        const inp = document.createElement('input');
+        inp.className = 'mm-inline-edit'; inp.value = node.text;
+        inp.style.width = Math.max(40,el.offsetWidth)+'px';
+        el.innerHTML = ''; el.appendChild(inp); inp.focus(); inp.select();
+        inp.onblur = () => { if(!inp.value && node.shape==='text'){mmDelNode(id);return;} node.text = inp.value||'Node'; save(); renderMindmap(); };
+        inp.onkeydown = (ev) => { if(ev.key==='Enter') inp.blur(); if(ev.key==='Escape'){inp.value=node.text; inp.blur();} };
+    }
+
+    // Delete
+    function mmDelNode(id) {
+        if (mmEditing===id) mmEditing=null;
+        mmPushUndo();
+        S.mindmap.nodes = S.mindmap.nodes.filter(n=>n.id!==id);
+        S.mindmap.edges = S.mindmap.edges.filter(e=>e.f!==id && e.t!==id);
+        if (mmSel===id) mmSel=null; save(); renderMindmap();
+    }
+    // Canvas click → deselect
+    function mmCanvasClick(e) {
+        if (e.target.closest('.mindmap-node')) return;
+        // Skip if node mousedown just fired (DOM rebuilt, click retargets to canvas)
+        if (Date.now() - mmNodeMouseDown < 300) return;
+        // Skip if box-select just finished (click fires right after mouseup)
+        if (mmBoxSelDone) { mmBoxSelDone = false; return; }
+        if (mmEditing) { mmSaveBody(mmEditing); renderMindmap(); return; }
+        if (mmTool === 'hand') return;
+        if (mmTool === 'shape') { mmPlaceShape(e); return; }
+        if (mmTool === 'text') { mmPlaceText(e); return; }
+        if (mmTool === 'sticky') { mmPlaceSticky(e); return; }
+        if (mmConn) { mmConn=null; document.getElementById('mm-canvas').onmousemove=null; renderMindmap(); }
+        else if (mmMultiSel.length) { mmMultiSel = []; renderMindmap(); }
+        else mmDeselect();
+    }
+
+    // === Context Menus ===
+    function mmContextMenu(e) {
+        e.preventDefault();
+        if (e.target.closest('.mindmap-node')) return;
+        const p = mmScreenToCanvas(e.clientX, e.clientY);
+        mmCtxPos = { x:p.x+50, y:p.y+18 };
+        showMmCtx(e.clientX, e.clientY, [
+            {label:'Rectangle', icon:'▬', fn:()=>mmQuickAdd('rectangle')},
+            {label:'Circle', icon:'●', fn:()=>mmQuickAdd('circle')},
+            {label:'Diamond', icon:'◆', fn:()=>mmQuickAdd('diamond')},
+            {label:'Pill', icon:'▰', fn:()=>mmQuickAdd('pill')},
+            'sep',
+            {label:'Paste from Clipboard', icon:'⎘', fn:mmPasteNode}
+        ]);
+    }
+    function mmNodeCtx(e, id) {
+        e.preventDefault(); e.stopPropagation(); mmSelect(id);
+        const colors = [{l:'White',v:'var(--text-primary)'},{l:'Gold',v:'#ffaa00'},{l:'Green',v:'#55efc4'},{l:'Blue',v:'#74b9ff'},{l:'Red',v:'#ff7675'},{l:'Purple',v:'#a29bfe'}];
+        const node = S.mindmap.nodes.find(n=>n.id===id); if(!node) return;
+        showMmCtx(e.clientX, e.clientY, [
+            {label:'Edit Text', icon:'✏', fn:()=>mmInlineEdit(id)},
+            'sep',
+            {label:'Connect → (straight)', icon:'→', fn:()=>mmStartConn(id,'straight',false,false)},
+            {label:'Connect ↝ (curved)', icon:'↝', fn:()=>mmStartConn(id,'curved',false,false)},
+            {label:'Connect ┄ (dashed)', icon:'┄', fn:()=>mmStartConn(id,'straight',true,false)},
+            {label:'Connect ↔ (both ways)', icon:'↔', fn:()=>mmStartConn(id,'straight',false,true)},
+            {label:'Connect — (no arrow)', icon:'—', fn:()=>{mmConn=id;mmConnStyle='straight';mmConnDash=false;mmConnNoArr=true;renderMindmap();document.getElementById('mm-canvas').onmousemove=mmConnPreview;}},
+            'sep',
+            {label:'Arrow: Triangle', icon:'▶', fn:()=>{mmArrStyle='triangle';}},
+            {label:'Arrow: Open', icon:'>', fn:()=>{mmArrStyle='open';}},
+            {label:'Arrow: Diamond', icon:'◆', fn:()=>{mmArrStyle='diamond';}},
+            {label:'Arrow: Dot', icon:'●', fn:()=>{mmArrStyle='circle';}},
+            'sep',
+            ...colors.map(c=>({label:c.l, icon:'●', iconColor:c.v==='var(--text-primary)'?'#fff':c.v, fn:()=>{node.color=c.v;save();renderMindmap();}})),
+            'sep',
+            {label:node.locked?'Unlock':'Lock', icon:node.locked?'🔓':'🔒', fn:()=>{node.locked=!node.locked;save();renderMindmap();}},
+            {label:'Duplicate', icon:'⧉', fn:()=>mmDupNode(id)},
+            {label:'Delete', icon:'✕', fn:()=>mmDelNode(id), danger:true}
+        ]);
+    }
+    function showMmCtx(x, y, items) {
+        const m = document.getElementById('mm-ctx');
+        m._items = items;
+        m.innerHTML = items.map((it,i) => {
+            if (it==='sep') return '<div class="mm-ctx-sep"></div>';
+            const ic = it.iconColor ? 'color:'+it.iconColor : '';
+            const dg = it.danger ? 'color:var(--accent-danger)' : '';
+            return `<div class="mm-ctx-item" style="${dg}" onclick="mmCtxRun(${i})"><span style="font-size:12px;width:16px;text-align:center;${ic}">${it.icon||''}</span>${it.label}</div>`;
+        }).join('');
+        // Position near cursor, clamp to viewport
+        m.style.left = Math.min(x, window.innerWidth-180)+'px';
+        m.style.top = Math.min(y, window.innerHeight-300)+'px';
+        m.classList.add('open');
+        setTimeout(()=>{ document.addEventListener('click', closeMmCtx, {once:true}); document.addEventListener('contextmenu', closeMmCtx, {once:true}); },10);
+    }
+    function mmCtxRun(i) { const m=document.getElementById('mm-ctx'); const it=(m._items||[])[i]; if(it&&it.fn) it.fn(); closeMmCtx(); }
+    function closeMmCtx() { document.getElementById('mm-ctx').classList.remove('open'); }
+
+    // Quick add from context menu
+    function mmQuickAdd(shape) {
+        const id = Date.now();
+        mmPushUndo();
+        S.mindmap.nodes.push({id, x:mmCtxPos.x, y:mmCtxPos.y, text:'New Node', color:'var(--text-primary)', shape});
+        save(); mmSel=id; renderMindmap();
+        setTimeout(()=>mmInlineEdit(id), 50);
+    }
+
+    // Connection drawing
+    function mmStartConn(fromId, style, dashed, bidir) {
+        mmConn = fromId; mmConnStyle = style||'straight'; mmConnDash = !!dashed; mmConnNoArr = false;
+        if (bidir) mmConnNoArr = 'bidir';
+        renderMindmap();
+        document.getElementById('mm-canvas').onmousemove = mmConnPreview;
+    }
+    function mmConnPreview(e) {
+        const ln = document.getElementById('mm-cprev');
+        if (!ln || !mmConn) return;
+        const src = S.mindmap.nodes.find(n=>n.id===mmConn); if(!src) return;
+        const p = mmScreenToCanvas(e.clientX, e.clientY);
+        ln.setAttribute('x1', src.x); ln.setAttribute('y1', src.y);
+        ln.setAttribute('x2', p.x); ln.setAttribute('y2', p.y);
+    }
+    function mmFinishConn(toId) {
+        if (!mmConn || mmConn===toId) return;
+        const edge = {f:mmConn, t:toId, style:mmConnStyle, arrStyle:mmArrStyle};
+        if (mmConnDash) edge.dashed = true;
+        if (mmConnNoArr === 'bidir') edge.bidir = true;
+        else if (mmConnNoArr) edge.arrow = false;
+        mmPushUndo();
+        S.mindmap.edges.push(edge);
+        mmConn = null; document.getElementById('mm-canvas').onmousemove = null;
+        save(); renderMindmap();
+    }
+
+    // Duplicate & Paste
+    function mmDupNode(id) {
+        const n = S.mindmap.nodes.find(nd=>nd.id===id); if(!n) return;
+        const nid = Date.now();
+        mmPushUndo();
+        S.mindmap.nodes.push({...JSON.parse(JSON.stringify(n)), id:nid, x:n.x+30, y:n.y+30});
+        mmSel=nid; save(); renderMindmap();
+    }
+    function mmPasteNode() {
+        navigator.clipboard.readText().then(t => {
+            if (!t) return;
+            const id = Date.now();
+            mmPushUndo();
+            S.mindmap.nodes.push({id, x:mmCtxPos.x, y:mmCtxPos.y, text:t.slice(0,100), color:'var(--text-primary)', shape:'rectangle'});
+            save(); renderMindmap();
+        }).catch(()=>{});
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.isContentEditable) return;
+        const sec = document.getElementById('sec-mindmap');
+        if (!sec || sec.offsetParent === null) return;
+        if (!e.ctrlKey && !e.metaKey && !e.altKey) {
+            if (e.key==='v') { setMmTool('select'); return; }
+            if (e.key==='h') { setMmTool('hand'); return; }
+            if (e.key==='r') { setMmTool('shape'); return; }
+            if (e.key==='l') { setMmTool('line'); return; }
+            if (e.key==='t') { setMmTool('text'); return; }
+            if (e.key==='n') { setMmTool('sticky'); return; }
+            if (e.key==='Escape') { setMmTool('select'); return; }
+            if (e.key==='g') { mmToggleGrid(); return; }
+            if (e.key==='s') { mmToggleSnap(); return; }
+            if (e.key==='='||e.key==='+') { e.preventDefault(); mmZoomIn(); return; }
+            if (e.key==='-') { e.preventDefault(); mmZoomOut(); return; }
+            if (e.key==='0') { e.preventDefault(); mmResetZoom(); return; }
+            if (e.key==='c') { mmCenterView(); return; }
+            if (e.key===' ') { e.preventDefault(); mmSpaceDown=true; document.getElementById('mm-canvas').style.cursor='grab'; return; }
+        }
+        if ((e.metaKey||e.ctrlKey) && e.key==='z' && !e.shiftKey) { e.preventDefault(); mmUndo(); return; }
+        if ((e.metaKey||e.ctrlKey) && (e.key==='z' && e.shiftKey || e.key==='y')) { e.preventDefault(); mmRedo(); return; }
+        if ((e.metaKey||e.ctrlKey) && (e.key==='='||e.key==='+')) { e.preventDefault(); mmZoomIn(); return; }
+        if ((e.metaKey||e.ctrlKey) && e.key==='-') { e.preventDefault(); mmZoomOut(); return; }
+        if ((e.metaKey||e.ctrlKey) && e.key==='0') { e.preventDefault(); mmResetZoom(); return; }
+        if ((e.key==='Delete'||e.key==='Backspace') && (mmSel || mmMultiSel.length)) {
+            e.preventDefault();
+            if (mmMultiSel.length) { mmMultiSel.forEach(nid=>mmDelNode(nid)); mmMultiSel=[]; }
+            else if (mmSel) mmDelNode(mmSel);
+        }
+    });
+    let mmSpaceDown = false;
+    document.addEventListener('keyup', function(e) {
+        if (e.key===' ') { mmSpaceDown=false; const cv=document.getElementById('mm-canvas'); if(cv) cv.style.cursor=''; }
+    });
+
+    // Grid rendering — viewport-locked dot grid
+    function mmDrawGrid() {
+        const gc = document.getElementById('mm-grid');
+        if (!gc) return;
+        const cv = document.getElementById('mm-canvas');
+        // Size canvas to fill viewport
+        gc.width = cv.clientWidth;
+        gc.height = cv.clientHeight;
+        const ctx = gc.getContext('2d');
+        ctx.clearRect(0, 0, gc.width, gc.height);
+        if (!mmGridVisible) { gc.style.display='none'; return; }
+        gc.style.display='block';
+        const g = MM_GRID_SIZE;
+        const gScreen = g * mmZoom;
+        // Skip drawing if zoomed out too far (dots would overlap)
+        if (gScreen < 4) return;
+        // Calculate grid offset from pan
+        const offX = mmPanX % gScreen;
+        const offY = mmPanY % gScreen;
+        const majorStep = 5;
+        const majorScreen = g * majorStep * mmZoom;
+        const majorOffX = mmPanX % majorScreen;
+        const majorOffY = mmPanY % majorScreen;
+        // Minor dots
+        ctx.fillStyle = 'rgba(255,255,255,0.07)';
+        for (let sx = offX; sx <= gc.width; sx += gScreen) {
+            for (let sy = offY; sy <= gc.height; sy += gScreen) {
+                ctx.fillRect(Math.round(sx), Math.round(sy), 1, 1);
+            }
+        }
+        // Major dots every 5 cells — brighter + larger
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        for (let sx = majorOffX; sx <= gc.width; sx += majorScreen) {
+            for (let sy = majorOffY; sy <= gc.height; sy += majorScreen) {
+                ctx.beginPath();
+                ctx.arc(Math.round(sx), Math.round(sy), 1.5, 0, Math.PI*2);
+                ctx.fill();
+            }
         }
     }
-    function addMindmapConnection() {
-        const list=S.mindmap.nodes.map(n=>`${n.id}: ${n.text}`).join('\n');
-        const fid=parseInt(prompt('From node ID:\n'+list)); const tid=parseInt(prompt('To node ID:\n'+list));
-        if(fid&&tid) { S.mindmap.edges.push({f:fid,t:tid}); renderMindmap(); save(); }
+    function mmToggleGrid() {
+        mmGridVisible = !mmGridVisible;
+        document.getElementById('mm-grid-btn').classList.toggle('active', mmGridVisible);
+        mmDrawGrid();
     }
-    function clearMindmap() { if(confirm('Clear mindmap?')){S.mindmap={nodes:[],edges:[]}; renderMindmap(); save();} }
+    function mmToggleSnap() {
+        mmSnapEnabled = !mmSnapEnabled;
+        document.getElementById('mm-snap-btn').classList.toggle('active', mmSnapEnabled);
+    }
+    function mmSnap(val) { return mmSnapEnabled ? Math.round(val / MM_GRID_SIZE) * MM_GRID_SIZE : val; }
+
+    // Zoom functions
+    function mmWheelZoom(e) {
+        e.preventDefault();
+        // Shift+scroll = horizontal pan
+        if (e.shiftKey) { mmPanX -= e.deltaY; mmUpdateTransform(); return; }
+        // Trackpad horizontal swipe (deltaX present) = pan both axes
+        if (!e.ctrlKey && !e.metaKey && Math.abs(e.deltaX) > 2) {
+            mmPanX -= e.deltaX; mmPanY -= e.deltaY; mmUpdateTransform(); return;
+        }
+        // Pinch (ctrlKey from trackpad) = smooth zoom, plain scroll = zoom
+        const cr = document.getElementById('mm-canvas').getBoundingClientRect();
+        const mouseX = e.clientX - cr.left, mouseY = e.clientY - cr.top;
+        const factor = e.ctrlKey ? (e.deltaY > 0 ? 0.97 : 1.03) : (e.deltaY > 0 ? 0.92 : 1.08);
+        const newZoom = Math.min(MM_ZOOM_MAX, Math.max(MM_ZOOM_MIN, mmZoom * factor));
+        const scale = newZoom / mmZoom;
+        mmPanX = mouseX - scale * (mouseX - mmPanX);
+        mmPanY = mouseY - scale * (mouseY - mmPanY);
+        mmZoom = newZoom;
+        mmUpdateTransform();
+    }
+    function mmZoomIn() { mmZoomCenter(mmZoom * 1.25); }
+    function mmZoomOut() { mmZoomCenter(mmZoom / 1.25); }
+    function mmCenterView() {
+        const nodes = S.mindmap.nodes||[];
+        if (!nodes.length) { mmPanX=0; mmPanY=0; mmUpdateTransform(); return; }
+        const cr = document.getElementById('mm-canvas').getBoundingClientRect();
+        const cx = nodes.reduce((s,n)=>s+n.x,0)/nodes.length;
+        const cy = nodes.reduce((s,n)=>s+n.y,0)/nodes.length;
+        mmPanX = cr.width/2 - cx*mmZoom;
+        mmPanY = cr.height/2 - cy*mmZoom;
+        mmUpdateTransform();
+    }
+    function mmResetZoom() { mmZoom=1; mmCenterView(); }
+    function mmZoomCenter(z) {
+        const cr = document.getElementById('mm-canvas').getBoundingClientRect();
+        const cx = cr.width/2, cy = cr.height/2;
+        const newZoom = Math.min(MM_ZOOM_MAX, Math.max(MM_ZOOM_MIN, z));
+        const scale = newZoom / mmZoom;
+        mmPanX = cx - scale * (cx - mmPanX);
+        mmPanY = cy - scale * (cy - mmPanY);
+        mmZoom = newZoom;
+        mmUpdateTransform();
+    }
+    function mmFitView() {
+        const nodes = S.mindmap.nodes||[];
+        if (!nodes.length) { mmResetZoom(); return; }
+        const cr = document.getElementById('mm-canvas').getBoundingClientRect();
+        const xs = nodes.map(n=>n.x-50), ys = nodes.map(n=>n.y-18);
+        const xMax = nodes.map(n=>n.x+80), yMax = nodes.map(n=>n.y+40);
+        const minX=Math.min(...xs), minY=Math.min(...ys), maxX=Math.max(...xMax), maxY=Math.max(...yMax);
+        const w=maxX-minX||1, h=maxY-minY||1;
+        const pad = 60;
+        const zx = (cr.width-pad*2)/w, zy = (cr.height-pad*2)/h;
+        mmZoom = Math.min(MM_ZOOM_MAX, Math.max(MM_ZOOM_MIN, Math.min(zx, zy)));
+        mmPanX = (cr.width - w*mmZoom)/2 - minX*mmZoom;
+        mmPanY = (cr.height - h*mmZoom)/2 - minY*mmZoom;
+        mmUpdateTransform();
+    }
+    // Attach wheel zoom to canvas
+    (function() {
+        const attach = () => { const cv=document.getElementById('mm-canvas'); if(cv) cv.addEventListener('wheel', mmWheelZoom, {passive:false}); };
+        if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', attach); else attach();
+    })();
+
+    // Existing utilities (unchanged)
+    function clearMindmap() { if(confirm('Clear mindmap?')){S.mindmap={nodes:[],edges:[]}; mmSel=null; renderMindmap(); save();} }
     function exportMindmap(fmt) { dl('mindmap.json',JSON.stringify(S.mindmap,null,2),'application/json'); }
 
-    // K4: PNG export via canvas
     function exportMindmapPNG() {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        const nodes = S.mindmap.nodes || [];
-        const edges = S.mindmap.edges || [];
-        if (nodes.length === 0) { alert('No nodes to export'); return; }
-        const maxX = Math.max(...nodes.map(n=>n.x)) + 100;
-        const maxY = Math.max(...nodes.map(n=>n.y)) + 100;
-        canvas.width = Math.max(maxX, 400);
-        canvas.height = Math.max(maxY, 300);
-        ctx.fillStyle = '#0a0a0c';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        // Draw edges
-        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-        ctx.lineWidth = 2;
-        edges.forEach(e => {
-            const a = nodes.find(n=>n.id===e.f), b = nodes.find(n=>n.id===e.t);
-            if (a && b) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
-        });
-        // Draw nodes
+        const nodes = S.mindmap.nodes||[], edges = S.mindmap.edges||[];
+        if (!nodes.length) { alert('No nodes to export'); return; }
+        const maxX = Math.max(...nodes.map(n=>n.x))+100, maxY = Math.max(...nodes.map(n=>n.y))+100;
+        canvas.width = Math.max(maxX,400); canvas.height = Math.max(maxY,300);
+        ctx.fillStyle='#0a0a0c'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=2;
+        edges.forEach(e => { const a=nodes.find(n=>n.id===e.f),b=nodes.find(n=>n.id===e.t); if(a&&b){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();} });
         nodes.forEach(n => {
-            ctx.fillStyle = '#151519';
-            ctx.strokeStyle = n.color || '#444';
-            ctx.lineWidth = 1;
-            const w = ctx.measureText(n.text).width + 28;
-            ctx.beginPath(); ctx.roundRect(n.x - w/2, n.y - 15, w, 30, 6); ctx.fill(); ctx.stroke();
-            ctx.fillStyle = n.color || '#fff';
-            ctx.font = '12px Sora, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(n.text, n.x, n.y);
+            ctx.fillStyle='#151519'; ctx.strokeStyle=n.color||'#444'; ctx.lineWidth=1;
+            ctx.font='12px Sora, sans-serif';
+            const w=ctx.measureText(n.text).width+28;
+            ctx.beginPath(); ctx.roundRect(n.x-w/2,n.y-15,w,30,6); ctx.fill(); ctx.stroke();
+            ctx.fillStyle=n.color||'#fff'; ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillText(n.text,n.x,n.y);
         });
-        canvas.toBlob(blob => {
-            const u = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = u; a.download = 'mindmap.png'; document.body.appendChild(a); a.click();
-            setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(u); }, 100);
-        });
+        canvas.toBlob(blob => { const u=URL.createObjectURL(blob),a=document.createElement('a'); a.href=u; a.download='mindmap.png'; document.body.appendChild(a); a.click(); setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(u);},100); });
     }
 
-    // S4: SVG export
     function exportMindmapSVG() {
-        const nodes = S.mindmap.nodes || [];
-        const edges = S.mindmap.edges || [];
-        if (nodes.length === 0) { alert('No nodes to export'); return; }
-        const maxX = Math.max(...nodes.map(n=>n.x)) + 120;
-        const maxY = Math.max(...nodes.map(n=>n.y)) + 100;
-        let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${maxX}" height="${maxY}" style="background:#0a0a0c">`;
-        edges.forEach(e => {
-            const a = nodes.find(n=>n.id===e.f), b = nodes.find(n=>n.id===e.t);
-            if (a && b) {
-                svg += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>`;
-                if (e.label) {
-                    const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
-                    svg += `<text x="${mx}" y="${my-6}" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="middle">${e.label}</text>`;
-                }
-            }
-        });
-        nodes.forEach(n => {
-            const w = n.text.length * 8 + 28;
-            svg += `<rect x="${n.x-w/2}" y="${n.y-15}" width="${w}" height="30" rx="6" fill="#151519" stroke="${n.color||'#444'}" stroke-width="1"/>`;
-            svg += `<text x="${n.x}" y="${n.y+4}" fill="${n.color||'#fff'}" font-size="12" text-anchor="middle" font-family="Sora,sans-serif">${n.text}</text>`;
-        });
-        svg += '</svg>';
-        dl('mindmap.svg', svg, 'image/svg+xml');
+        const nodes=S.mindmap.nodes||[], edges=S.mindmap.edges||[];
+        if (!nodes.length) { alert('No nodes to export'); return; }
+        const maxX=Math.max(...nodes.map(n=>n.x))+120, maxY=Math.max(...nodes.map(n=>n.y))+100;
+        let svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${maxX}" height="${maxY}" style="background:#0a0a0c">`;
+        edges.forEach(e => { const a=nodes.find(n=>n.id===e.f),b=nodes.find(n=>n.id===e.t); if(a&&b){svg+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>`; if(e.label){const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;svg+=`<text x="${mx}" y="${my-6}" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="middle">${e.label}</text>`;}} });
+        nodes.forEach(n => { const w=n.text.length*8+28; svg+=`<rect x="${n.x-w/2}" y="${n.y-15}" width="${w}" height="30" rx="6" fill="#151519" stroke="${n.color||'#444'}" stroke-width="1"/><text x="${n.x}" y="${n.y+4}" fill="${n.color||'#fff'}" font-size="12" text-anchor="middle" font-family="Sora,sans-serif">${n.text}</text>`; });
+        svg+='</svg>'; dl('mindmap.svg',svg,'image/svg+xml');
     }
 
-    // K5: Named save/load
     function saveNamedMindmap() {
-        const name = prompt('Save mindmap as:');
-        if (!name) return;
+        const name = prompt('Save mindmap as:'); if(!name) return;
         if (!S.savedMindmaps) S.savedMindmaps = {};
         S.savedMindmaps[name] = JSON.parse(JSON.stringify(S.mindmap));
-        save();
-        updateMindmapList();
-        alert('Mindmap "' + name + '" saved');
+        save(); updateMindmapList();
     }
     function loadNamedMindmap() {
         const sel = document.getElementById('mm-saved');
         if (!sel || sel.value === '') return;
         const mm = (S.savedMindmaps||{})[sel.value];
-        if (mm) { S.mindmap = JSON.parse(JSON.stringify(mm)); renderMindmap(); }
+        if (mm) { S.mindmap = JSON.parse(JSON.stringify(mm)); mmSel=null; renderMindmap(); }
     }
     function updateMindmapList() {
         const sel = document.getElementById('mm-saved');
@@ -2817,27 +3792,26 @@
     function initDecisions() {
         document.getElementById('k-decisions').textContent=S.decisions.length;
         document.getElementById('decisions-list').innerHTML=S.decisions.map((d,i)=>`
-            <div class="card" data-idx="${i}" style="padding:10px;background:var(--bg-deep);cursor:grab">
+            <div class="card" data-idx="${i}" style="padding:10px;background:var(--bg-deep);cursor:grab;${d.status==='resolved'?'opacity:0.45;':''}">
                 <div class="flex items-center justify-between" style="margin-bottom:6px">
                     <div style="display:flex;align-items:center;gap:6px">
                         <span style="color:rgba(255,255,255,0.15);font-size:10px;cursor:grab">&#9776;</span>
+                        <span onclick="toggleDecision(${i})" style="width:14px;height:14px;border-radius:50%;border:1.5px solid ${d.status==='resolved'?'var(--accent-success)':'var(--border-hover)'};background:${d.status==='resolved'?'var(--accent-success)':'transparent'};cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:8px;color:#fff;flex-shrink:0" title="${d.status==='resolved'?'Mark open':'Mark resolved'}">${d.status==='resolved'?'✓':''}</span>
                         <span class="badge ${d.status==='resolved'?'badge-green':'badge-orange'}">${d.status}</span>
                     </div>
-                    <span style="font-size:9px;color:var(--text-tertiary)">${d.date}</span>
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span style="font-size:9px;color:var(--text-tertiary)">${d.date}</span>
+                        <span onclick="deleteDecision(${i})" style="color:rgba(255,255,255,0.2);cursor:pointer;font-size:14px;line-height:1;padding:0 2px" title="Delete">&times;</span>
+                    </div>
                 </div>
-                <div style="font-size:12px;font-weight:600;color:var(--text-primary)">${d.title}</div>
+                <div style="font-size:12px;font-weight:600;color:var(--text-primary);${d.status==='resolved'?'text-decoration:line-through;':''}">${d.title}</div>
                 <div style="font-size:10px;color:var(--text-tertiary);margin-top:3px">${d.context}</div>
             </div>`).join('');
-        document.getElementById('bottlenecks-list').innerHTML=S.bottlenecks.map((b,i)=>`
-            <div class="card" data-idx="${i}" style="padding:10px;background:var(--bg-deep);border-color:${b.priority==='high'?'var(--accent-warning)':'var(--border-subtle)'};cursor:grab">
-                <div class="flex items-center justify-between" style="margin-bottom:6px">
-                    <div style="display:flex;align-items:center;gap:6px">
-                        <span style="color:rgba(255,255,255,0.15);font-size:10px;cursor:grab">&#9776;</span>
-                        <span class="badge ${b.priority==='high'?'badge-orange':''}">${b.priority}</span>
-                    </div>
-                    <button class="btn btn-sm" onclick="resolveBottleneck(${b.id})">Resolve</button>
-                </div>
-                <div style="font-size:12px;font-weight:600;color:var(--text-primary)">${b.title}</div>
+        document.getElementById('bottlenecks-list').innerHTML=S.bottlenecks.map(b=>`
+            <div style="display:flex;align-items:flex-start;gap:8px;padding:6px 4px;border-bottom:1px solid rgba(255,255,255,0.03)">
+                <span onclick="toggleNoteStatus(${b.id})" style="width:10px;height:10px;border-radius:50%;background:${b.resolved?'var(--accent-success)':'var(--accent-danger)'};flex-shrink:0;cursor:pointer;margin-top:3px" title="${b.resolved?'Resolved':'Unresolved'} — click to toggle"></span>
+                <div style="flex:1;font-size:10px;color:${b.resolved?'var(--text-tertiary)':'var(--text-secondary)'};line-height:1.5;${b.resolved?'text-decoration:line-through;opacity:0.5;':''}">${(b.title||'').replace(/\n/g,'<br>')}</div>
+                <span onclick="deleteNote(${b.id})" style="color:rgba(255,255,255,0.15);cursor:pointer;font-size:12px;line-height:1;padding:0 2px" title="Delete">&times;</span>
             </div>`).join('');
         // Init Sortable on both lists
         if (typeof Sortable !== 'undefined') {
@@ -2849,14 +3823,7 @@
                     save();
                 }
             });
-            Sortable.create(document.getElementById('bottlenecks-list'), {
-                animation: 150, ghostClass: 'sortable-ghost',
-                onEnd: function(evt) {
-                    const item = S.bottlenecks.splice(evt.oldIndex, 1)[0];
-                    S.bottlenecks.splice(evt.newIndex, 0, item);
-                    save();
-                }
-            });
+            // Notes list — no drag needed
         }
     }
     function addDecision() {
@@ -2891,39 +3858,32 @@
         save(); initDecisions();
         showToast('Decision locked');
     }
-    function addBottleneck() {
-        const list = document.getElementById('bottlenecks-list');
-        const draft = document.createElement('div');
-        draft.className = 'card';
-        draft.style.cssText = 'padding:10px;background:var(--bg-deep);border-color:var(--accent-gold)';
-        draft.innerHTML = `
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-                <span class="badge badge-orange">draft</span>
-                <select class="bn-priority" style="font-size:9px;padding:2px 4px;background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:3px;color:var(--text-secondary)">
-                    <option value="high">High</option>
-                    <option value="normal">Normal</option>
-                </select>
-                <span style="flex:1"></span>
-                <button class="btn btn-sm btn-primary" onclick="lockBottleneck(this)" style="font-size:9px;padding:2px 8px">Lock</button>
-                <button class="btn btn-sm" onclick="this.closest('.card').remove()" style="color:var(--accent-danger);font-size:9px;padding:2px 6px">&times;</button>
-            </div>
-            <input type="text" class="bn-title" placeholder="Bottleneck..." autofocus style="width:100%;background:transparent;border:none;border-bottom:1px solid var(--border-subtle);color:var(--text-primary);font-size:12px;font-weight:600;padding:4px 0;outline:none">`;
-        list.prepend(draft);
-        draft.querySelector('.bn-title').focus();
-    }
-    function lockBottleneck(btn) {
-        const card = btn.closest('.card');
-        const title = card.querySelector('.bn-title').value.trim();
-        if (!title) { card.querySelector('.bn-title').focus(); return; }
-        const priority = card.querySelector('.bn-priority').value;
-        S.bottlenecks.unshift({id:Date.now(),title,priority});
+    function toggleDecision(idx) {
+        const d = S.decisions[idx]; if(!d) return;
+        d.status = d.status==='resolved' ? 'open' : 'resolved';
         save(); initDecisions();
-        showToast('Bottleneck locked');
     }
-    function resolveBottleneck(id) {
-        if(!confirm('Mark this bottleneck as resolved and remove it?')) return;
-        S.bottlenecks=S.bottlenecks.filter(b=>b.id!==id); initDecisions(); save();
+    function deleteDecision(idx) {
+        S.decisions.splice(idx, 1);
+        save(); initDecisions();
     }
+    function saveNote() {
+        const el = document.getElementById('bn-scratchpad');
+        const text = (el.value||'').trim();
+        if (!text) { el.focus(); return; }
+        S.bottlenecks.unshift({id:Date.now(), title:text, resolved:false});
+        el.value = '';
+        save(); initDecisions();
+    }
+    function toggleNoteStatus(id) {
+        const b = S.bottlenecks.find(n=>n.id===id);
+        if (b) { b.resolved = !b.resolved; save(); initDecisions(); }
+    }
+    function deleteNote(id) {
+        S.bottlenecks = S.bottlenecks.filter(n=>n.id!==id);
+        save(); initDecisions();
+    }
+    // resolveBottleneck replaced by toggleNoteStatus/deleteNote
 
     // BARCODE
     function initBarcode() {
@@ -3332,16 +4292,6 @@
         if (db) {
             db.innerHTML = S.bottlenecks.map(b => `<div style="padding:4px 0;border-bottom:1px solid var(--border-subtle);font-size:10px"><span class="badge ${b.priority==='high'?'badge-orange':''}" style="margin-right:6px">${b.priority}</span>${b.title}</div>`).join('') || '<div style="font-size:10px;color:var(--accent-success)">No active bottlenecks</div>';
         }
-    }
-
-    // S1-S4: Enhanced Mindmap
-    const mmShapes = ['rectangle','circle','diamond','hexagon','pill'];
-    function addMindmapNodeShaped() {
-        const text = prompt('Node text:'); if (!text) return;
-        const shape = prompt('Shape (rectangle/circle/diamond/hexagon/pill):', 'rectangle') || 'rectangle';
-        const color = prompt('Color (hex):', '#ffaa00') || 'var(--text-primary)';
-        S.mindmap.nodes.push({ id:Date.now(), x:300+Math.random()*200, y:150+Math.random()*150, text, color, shape: shape });
-        renderMindmap(); save();
     }
 
     // Y1: MATRIX QUERY ENGINE
