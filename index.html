@@ -107,25 +107,29 @@
         /* TOC hierarchy: Part > Chapter > Section */
         .toc-item { background: var(--bg-deep); border: 1px solid var(--border-subtle); border-left: 2px solid #27272a; border-radius: var(--radius-sm); padding: var(--sp-2) var(--sp-3); cursor: grab; transition: all 0.15s; display: flex; align-items: center; gap: var(--sp-2); }
         .toc-item:hover { border-color: var(--border-hover); background: var(--bg-surface); }
-        .toc-item .type-tag { font-family: var(--font-mono); font-size: 8px; color: var(--text-tertiary); min-width: 14px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .toc-item .type-tag { font-family: var(--font-mono); font-size: 8px; color: var(--text-tertiary); min-width: 30px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
         .toc-item .title { font-size: 12px; flex: 1; color: rgba(255,255,255,0.85); font-weight: 400; line-height: 1.4; }
-        /* Part = Level 0: large, bold, white, no indent */
-        .toc-item.is-part { background: var(--bg-surface); border-left: 3px solid rgba(255,255,255,0.25); padding: var(--sp-3) var(--sp-3); margin-top: var(--sp-2); }
-        .toc-item.is-part .title { font-size: 14px; color: #ffffff; font-weight: 700; letter-spacing: 0.2px; }
-        .toc-item.is-part .type-tag { color: rgba(255,255,255,0.5); }
-        /* Chapter = Level 1: indent 24px, medium weight */
-        .toc-item.is-chapter { margin-left: var(--sp-5); border-left-color: rgba(255,255,255,0.10); }
-        .toc-item.is-chapter .title { font-size: 12px; color: rgba(255,255,255,0.75); font-weight: 500; }
-        /* Section = Level 2: indent 48px, lighter */
-        .toc-item.is-section { margin-left: var(--sp-8); border-left-color: transparent; }
-        .toc-item.is-section .title { font-size: 11px; color: rgba(255,255,255,0.45); font-weight: 400; }
-        .toc-item.is-section .type-tag { color: rgba(255,255,255,0.2); }
+        /* Part = Level 0: prominent, gradient accent, no indent */
+        .toc-item.is-part { background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.08) 100%); border: 2px solid rgba(255,255,255,0.15); border-left: 4px solid #667eea; padding: 14px 16px; margin-top: var(--sp-3); border-radius: 10px; }
+        .toc-item.is-part:hover { background: linear-gradient(135deg, rgba(102,126,234,0.14) 0%, rgba(118,75,162,0.14) 100%); border-color: rgba(255,255,255,0.25); }
+        .toc-item.is-part .title { font-size: 15px; color: #ffffff; font-weight: 800; letter-spacing: 0.3px; text-transform: uppercase; }
+        .toc-item.is-part .type-tag { color: #667eea; font-size: 9px; font-weight: 700; min-width: 36px; }
+        /* Chapter = Level 1: indent, colored number, expandable */
+        .toc-item.is-chapter { margin-left: 20px; border: 1px solid rgba(255,255,255,0.08); border-left: 3px solid rgba(102,126,234,0.4); background: rgba(255,255,255,0.02); padding: 10px 14px; border-radius: 8px; margin-top: 2px; }
+        .toc-item.is-chapter:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); }
+        .toc-item.is-chapter .title { font-size: 13px; color: rgba(255,255,255,0.9); font-weight: 600; }
+        .toc-item.is-chapter .type-tag { color: #667eea; font-weight: 600; }
+        /* Section = Level 2: deeper indent, subdued */
+        .toc-item.is-section { margin-left: 48px; border: 1px solid rgba(255,255,255,0.04); border-left: 2px solid rgba(136,136,136,0.2); background: transparent; padding: 6px 12px; border-radius: 6px; margin-top: 1px; }
+        .toc-item.is-section:hover { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); }
+        .toc-item.is-section .title { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 400; }
+        .toc-item.is-section .type-tag { color: rgba(136,136,136,0.5); font-size: 7px; }
         .toc-item .movement-badges { display: flex; gap: 3px; flex-wrap: wrap; }
         .toc-item .movement-badge { font-size: 7px; padding: 1px 4px; border-radius: 2px; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); font-family: var(--font-mono); }
         .toc-item.mismatch { border-color: var(--accent-danger); background: rgba(255,68,102,0.06); }
         /* Collapse chevron */
-        .toc-chevron { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; cursor: pointer; color: rgba(255,255,255,0.3); font-size: 10px; transition: transform 0.2s; flex-shrink: 0; border-radius: 3px; }
-        .toc-chevron:hover { color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.04); }
+        .toc-chevron { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; cursor: pointer; color: rgba(255,255,255,0.35); font-size: 11px; transition: transform 0.3s ease, color 0.2s; flex-shrink: 0; border-radius: 4px; }
+        .toc-chevron:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); }
         .toc-chevron.collapsed { transform: rotate(-90deg); }
         .toc-item.toc-collapsed-child { display: none; }
         .ghost { opacity: 0.3; }
@@ -1737,12 +1741,13 @@
             if (i.type === 'part') { currentPartId = i.id; currentChapterId = null; }
             else if (i.type === 'chapter') { currentChapterId = i.id; }
             // Determine if this item should be hidden (parent collapsed)
+            // Default: Parts collapsed, Chapters collapsed — drill-in navigation
             let hiddenClass = '';
             if (i.type === 'chapter' && currentPartId) {
                 if (collapseState['p_'+currentPartId] !== false) hiddenClass = 'toc-collapsed-child';
             } else if (i.type === 'section') {
                 if (currentPartId && collapseState['p_'+currentPartId] !== false) hiddenClass = 'toc-collapsed-child';
-                else if (currentChapterId && collapseState['ch_'+currentChapterId] === true) hiddenClass = 'toc-collapsed-child';
+                else if (currentChapterId && collapseState['ch_'+currentChapterId] !== false) hiddenClass = 'toc-collapsed-child';
             }
             // Chevron for parts and chapters with children
             let chevron = '';
@@ -1750,7 +1755,7 @@
                 const isCollapsed = collapseState['p_'+i.id] !== false;
                 chevron = `<span class="toc-chevron ${isCollapsed?'collapsed':''}" onclick="event.stopPropagation();toggleTOCCollapse(this,'p_${i.id}','${side}')">&#9654;</span>`;
             } else if (i.type === 'chapter' && hasChildren[i.id]) {
-                const isCollapsed = collapseState['ch_'+i.id] === true;
+                const isCollapsed = collapseState['ch_'+i.id] !== false;
                 chevron = `<span class="toc-chevron ${isCollapsed?'collapsed':''}" onclick="event.stopPropagation();toggleTOCCollapse(this,'ch_${i.id}','${side}')">&#9654;</span>`;
             }
             html += `
@@ -1777,13 +1782,25 @@
         const item = chevron.closest('.toc-item');
         const isPart = key.startsWith('p_');
         let sibling = item.nextElementSibling;
+        let currentChId = null;
         while (sibling) {
             const type = sibling.dataset.type;
             if (isPart) {
-                // Part collapse: hide chapters + sections until next part
+                // Part collapse: hide/show chapters and sections until next part
                 if (type === 'part') break;
-                if (nowCollapsed) sibling.classList.add('toc-collapsed-child');
-                else sibling.classList.remove('toc-collapsed-child');
+                if (nowCollapsed) {
+                    sibling.classList.add('toc-collapsed-child');
+                } else {
+                    // Show chapters, but keep sections hidden if their chapter is collapsed
+                    if (type === 'chapter') {
+                        sibling.classList.remove('toc-collapsed-child');
+                        currentChId = sibling.dataset.id;
+                    } else if (type === 'section') {
+                        const chKey = 'ch_' + currentChId;
+                        if (S._tocCollapse[chKey] !== false) sibling.classList.add('toc-collapsed-child');
+                        else sibling.classList.remove('toc-collapsed-child');
+                    }
+                }
             } else {
                 // Chapter collapse: hide sections until next chapter or part
                 if (type === 'part' || type === 'chapter') break;
@@ -1792,6 +1809,7 @@
             }
             sibling = sibling.nextElementSibling;
         }
+        save();
     }
 
     function reorderTOCFromDOM(side) {
