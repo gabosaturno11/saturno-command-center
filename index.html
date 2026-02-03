@@ -514,6 +514,10 @@
                         <button class="btn" onclick="exportAs('pdf')">PDF</button>
                     </div>
                 </div>
+                <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-subtle)">
+                    <div class="sidebar-label">Save to Vault</div>
+                    <button class="btn w-full" onclick="saveToVault()" style="margin-top:6px">Save to Vault</button>
+                </div>
             </div>
             <div class="content flex-col" style="display:flex;flex:1">
                 <div class="flex items-center justify-between mb-3">
@@ -2074,10 +2078,20 @@
     }
     function saveDocument() {
         const title = document.getElementById('doc-title').value;
+        const content = quill ? quill.getText() : '';
         const key = 'scc_doc_' + title.replace(/\s+/g,'_').toLowerCase();
         localStorage.setItem(key, quill.root.innerHTML);
         localStorage.setItem('scc_doc', quill.root.innerHTML);
-        alert('Saved');
+        // If editing a vault doc, update it
+        if (typeof S._editingVaultIdx === 'number' && S.vault?.[S._editingVaultIdx]) {
+            S.vault[S._editingVaultIdx].title = title;
+            S.vault[S._editingVaultIdx].content = content;
+            S.vault[S._editingVaultIdx].date = new Date().toISOString().split('T')[0];
+            save();
+            showToast('Vault doc updated');
+        } else {
+            showToast('Saved');
+        }
     }
     function exportAs(fmt) {
         if(!quill) initWriting();
@@ -4139,7 +4153,7 @@
     // Q: Knowledge Vault
     function initVault() {
         if (!S.vault) S.vault = [];
-        if (!S.vaultFolders) S.vaultFolders = [{id:'all',name:'All Documents',icon:'📄'},{id:'drafts',name:'Drafts',icon:'✏️'},{id:'research',name:'Research',icon:'🔬'},{id:'reference',name:'Reference',icon:'📚'},{id:'notes',name:'Notes',icon:'📝'}];
+        if (!S.vaultFolders) S.vaultFolders = [{id:'all',name:'All Documents'},{id:'drafts',name:'Drafts'},{id:'research',name:'Research'},{id:'reference',name:'Reference'},{id:'notes',name:'Notes'}];
         if (!S.vaultActiveFolder) S.vaultActiveFolder = 'all';
         renderVaultFolders();
         filterVault();
@@ -4148,13 +4162,16 @@
     function renderVaultFolders() {
         const el = document.getElementById('vault-folders');
         if (!el) return;
-        el.innerHTML = (S.vaultFolders||[]).map(f => `
-            <div onclick="selectVaultFolder('${f.id}')" style="display:flex;align-items:center;gap:6px;padding:5px 8px;cursor:pointer;border-radius:4px;font-size:10px;margin-bottom:2px;background:${S.vaultActiveFolder===f.id?'rgba(255,170,0,0.1)':'transparent'};color:${S.vaultActiveFolder===f.id?'var(--accent-gold)':'var(--text-secondary)'}">
-                <span style="font-size:11px">${f.icon||'📁'}</span>
-                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.name}</span>
-                <span style="font-size:8px;opacity:0.5">${S.vault.filter(d=>(f.id==='all'||d.folder===f.id)).length}</span>
-            </div>
-        `).join('');
+        el.innerHTML = (S.vaultFolders||[]).map(f => {
+            const count = S.vault.filter(d=>(f.id==='all'||d.folder===f.id)).length;
+            const isActive = S.vaultActiveFolder===f.id;
+            return `
+            <div onclick="selectVaultFolder('${f.id}')" style="display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer;border:1px solid ${isActive?'var(--accent-gold)':'var(--border-subtle)'};border-radius:4px;font-size:10px;margin-bottom:4px;background:${isActive?'rgba(255,170,0,0.08)':'transparent'};transition:all 0.15s" onmouseover="if(!${isActive})this.style.borderColor='var(--border-default)'" onmouseout="if(!${isActive})this.style.borderColor='var(--border-subtle)'">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${isActive?'var(--accent-gold)':'currentColor'}" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:${isActive?'var(--accent-gold)':'var(--text-secondary)'}">${f.name}</span>
+                <span style="font-size:8px;color:var(--text-tertiary);min-width:12px;text-align:right">${count}</span>
+            </div>`;
+        }).join('');
     }
     function selectVaultFolder(id) {
         S.vaultActiveFolder = id;
@@ -4165,7 +4182,7 @@
         const name = prompt('Folder name:');
         if (!name) return;
         if (!S.vaultFolders) S.vaultFolders = [];
-        S.vaultFolders.push({id:'f-'+Date.now(),name:name,icon:'📁'});
+        S.vaultFolders.push({id:'f-'+Date.now(),name:name});
         save(); renderVaultFolders();
     }
     function updateVaultStats() {
@@ -4215,9 +4232,9 @@
                         <div style="font-size:9px;color:var(--text-tertiary)">${folderName} · ${d.date||''}</div>
                     </div>
                     <div style="display:flex;gap:4px;flex-shrink:0">
-                        <button class="btn btn-sm" onclick="editVaultDoc(${idx})" style="font-size:9px;padding:4px 8px">Edit</button>
+                        <button class="btn btn-sm" onclick="openInWritingHub(${idx})" style="font-size:9px;padding:4px 8px">Edit in Writer</button>
                         <button class="btn btn-sm" onclick="copyVaultDoc(${idx})" style="font-size:9px;padding:4px 8px">Copy</button>
-                        <button class="btn btn-sm" onclick="deleteVaultDoc(${idx})" style="font-size:9px;padding:4px 8px;color:var(--accent-danger)">×</button>
+                        <button class="btn btn-sm" onclick="deleteVaultDoc(${idx})" style="font-size:9px;padding:4px 8px;color:var(--accent-danger)">Del</button>
                     </div>
                 </div>
                 <div style="font-size:12px;line-height:1.7;color:var(--text-secondary);white-space:pre-wrap">${d.content||''}</div>
@@ -4260,6 +4277,42 @@
     function exportVault() {
         if (!S.vault || S.vault.length === 0) { alert('Vault is empty'); return; }
         dl('knowledge-vault.json', JSON.stringify(S.vault, null, 2), 'application/json');
+    }
+    // Save current writing document to Vault
+    function saveToVault() {
+        const title = document.getElementById('doc-title')?.value || 'Untitled';
+        const content = quill ? quill.getText() : '';
+        if (!content.trim()) { showToast('Nothing to save'); return; }
+        // Format selection
+        const format = prompt('Save as format:\n1. Markdown (.md)\n2. Plain Text (.txt)\n\nEnter 1 or 2:', '1');
+        if (!format) return;
+        const ext = format === '2' ? 'txt' : 'md';
+        if (!S.vault) S.vault = [];
+        const folder = 'drafts';
+        S.vault.push({
+            id: 'VD-' + Date.now(),
+            title: title + '.' + ext,
+            folder: folder,
+            content: content,
+            format: ext,
+            date: new Date().toISOString().split('T')[0]
+        });
+        save();
+        showToast('Saved to Vault');
+    }
+    // Open vault document in Writing Hub
+    function openInWritingHub(idx) {
+        if (!S.vault || !S.vault[idx]) return;
+        const d = S.vault[idx];
+        S._editingVaultIdx = idx;
+        const cleanTitle = (d.title || 'Untitled').replace(/\.(md|txt)$/, '');
+        document.getElementById('doc-title').value = cleanTitle;
+        switchTab('writing');
+        setTimeout(() => {
+            if (!quill) initWriting();
+            if (quill) quill.setText(d.content || '');
+            showToast('Editing: ' + cleanTitle);
+        }, 100);
     }
 
     // Vault drag-drop upload
