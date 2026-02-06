@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOC Progress Tracker Adaptations</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f23 100%);
+            color: #ffffff;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            background: linear-gradient(45deg, #8a2be2, #4169e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .adaptation {
+            margin-bottom: 80px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .adaptation-title {
+            font-size: 1.8rem;
+            color: #8a2be2;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .original-concept {
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 4px solid #ff6b6b;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .original-title {
+            color: #ff6b6b;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .adaptation-description {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Adaptation 1: Chapter Completion Rings */
+        .part-rings-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .part-ring {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .ring-visual {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 15px;
+        }
+
+        .ring-track {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 6px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .ring-progress {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 6px solid transparent;
+            border-radius: 50%;
+            transform: rotate(-90deg);
+        }
+
+        .ring-1 { border-top-color: #8a2be2; border-right-color: #8a2be2; }
+        .ring-2 { border-top-color: #4169e1; border-right-color: #4169e1; border-bottom-color: #4169e1; }
+        .ring-3 { border-color: #00bcd4; }
+
+        .ring-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(138, 43, 226, 0.2);
+            border: 2px solid #8a2be2;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .ring-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .ring-stats {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        /* Adaptation 2: Mini-Heatmap Difficulty Grid */
+        .difficulty-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .difficulty-section {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            margin-bottom: 15px;
+        }
+
+        .heatmap-cell {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+        }
+
+        .difficulty-beginner { background: #4caf50; }
+        .difficulty-intermediate { background: #ff9800; }
+        .difficulty-advanced { background: #f44336; }
+        .difficulty-master { background: #9c27b0; }
+        .difficulty-empty { background: rgba(255, 255, 255, 0.1); }
+
+        .difficulty-legend {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Adaptation 3: Dual Stats Display */
+        .dual-stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .chapter-dual-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .chapter-dual-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(138, 43, 226, 0.3);
+        }
+
+        .dual-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .dual-number {
+            background: #4169e1;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-right: 15px;
+        }
+
+        .dual-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .stats-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-column {
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .volume-column {
+            background: rgba(65, 105, 225, 0.1);
+            border: 1px solid rgba(65, 105, 225, 0.3);
+        }
+
+        .quality-column {
+            background: rgba(0, 188, 212, 0.1);
+            border: 1px solid rgba(0, 188, 212, 0.3);
+        }
+
+        .column-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .volume-title { color: #4169e1; }
+        .quality-title { color: #00bcd4; }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+        }
+
+        /* Adaptation 4: Timeline Slider Interface */
+        .timeline-container {
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .timeline-title {
+            font-size: 1.4rem;
+            color: #8a2be2;
+            margin-bottom: 10px;
+        }
+
+        .timeline-track {
+            position: relative;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 40px 0;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 60%;
+            background: linear-gradient(90deg, #8a2be2, #4169e1, #00bcd4);
+            border-radius: 4px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            top: -12px;
+            width: 32px;
+            height: 32px;
+            background: #8a2be2;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-marker:hover {
+            transform: scale(1.2);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .timeline-content {
+            margin-top: 40px;
+            min-height: 200px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .timeline-chapter {
+            display: none;
+        }
+
+        .timeline-chapter.active {
+            display: block;
+        }
+
+        .chapter-preview {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .chapter-info {
+            background: rgba(138, 43, 226, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .chapter-details h4 {
+            color: #8a2be2;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .micro-notes {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .note-item {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .note-item::before {
+            content: '💡';
+            position: absolute;
+            left: 0;
+            font-size: 0.8rem;
+        }
+
+        /* Adaptation 5: Before vs Now Progress Cards */
+        .progress-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .comparison-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(138, 43, 226, 0.2);
+        }
+
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-title {
+            font-size: 1.3rem;
+            color: #8a2be2;
+            margin-bottom: 8px;
+        }
+
+        .comparison-subtitle {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .comparison-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .before-state, .after-state {
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .before-state {
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .after-state {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .state-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .before-label { color: #f44336; }
+        .after-label { color: #4caf50; }
+
+        .state-content {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
+
+        .expand-toggle {
+            background: rgba(138, 43, 226, 0.2);
+            border: 1px solid rgba(138, 43, 226, 0.4);
+            color: #8a2be2;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .expand-toggle:hover {
+            background: #8a2be2;
+            color: #ffffff;
+        }
+
+        @media (max-width: 768px) {
+            .part-rings-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-columns {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .chapter-preview {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TOC Progress Tracker Adaptations</h1>
+
+        <div class="adaptation">
+            <h2 class="adaptation-title">Adaptation 1: Part Completion Rings</h2>
+            <div class="original-concept">
+                <div class="original-title">Original: Ring Progress Orb (Saturn Vibe)</div>
+                Use a planetary ring that thickens or glows based on reps/sets/effort. Color coding for quality and tap for session breakdown.
+            </div>
+            <p class="adaptation-description">Transform this concept into part-level progress visualization where each major section of the book is represented by a completion ring. The ring fills as readers progress through chapters, creating a visual representation of their journey through each discipline area.</p>
+            
+            <div class="part-rings-container">
+                <div class="part-ring">
+                    <div class="ring-visual">
+                        <div class="ring-track"></div>
+                        <div class="ring-progress ring-1"></div>
+                        <div class="ring-center">PART 1</div>
+                    </div>
+                    <div class="ring-label">Start Here</div>
+                    <div class="ring-stats">2/2 Chapters</div>
+                </div>
+                
+                <div class="part-ring">
+                    <div class="ring-visual">
+                        <div class="ring-track"></div>
+                        <div class="ring-progress ring-2"></div>
+                        <div class="ring-center">PART 2</div>
+                    </div>
+                    <div class="ring-label">The Art</div>
+                    <div class="ring-stats">3/4 Chapters</div>
+                </div>
+                
+                <div class="part-ring">
+                    <div class="ring-visual">
+                        <div class="ring-track"></div>
+                        <div class="ring-progress ring-3"></div>
+                        <div class="ring-center">PART 3</div>
+                    </div>
+                    <div class="ring-label">Mastering</div>
+                    <div class="ring-stats">5/5 Chapters</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="adaptation">
+            <h2 class="adaptation-title">Adaptation 2: Chapter Difficulty Heatmaps</h2>
+            <div class="original-concept">
+                <div class="original-title">Original: Mini-Heatmaps</div>
+                5×5 grid for each movement with each box representing one session, colored by intensity. Full grid equals completed micro-cycle.
+            </div>
+            <p class="adaptation-description">Adapt this to show chapter difficulty and complexity levels. Each section gets a mini-grid where individual cells represent concept difficulty, helping readers understand the learning curve and prepare mentally for challenging sections.</p>
+            
+            <div class="difficulty-grid-container">
+                <div class="difficulty-section">
+                    <div class="section-title">Part 2: The Art of Calisthenics</div>
+                    <div class="heatmap-grid">
+                        <div class="heatmap-cell difficulty-beginner">3</div>
+                        <div class="heatmap-cell difficulty-beginner">4</div>
+                        <div class="heatmap-cell difficulty-intermediate">5</div>
+                        <div class="heatmap-cell difficulty-intermediate">6</div>
+                        <div class="heatmap-cell difficulty-empty"></div>
+                    </div>
+                    <div class="difficulty-legend">
+                        <span>Beginner</span>
+                        <span>Intermediate</span>
+                        <span>Advanced</span>
+                        <span>Master</span>
+                    </div>
+                </div>
+                
+                <div class="difficulty-section">
+                    <div class="section-title">Part 4: Road to Mastery</div>
+                    <div class="heatmap-grid">
+                        <div class="heatmap-cell difficulty-intermediate">12</div>
+                        <div class="heatmap-cell difficulty-advanced">13</div>
+                        <div class="heatmap-cell difficulty-advanced">14</div>
+                        <div class="heatmap-cell difficulty-master">15</div>
+                        <div class="heatmap-cell difficulty-master">16</div>
+                        <div class="heatmap-cell difficulty-advanced">17</div>
+                        <div class="heatmap-cell difficulty-master">18</div>
+                        <div class="heatmap-cell difficulty-empty"></div>
+                        <div class="heatmap-cell difficulty-empty"></div>
+                        <div class="heatmap-cell difficulty-empty"></div>
+                    </div>
+                    <div class="difficulty-legend">
+                        <span>Beginner</span>
+                        <span>Intermediate</span>
+                        <span>Advanced</span>
+                        <span>Master</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="adaptation">
+            <h2 class="adaptation-title">Adaptation 3: Dual Content Classification</h2>
+            <div class="original-concept">
+                <div class="original-title">Original: Dual Stats Columns (Left = Volume, Right = Quality)</div>
+                Left column shows sets/reps/volume, right shows RPE, form score, focus. Visual hints when quality drops.
+            </div>
+            <p class="adaptation-description">Transform this into content classification where each chapter displays both practical content metrics and philosophical depth indicators, helping readers understand what type of learning experience to expect.</p>
+            
+            <div class="dual-stats-container">
+                <div class="chapter-dual-card">
+                    <div class="dual-header">
+                        <div class="dual-number">7</div>
+                        <div class="dual-title">Perfect Technique Paradigm</div>
+                    </div>
+                    <div class="stats-columns">
+                        <div class="stat-column volume-column">
+                            <div class="column-title volume-title">Practical Content</div>
+                            <div class="stat-item">
+                                <span>Exercises:</span>
+                                <span class="stat-value">12</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Progressions:</span>
+                                <span class="stat-value">8</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Diagrams:</span>
+                                <span class="stat-value">15</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Read Time:</span>
+                                <span class="stat-value">25 min</span>
+                            </div>
+                        </div>
+                        <div class="stat-column quality-column">
+                            <div class="column-title quality-title">Depth & Focus</div>
+                            <div class="stat-item">
+                                <span>Philosophy:</span>
+                                <span class="stat-value">High</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Technical:</span>
+                                <span class="stat-value">Deep</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Reflection:</span>
+                                <span class="stat-value">Med</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Integration:</span>
+                                <span class="stat-value">High</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chapter-dual-card">
+                    <div class="dual-header">
+                        <div class="dual-number">16</div>
+                        <div class="dual-title">Hand-Balancing</div>
+                    </div>
+                    <div class="stats-columns">
+                        <div class="stat-column volume-column">
+                            <div class="column-title volume-title">Practical Content</div>
+                            <div class="stat-item">
+                                <span>Exercises:</span>
+                                <span class="stat-value">24</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Progressions:</span>
+                                <span class="stat-value">18</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Diagrams:</span>
+                                <span class="stat-value">22</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Read Time:</span>
+                                <span class="stat-value">45 min</span>
+                            </div>
+                        </div>
+                        <div class="stat-column quality-column">
+                            <div class="column-title quality-title">Depth & Focus</div>
+                            <div class="stat-item">
+                                <span>Philosophy:</span>
+                                <span class="stat-value">Med</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Technical:</span>
+                                <span class="stat-value">Expert</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Reflection:</span>
+                                <span class="stat-value">Low</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Integration:</span>
+                                <span class="stat-value">High</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="adaptation">
+            <h2 class="adaptation-title">Adaptation 4: Interactive Chapter Timeline</h2>
+            <div class="original-concept">
+                <div class="original-title">Original: Timeline Slider with Micro-Notes</div>
+                Slide through each session visually with hover/click to reveal notes like "elbows flared on last rep" or "grip felt stronger."
+            </div>
+            <p class="adaptation-description">Create an interactive timeline for exploring chapter content with micro-notes about key concepts, difficulty spikes, and integration points. This helps readers navigate complex chapters and understand the flow of ideas.</p>
+            
+            <div class="timeline-container">
+                <div class="timeline-header">
+                    <div class="timeline-title">Chapter 9: Stage 1 - Creating the Base</div>
+                </div>
+                
+                <div class="timeline-track">
+                    <div class="timeline-progress"></div>
+                    <div class="timeline-marker" style="left: 10%;" onclick="showChapter(1)">1</div>
+                    <div class="timeline-marker" style="left: 25%;" onclick="showChapter(2)">2</div>
+                    <div class="timeline-marker" style="left: 45%;" onclick="showChapter(3)">3</div>
+                    <div class="timeline-marker" style="left: 60%;" onclick="showChapter(4)">4</div>
+                    <div class="timeline-marker" style="left: 80%;" onclick="showChapter(5)">5</div>
+                </div>
+                
+                <div class="timeline-content">
+                    <div class="timeline-chapter active" id="chapter-1">
+                        <div class="chapter-preview">
+                            <div class="chapter-info">
+                                <h4>Section 1: Stage 1 Warm-up</h4>
+                                <p>Foundation preparation protocols that establish the mindset and physical readiness for deeper work.</p>
+                                <div class="micro-notes">
+                                    <div class="note-item">Critical transition from general to specific movement</div>
+                                    <div class="note-item">Mental preparation techniques introduced</div>
+                                    <div class="note-item">First integration of breathing patterns</div>
+                                </div>
+                            </div>
+                            <div class="chapter-details">
+                                <h4>Key Learning Points</h4>
+                                <ul>
+                                    <li>Understanding the purpose of stage-specific warm-ups</li>
+                                    <li>Developing awareness of readiness signals</li>
+                                    <li>Building consistent preparation habits</li>
+                                    <li>Connecting movement with intention</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="adaptation">
+            <h2 class="adaptation-title">Adaptation 5: Skill Development Progress Cards</h2>
+            <div class="original-concept">
+                <div class="original-title">Original: "Before vs Now" Collapse Cards</div>
+                Side-by-side comparison of first session vs most recent, with tap to expand for mini charts, photos, or RPE scales.
+            </div>
+            <p class="adaptation-description">Transform this into skill development progress cards that show the transformation readers can expect from each major chapter or part, demonstrating the before and after states of understanding and capability.</p>
+            
+            <div class="progress-comparison">
+                <div class="comparison-card">
+                    <div class="comparison-header">
+                        <div class="comparison-title">Handstand Journey</div>
+                        <div class="comparison-subtitle">Chapter 16: Hand-Balancing</div>
+                    </div>
+                    <div class="comparison-content">
+                        <div class="before-state">
+                            <div class="state-label before-label">Before</div>
+                            <div class="state-content">
+                                Wall-dependent<br>
+                                2-3 second holds<br>
+                                Inconsistent form<br>
+                                Fear of falling
+                            </div>
+                        </div>
+                        <div class="after-state">
+                            <div class="state-label after-label">After</div>
+                            <div class="state-content">
+                                Freestanding confidence<br>
+                                30+ second holds<br>
+                                Refined alignment<br>
+                                Spatial awareness
+                            </div>
+                        </div>
+                    </div>
+                    <button class="expand-toggle">View Detailed Progression →</button>
+                </div>
+                
+                <div class="comparison-card">
+                    <div class="comparison-header">
+                        <div class="comparison-title">Movement Philosophy</div>
+                        <div class="comparison-subtitle">Part 2: The Art of Calisthenics</div>
+                    </div>
+                    <div class="comparison-content">
+                        <div class="before-state">
+                            <div class="state-label before-label">Before</div>
+                            <div class="state-content">
+                                Exercise as task<br>
+                                Goal-focused only<br>
+                                Impatient mindset<br>
+                                External validation
+                            </div>
+                        </div>
+                        <div class="after-state">
+                            <div class="state-label after-label">After</div>
+                            <div class="state-content">
+                                Movement as meditation<br>
+                                Process awareness<br>
+                                Patient cultivation<br>
+                                Internal compass
+                            </div>
+                        </div>
+                    </div>
+                    <button class="expand-toggle">Explore Mindset Shifts →</button>
+                </div>
+                
+                <div class="comparison-card">
+                    <div class="comparison-header">
+                        <div class="comparison-title">Technical Mastery</div>
+                        <div class="comparison-subtitle">Chapter 7: Perfect Technique</div>
+                    </div>
+                    <div class="comparison-content">
+                        <div class="before-state">
+                            <div class="state-label before-label">Before</div>
+                            <div class="state-content">
+                                Sloppy execution<br>
+                                Quantity over quality<br>
+                                Injury-prone patterns<br>
+                                Inconsistent results
+                            </div>
+                        </div>
+                        <div class="after-state">
+                            <div class="state-label after-label">After</div>
+                            <div class="state-content">
+                                Precision focus<br>
+                                Quality standards<br>
+                                Injury prevention<br>
+                                Reliable progress
+                            </div>
+                        </div>
+                    </div>
+                    <button class="expand-toggle">Master the Details →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showChapter(chapterNum) {
+            // Hide all chapters
+            const chapters = document.querySelectorAll('.timeline-chapter');
+            chapters.forEach(chapter => chapter.classList.remove('active'));
+            
+            // Show selected chapter (for demo, just show first one)
+            document.getElementById('chapter-1').classList.add('active');
+        }
+    </script>
+</body>
+</html>

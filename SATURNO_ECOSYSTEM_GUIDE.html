@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SATURNO ECOSYSTEM — Full Deployment Guide</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Sora:wght@300;400;600;700&display=swap');
+
+    :root {
+        --bg: #0a0a0c;
+        --bg-deep: #0f1014;
+        --bg-surface: #151519;
+        --gold: #ffaa00;
+        --cyan: #00ffcc;
+        --text: #e4e4e7;
+        --text-2: rgba(255,255,255,0.6);
+        --text-3: rgba(255,255,255,0.3);
+        --border: rgba(255,255,255,0.08);
+        --green: #00ff88;
+        --red: #ff4466;
+        --blue: #00cfff;
+        --purple: #a855f7;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Sora', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+        padding: 40px;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    @media print {
+        body { background: white; color: #111; padding: 20px; font-size: 10pt; line-height: 1.5; }
+        .cover { background: #111 !important; color: white !important; }
+        .cover * { color: white !important; }
+        table { font-size: 9pt; }
+        th { background: #222 !important; color: white !important; }
+        td { border-color: #ccc !important; color: #111 !important; }
+        a { color: #0066cc !important; }
+        h2 { color: #111 !important; border-color: #ccc !important; }
+        .section { page-break-inside: avoid; }
+        .vector-map { background: #f5f5f5 !important; color: #111 !important; }
+        .vector-map * { color: #111 !important; }
+        code, .code-ref { background: #eee !important; color: #111 !important; }
+        .badge { border-color: #666 !important; color: #333 !important; }
+        .no-print { display: none !important; }
+    }
+
+    /* Cover */
+    .cover {
+        background: linear-gradient(135deg, #0a0a0c 0%, #151519 100%);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 60px 48px;
+        margin-bottom: 48px;
+        text-align: center;
+    }
+
+    .cover h1 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -1px;
+        margin-bottom: 8px;
+    }
+
+    .cover h1 span { color: var(--gold); }
+
+    .cover .subtitle {
+        font-size: 14px;
+        color: var(--text-2);
+        margin-bottom: 32px;
+    }
+
+    .cover .meta {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: var(--text-3);
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        line-height: 2;
+    }
+
+    /* Sections */
+    h2 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gold);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255,170,0,0.2);
+        margin-top: 48px;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+        margin-top: 28px;
+        margin-bottom: 12px;
+    }
+
+    h4 {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-2);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 20px;
+        margin-bottom: 8px;
+    }
+
+    p { margin-bottom: 12px; font-size: 13px; color: var(--text-2); }
+
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 24px;
+        font-size: 11px;
+    }
+
+    th {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 10px 12px;
+        text-align: left;
+        background: var(--bg-surface);
+        color: var(--text-3);
+        border-bottom: 1px solid var(--border);
+    }
+
+    td {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-2);
+        vertical-align: top;
+    }
+
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* Badges */
+    .badge {
+        display: inline-block;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        padding: 2px 8px;
+        border-radius: 3px;
+        border: 1px solid;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .badge-live { border-color: var(--green); color: var(--green); }
+    .badge-locked { border-color: var(--purple); color: var(--purple); }
+    .badge-stale { border-color: var(--text-3); color: var(--text-3); }
+    .badge-bug { border-color: var(--red); color: var(--red); }
+    .badge-future { border-color: var(--blue); color: var(--blue); }
+    .badge-gold { border-color: var(--gold); color: var(--gold); }
+
+    /* Code blocks */
+    code, .code-ref {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        background: var(--bg-deep);
+        padding: 1px 5px;
+        border-radius: 3px;
+    }
+
+    pre {
+        background: var(--bg-deep);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 16px 20px;
+        overflow-x: auto;
+        margin-bottom: 20px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        line-height: 1.6;
+        color: var(--text-2);
+    }
+
+    /* Vector map */
+    .vector-map {
+        background: var(--bg-deep);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 32px;
+        margin: 20px 0;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        line-height: 1.4;
+        white-space: pre;
+        overflow-x: auto;
+        color: var(--text-2);
+    }
+
+    /* Checklist */
+    .checklist { list-style: none; padding: 0; margin-bottom: 20px; }
+    .checklist li {
+        font-size: 12px;
+        padding: 6px 0 6px 24px;
+        position: relative;
+        color: var(--text-2);
+    }
+    .checklist li::before {
+        content: '☐';
+        position: absolute;
+        left: 0;
+        color: var(--text-3);
+    }
+    .checklist li.done::before { content: '☑'; color: var(--green); }
+
+    /* Separator */
+    hr {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 32px 0;
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center;
+        padding: 32px 0;
+        font-size: 10px;
+        color: var(--text-3);
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Section card */
+    .section-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+    }
+
+    .section-card h4 { margin-top: 0; }
+
+    /* Print button */
+    .print-btn {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--gold);
+        color: black;
+        border: none;
+        padding: 12px 24px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 6px;
+        z-index: 100;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .print-btn:hover { background: white; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">⌘P — SAVE AS PDF</button>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- COVER -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="cover">
+    <h1>SATURNO <span>ECOSYSTEM</span></h1>
+    <div class="subtitle">Full Deployment Guide — The Art of Calisthenics<br><small style="color:var(--cyan);font-size:10px;">SINGLE SOURCE OF TRUTH — All deployments, repos, and assets</small></div>
+    <div class="meta">
+        Author: Gabo Saturno | Saturno Movement<br>
+        Built with: Claude Code (Opus 4.5)<br>
+        Updated: February 2, 2026 (PASS 12)<br>
+        Repos: 7 | Deployed Pages: 11 | Total Lines: ~10,000+ | HTMLs: 22
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TABLE OF CONTENTS -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>Table of Contents</h2>
+<ol style="font-size:12px;color:var(--text-2);padding-left:20px;line-height:2.2">
+    <li><a href="#deployments">Deployment Links (CSV)</a></li>
+    <li><a href="#repos">Repository Map</a></li>
+    <li><a href="#readmes">README Direct Links</a></li>
+    <li><a href="#app-profiles">App Profiles — Feature Summary per Page</a></li>
+    <li><a href="#future">Future Plans Checklist — Per App</a></li>
+    <li><a href="#bugs">Pending Bugs & Known Issues</a></li>
+    <li><a href="#vector">Vector Connection Map</a></li>
+    <li><a href="#tech">Shared Technical DNA</a></li>
+    <li><a href="#reference">Code Reference (Compact)</a></li>
+</ol>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 1. DEPLOYMENT LINKS -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 id="deployments">1. Deployment Links</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>App Name</th>
+            <th>Live URL</th>
+            <th>Function</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td><strong>Victory Belt CC (was SCC V3)</strong></td>
+            <td><a href="https://gabosaturno11.github.io/victory-belt-cc/">github.io/victory-belt-cc</a></td>
+            <td>15-tab book command center: TOC, Writing, Mind Map, Matrix, Workout, Gallery (26 HTMLs), Research, Export</td>
+            <td><span class="badge badge-live">LIVE</span></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td><strong>Saturno Forge (Dashboard)</strong></td>
+            <td><a href="https://gabosaturno11.github.io/titan-forge/">github.io/titan-forge</a></td>
+            <td>Main hub: 6 faders, 8 voice modes, preset stacks, nav to all forge tools</td>
+            <td><span class="badge badge-live">LIVE</span></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td><strong>TITAN V1.2 — Synthesizer</strong></td>
+            <td><a href="https://gabosaturno11.github.io/titan-forge/titan.html">github.io/titan-forge/titan.html</a></td>
+            <td>AI writing synthesizer: Claude API + 6 faders + 8 modes + PDF export</td>
+            <td><span class="badge badge-live">LIVE</span></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td><strong>Apoapsis Writer</strong></td>
+            <td><a href="https://gabosaturno11.github.io/titan-forge/writer.html">github.io/titan-forge/writer.html</a></td>
+            <td>Chapter-based markdown editor + live preview, save/export/ship-to-vault</td>
+            <td><span class="badge badge-live">LIVE</span></td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td><strong>Batch Generator</strong></td>
+            <td><a href="https://gabosaturno11.github.io/titan-forge/batch-generator.html">github.io/titan-forge/batch-generator.html</a></td>
+            <td>CSV → 100+ PDFs → ZIP download with Claude API processing</td>
+            <td><span class="badge badge-live">LIVE</span></td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td><strong>TRITON Onboarding</strong></td>
+            <td><a href="https://gabosaturno11.github.io/titan-forge/onboarding.html">github.io/titan-forge/onboarding.html</a></td>
+            <td>10-question identity sequence for voice calibration</td>
+            <td><span class="badge badge-locked">LOCKED</span></td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td><strong>Mission Logs</strong></td>
+            <td><a href="https://gabosaturno11.github.io/titan-forge/logs.html">github.io/titan-forge/logs.html</a></td>
+            <td>Execution timeline + task tracking</td>
+            <td><span class="badge badge-live">LIVE</span></td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td><strong>Interactive TOC Editor</strong></td>
+            <td><a href="https://gabosaturno11.github.io/interactive-toc-editor/">github.io/interactive-toc-editor</a></td>
+            <td>Voice-controlled TOC editor: 20+ commands, themes, gradients, tasks</td>
+            <td><span class="badge badge-live">LIVE</span></td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td><strong>Saturno Solar System</strong></td>
+            <td><a href="https://gabosaturno11.github.io/saturno-solar-system/">github.io/saturno-solar-system</a></td>
+            <td>Vue 3 interactive solar system: 6 training planets, research frameworks, power skills</td>
+            <td><span class="badge badge-live">LIVE</span></td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td><strong>VB Command Center</strong></td>
+            <td><a href="https://gabosaturno11.github.io/VB-COMMAND-CENTER/">github.io/VB-COMMAND-CENTER</a></td>
+            <td>Multi-Claude coordination: syncs all Claude instances + submission assets</td>
+            <td><span class="badge badge-live">LIVE</span></td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td><strong>Saturno Hub (Starter)</strong></td>
+            <td><a href="https://gabosaturno11.github.io/saturno-hub/">github.io/saturno-hub</a></td>
+            <td>Merge tool: legacy HTML imports, data contracts, Gemini pass-through</td>
+            <td><span class="badge badge-stale">STARTER</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 2. REPOSITORY MAP -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 id="repos">2. Repository Map</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Repo</th>
+            <th>GitHub</th>
+            <th>Local Path</th>
+            <th>Stack</th>
+            <th>Lines</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>victory-belt-cc</strong></td>
+            <td><a href="https://github.com/gabosaturno11/victory-belt-cc">gabosaturno11/victory-belt-cc</a></td>
+            <td><code>~/Desktop/saturno-command-center/</code></td>
+            <td>Single HTML + TITAN CSS + Quill/Cytoscape/Sortable/pdfmake</td>
+            <td>~4,629</td>
+        </tr>
+        <tr>
+            <td><strong>titan-forge</strong></td>
+            <td><a href="https://github.com/gabosaturno11/titan-forge">gabosaturno11/titan-forge</a></td>
+            <td><code>~/Library/Mobile Documents/.../titan-forge-upgrade/</code></td>
+            <td>6 HTML files + JetBrains Mono + jsPDF + Claude API</td>
+            <td>~3,400</td>
+        </tr>
+        <tr>
+            <td><strong>interactive-toc-editor</strong></td>
+            <td><a href="https://github.com/gabosaturno11/interactive-toc-editor">gabosaturno11/interactive-toc-editor</a></td>
+            <td><code>~/Desktop/interactive-toc-editor/</code></td>
+            <td>Vanilla JS + Web Speech API + LocalStorage</td>
+            <td>~1,200</td>
+        </tr>
+        <tr>
+            <td><strong>saturno-solar-system</strong></td>
+            <td><a href="https://github.com/gabosaturno11/saturno-solar-system">gabosaturno11/saturno-solar-system</a></td>
+            <td><code>~/Desktop/saturno-solar-system/</code></td>
+            <td>Vue 3 + Vite</td>
+            <td>~800</td>
+        </tr>
+        <tr>
+            <td><strong>VB-COMMAND-CENTER</strong></td>
+            <td><a href="https://github.com/gabosaturno11/VB-COMMAND-CENTER">gabosaturno11/VB-COMMAND-CENTER</a></td>
+            <td><code>~/Desktop/VB-COMMAND-CENTER/</code></td>
+            <td>Markdown docs + submission assets</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>saturno-hub</strong></td>
+            <td><a href="https://github.com/gabosaturno11/saturno-hub">gabosaturno11/saturno-hub</a></td>
+            <td><code>~/Desktop/saturno-hub-starter/</code></td>
+            <td>Vite + merge scripts + JSON schemas</td>
+            <td>~300</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 3. README DIRECT LINKS -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 id="readmes">3. README Direct Links</h2>
+
+<table>
+    <thead>
+        <tr><th>Repo</th><th>README URL</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>victory-belt-cc</td><td><a href="https://github.com/gabosaturno11/victory-belt-cc#readme">github.com/gabosaturno11/victory-belt-cc#readme</a></td></tr>
+        <tr><td>titan-forge</td><td><a href="https://github.com/gabosaturno11/titan-forge#readme">github.com/gabosaturno11/titan-forge#readme</a></td></tr>
+        <tr><td>interactive-toc-editor</td><td><a href="https://github.com/gabosaturno11/interactive-toc-editor#readme">github.com/gabosaturno11/interactive-toc-editor#readme</a></td></tr>
+        <tr><td>saturno-solar-system</td><td><a href="https://github.com/gabosaturno11/saturno-solar-system#readme">github.com/gabosaturno11/saturno-solar-system#readme</a></td></tr>
+        <tr><td>VB-COMMAND-CENTER</td><td><a href="https://github.com/gabosaturno11/VB-COMMAND-CENTER#readme">github.com/gabosaturno11/VB-COMMAND-CENTER#readme</a></td></tr>
+        <tr><td>saturno-hub</td><td><a href="https://github.com/gabosaturno11/saturno-hub#readme">github.com/gabosaturno11/saturno-hub#readme</a></td></tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 4. APP PROFILES -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 id="app-profiles">4. App Profiles — Feature Summary</h2>
+
+<!-- SCC -->
+<div class="section-card">
+    <h3>Saturno Command Center V3 <span class="badge badge-gold">FLAGSHIP</span></h3>
+    <p>Single-file HTML app (~4,600 lines) — 15 tabs, TITAN Design Language, password-protected.</p>
+
+    <h4>15 Tabs</h4>
+    <table>
+        <tr><th>#</th><th>Tab</th><th>Purpose</th></tr>
+        <tr><td>1</td><td>TOC</td><td>Dual-pane editor, 220-item canonical TOC (v1), compare view + gradient notes panel</td></tr>
+        <tr><td>2</td><td>Writing</td><td>Quill.js rich text, 8 voice modes (stitched squares), preview, word count</td></tr>
+        <tr><td>3</td><td>Decisions</td><td>Decision log + bottleneck tracker, drag-reorder, toggle resolved, X delete</td></tr>
+        <tr><td>4</td><td>Research</td><td>A/B/C/D research cards, expandable, copy-per-block, usage tracking</td></tr>
+        <tr><td>5</td><td>HTMLs</td><td>Visual gallery: 26 items (22 local + 4 Titan Forge deployed), modal preview</td></tr>
+        <tr><td>6</td><td>Matrix</td><td>Cytoscape.js graph: 95+ nodes, 119+ edges, 7 query types</td></tr>
+        <tr><td>7</td><td>Taxonomy</td><td>Sortable/filterable table, click-to-inspect detail panel</td></tr>
+        <tr><td>8</td><td>Workout</td><td>Drag-and-drop builder: Sets/Reps/Rest/Tempo/Notes, 6 templates, PDF export</td></tr>
+        <tr><td>9</td><td>Mind Map</td><td>Canvas engine: CSS transform viewport, dot grid, 5 shapes, 4 arrowheads, undo/redo, node lock</td></tr>
+        <tr><td>10</td><td>Barcode</td><td>QR code generator (kjua) with presets</td></tr>
+        <tr><td>11</td><td>Vault</td><td>Knowledge Vault: document library with cross-referencing</td></tr>
+        <tr><td>12</td><td>Dashboard</td><td>Overview: stats, writing progress, matrix coverage, decisions</td></tr>
+        <tr><td>13</td><td>Calendar</td><td>SheetJS Excel/CSV parser + calendar grid renderer</td></tr>
+        <tr><td>14</td><td>Export</td><td>Centralized export hub: JSON, MD, HTML, Word, PDF, CSV, Full Backup</td></tr>
+        <tr><td>15</td><td>Internal</td><td>Password-protected: storage usage, locked structures, state import/export</td></tr>
+    </table>
+
+    <h4>Dependencies</h4>
+    <p>Quill.js 1.3.6 · Sortable.js 1.15.0 · Cytoscape.js 3.28.1 · pdfmake 0.2.7 · SheetJS 0.18.5 · kjua 0.9.0 — all CDN, no build step.</p>
+
+    <h4>Persistence</h4>
+    <p><code>localStorage</code> key <code>vbcc1</code> (main state) + <code>scc_doc</code> (Quill editor). Auto-save on every mutation. Password: <code>saturno2026</code></p>
+</div>
+
+<!-- Titan Forge -->
+<div class="section-card">
+    <h3>Titan Forge <span class="badge badge-live">6 APPS</span></h3>
+    <p>Writing tools suite for voice-mode synthesis, batch processing, and chapter editing.</p>
+
+    <h4>App Breakdown</h4>
+    <table>
+        <tr><th>File</th><th>App</th><th>Features</th></tr>
+        <tr><td>index.html</td><td>SATURNO FORGE</td><td>Dashboard hub with nav, 6 faders, 8 voice modes, preset stacks, mission log</td></tr>
+        <tr><td>titan.html</td><td>TITAN V1.2</td><td>Claude API synthesis, split input/output, PDF export, binary toggles</td></tr>
+        <tr><td>writer.html</td><td>APOAPSIS WRITER</td><td>Chapter sidebar, markdown editor + Crimson Pro preview, save/export/ship</td></tr>
+        <tr><td>batch-generator.html</td><td>BATCH GEN</td><td>CSV upload → Claude API → 100+ PDFs → ZIP download</td></tr>
+        <tr><td>onboarding.html</td><td>TRITON</td><td>10-question identity sequence (LOCKED)</td></tr>
+        <tr><td>logs.html</td><td>MISSION LOG</td><td>Execution timeline with task dots</td></tr>
+    </table>
+
+    <h4>Dependencies</h4>
+    <p>jsPDF 2.5.1 · JSZip 3.10.1 · Marked.js · Tailwind CDN (index.html + writer.html only) · <code>js/api-config.js</code> + <code>js/claude-api.js</code></p>
+</div>
+
+<!-- TOC Editor -->
+<div class="section-card">
+    <h3>Interactive TOC Editor V2.0 <span class="badge badge-live">STANDALONE</span></h3>
+    <p>Voice-controlled Table of Contents editor with 20+ speech commands, 6 themes, gradient editor, and task management.</p>
+    <p><strong>Stack:</strong> Pure vanilla JS, Web Speech API, CSS Variables, LocalStorage. Zero dependencies.</p>
+    <p><strong>Key features:</strong> Voice commands ("expand all", "go to chapter 5", "dark theme"), debounced auto-save, keyboard shortcuts (Ctrl+S/E/R/M), priority task management.</p>
+</div>
+
+<!-- Solar System -->
+<div class="section-card">
+    <h3>Saturno Solar System <span class="badge badge-live">VUE 3</span></h3>
+    <p>Interactive visualization: 6 training planets (Foundation, Strength, Skills, Mobility, Power, Endurance), 385 exercises total, 10 research frameworks, 8 power skills with prerequisites.</p>
+    <p><strong>Stack:</strong> Vue 3 + Vite. Build: <code>npm run build</code> → <code>npx gh-pages -d dist</code></p>
+</div>
+
+<!-- VB-COMMAND-CENTER -->
+<div class="section-card">
+    <h3>VB Command Center <span class="badge badge-stale">DOCS</span></h3>
+    <p>Multi-Claude coordination hub. Contains <code>COMMAND_CENTER.md</code> (live sync doc), <code>AOC_EXPANDED_TOC.md</code> (7 Parts, 27 Chapters), and <code>VB_SUBMISSION_PACKAGE/</code> (visuals + assets).</p>
+    <p><strong>Purpose:</strong> Central reference for when multiple Claude instances work simultaneously on the book project.</p>
+</div>
+
+<!-- Saturno Hub -->
+<div class="section-card">
+    <h3>Saturno Hub (Starter) <span class="badge badge-stale">SCAFFOLD</span></h3>
+    <p>Merge tool for combining scattered frontends. Has legacy HTML import scripts, JSON data contracts (MovementDNA, Timeline, SMCal, Comments), and Gemini video-to-outline pass-through instructions.</p>
+    <p><strong>Status:</strong> Scaffold only — not yet populated with real merges.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 5. FUTURE PLANS CHECKLIST -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 id="future">5. Future Plans Checklist — Per App</h2>
+
+<h3>Saturno Command Center — Mind Map Roadmap</h3>
+<ul class="checklist">
+    <li>Image nodes (paste/drag-drop images onto canvas)</li>
+    <li>Container/group nodes (parent frames that hold children)</li>
+    <li>Hexagon, triangle, parallelogram shapes</li>
+    <li>Copy/paste nodes (Cmd+C / Cmd+V)</li>
+    <li>Duplicate nodes (Cmd+D)</li>
+    <li>Multi-node alignment (align left, center, distribute)</li>
+    <li>Connection labels (text on lines)</li>
+    <li>Minimap navigator (bottom-right corner)</li>
+    <li>PNG/SVG export with proper zoom/bounds</li>
+    <li>JSON import/export for sharing boards</li>
+    <li>Template boards (brainstorm, flow chart, mind map tree)</li>
+    <li>Layers panel (show/hide groups of nodes)</li>
+    <li>Node search/filter on canvas</li>
+    <li>Keyboard navigation between nodes (Tab, arrow keys)</li>
+</ul>
+
+<h3>Saturno Command Center — Feature Requests (User)</h3>
+<ul class="checklist">
+    <li>Draggable panels on Writing Hub (test on separate deployment first)</li>
+    <li>Document Hub as draggable canvas panel (Phase 10 vision)</li>
+    <li>Left sidebar for node properties (font size, box colors, arrow style picker)</li>
+    <li>Version control system for state snapshots</li>
+    <li>Load TOC from toc-interactive repo</li>
+    <li>Voice modes: intro + 7 sections (then per-discipline, then per-ACT)</li>
+</ul>
+
+<h3>Saturno Command Center — Writing Hub</h3>
+<ul class="checklist">
+    <li>Voice mode per-chapter presets (different default mode per section)</li>
+    <li>Research card embedding in editor (drag research into text)</li>
+    <li>Word count targets per chapter (not just global)</li>
+    <li>Export per-chapter as standalone document</li>
+</ul>
+
+<h3>Titan Forge</h3>
+<ul class="checklist">
+    <li>Unified voice mode state across all 6 apps (currently independent)</li>
+    <li>Writer: add Mystic + Companion modes (only 6 of 8 in dropdown)</li>
+    <li>Batch Generator: progress persistence (resume interrupted batches)</li>
+    <li>Logs: connect to real execution history (currently static)</li>
+    <li>API key sharing across apps (currently per-app localStorage)</li>
+</ul>
+
+<h3>Interactive TOC Editor</h3>
+<ul class="checklist">
+    <li>Sync TOC with Saturno Command Center (bidirectional)</li>
+    <li>Export to SCC format (JSON compatible with <code>S.tocs</code>)</li>
+    <li>Real-time collaboration (multi-user editing)</li>
+</ul>
+
+<h3>Saturno Solar System</h3>
+<ul class="checklist">
+    <li>Connect planet exercises to SCC movement matrix</li>
+    <li>Deep-link from planet → specific taxonomy entry in SCC</li>
+    <li>Add 7th planet for hand-balancing discipline</li>
+</ul>
+
+<h3>Ecosystem-Wide</h3>
+<ul class="checklist">
+    <li>Central auth / shared state across all apps</li>
+    <li>Merge all tools into single super-app (saturno-hub vision)</li>
+    <li>Real-time sync between apps (shared localStorage or API)</li>
+    <li>Mobile app wrapper (PWA or Capacitor)</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 6. BUGS -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 id="bugs">6. Pending Bugs & Known Issues</h2>
+
+<table>
+    <thead>
+        <tr><th>#</th><th>App</th><th>Bug</th><th>Severity</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>SCC</td>
+            <td>Responsive CSS still references <code>.wm-pill</code> at breakpoints 768px/480px (lines ~358, 370). Harmless — pills hidden via <code>display:none</code>, but dead CSS.</td>
+            <td><span class="badge badge-stale">LOW</span></td>
+            <td>Open</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Titan Forge</td>
+            <td><code>writer.html</code> mode-select dropdown only has 6 of 8 voice modes (missing Mystic + Companion)</td>
+            <td><span class="badge badge-stale">LOW</span></td>
+            <td>Open</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Titan Forge</td>
+            <td><code>index.html</code> + <code>writer.html</code> load Tailwind via CDN (<code>cdn.tailwindcss.com</code>). Build warning in console, CDN dependency risk.</td>
+            <td><span class="badge badge-stale">LOW</span></td>
+            <td>Open</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>SCC</td>
+            <td>Gallery iframe preview may CORS-block cross-origin deployed HTMLs when previewing Titan Forge entries</td>
+            <td><span class="badge badge-bug">MEDIUM</span></td>
+            <td>Open</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>SCC</td>
+            <td>Canonical TOC v1 has 220 items (27 chapters). Some legacy references may still assume 25 chapters.</td>
+            <td><span class="badge badge-stale">LOW</span></td>
+            <td>Open</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Titan Forge</td>
+            <td><code>titan.html</code> + <code>batch-generator.html</code> require CORS proxy for Claude API calls from browser</td>
+            <td><span class="badge badge-bug">MEDIUM</span></td>
+            <td>By design</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>SCC</td>
+            <td>Mind Map: exported PNG/SVG may not respect current zoom/pan bounds</td>
+            <td><span class="badge badge-stale">LOW</span></td>
+            <td>Open (roadmap)</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 7. VECTOR CONNECTION MAP -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 id="vector">7. Vector Connection Map</h2>
+
+<p>How all deployed pages connect to each other:</p>
+
+<div class="vector-map">
+                         ┌──────────────────────────────┐
+                         │     VB-COMMAND-CENTER         │
+                         │     (Coordination Hub)        │
+                         │     docs + submission assets  │
+                         └──────────┬───────────────────┘
+                                    │
+                          links to all 3 apps
+                     ┌──────────────┼──────────────┐
+                     ▼              ▼              ▼
+        ┌────────────────┐  ┌─────────────┐  ┌───────────────┐
+        │    SATURNO      │  │ INTERACTIVE │  │   SATURNO     │
+        │  COMMAND CENTER │  │ TOC EDITOR  │  │ SOLAR SYSTEM  │
+        │  ─────────────  │  │ ──────────  │  │ ────────────  │
+        │  15 tabs        │  │ Voice TOC   │  │ Vue 3 viz     │
+        │  TITAN design   │  │ 20+ cmds    │  │ 6 planets     │
+        │  4,600 lines    │  │ 6 themes    │  │ 385 exercises │
+        └──┬─────────┬───┘  └─────────────┘  └───────────────┘
+           │         │              ▲                  ▲
+    embeds │    hyperlinks          │                  │
+   in HTMLs│    in sidebar     both share          shares
+    gallery│         │         canonical TOC    movement data
+           │         │              │                  │
+           ▼         ▼              │                  │
+  ┌─────────────────────────┐      │                  │
+  │      TITAN FORGE        │      │                  │
+  │    (6 HTML apps)        │◄─────┘                  │
+  │  ┌────────────────────┐ │                         │
+  │  │ FORGE (dashboard)  │ │  All share:             │
+  │  │ TITAN V1.2 (synth) │ │  • 8 voice modes       │
+  │  │ WRITER (chapters)  │ │  • Master faders        │
+  │  │ BATCH (CSV→PDF)    │ │  • JetBrains Mono       │
+  │  │ TRITON (onboard)   │ │  • Dark-only aesthetic   │
+  │  │ LOGS (timeline)    │ │  • Claude API            │
+  │  └────────────────────┘ │                         │
+  └─────────────────────────┘                         │
+                                                      │
+  ┌─────────────────────────┐                         │
+  │    SATURNO HUB          │─────────────────────────┘
+  │    (Future merge target)│  Vision: merge all apps
+  │    Vite scaffold        │  into one super-hub
+  └─────────────────────────┘
+
+
+  ══════════════════════════════════════════════════════
+
+  DATA FLOW:
+
+  ┌─────────────┐     TOC JSON      ┌─────────────────┐
+  │ TOC Editor   │ ─────────────────▶│ SCC (TOC tab)   │
+  └─────────────┘                    └────────┬────────┘
+                                              │
+                     movement_matrix.json     │ S.matrixData
+                                              ▼
+  ┌─────────────┐     exercises      ┌─────────────────┐
+  │ Solar System │ ◀────────────────│ SCC (Matrix tab) │
+  │ (6 planets)  │  (shared schema) │ 95+ nodes        │
+  └─────────────┘                    └─────────────────┘
+
+  ┌─────────────┐     voice modes    ┌─────────────────┐
+  │ Titan Forge  │ ◀───────────────▶│ SCC (Writing)    │
+  │ (8 modes)    │  (same 8 modes)  │ (8 modes)        │
+  └─────────────┘                    └─────────────────┘
+
+  ══════════════════════════════════════════════════════
+
+  SHARED DNA ACROSS ALL APPS:
+
+  • The Art of Calisthenics (book project)
+  • 7 Movement Patterns (locked)
+  • Mobility Big 7 (locked)
+  • 6 Disciplines (locked)
+  • 3 Training Stages (locked)
+  • 8 Voice Modes: Raw, Teacher, Philosopher,
+    Prophet, Mystic, Companion, Confessor, Rebel
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 8. SHARED TECH DNA -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 id="tech">8. Shared Technical DNA</h2>
+
+<h3>Design Languages</h3>
+<table>
+    <tr><th>App</th><th>Background</th><th>Accent</th><th>Font</th><th>Framework</th></tr>
+    <tr><td>SCC</td><td><code>#0a0a0c</code></td><td>Gold <code>#ffaa00</code></td><td>Sora + JetBrains Mono</td><td>None (single HTML)</td></tr>
+    <tr><td>Titan Forge</td><td><code>#0a0a0a</code></td><td>Cyan <code>#00ffcc</code></td><td>JetBrains Mono only</td><td>None / Tailwind (2 files)</td></tr>
+    <tr><td>TOC Editor</td><td>Multi-theme</td><td>Per-theme</td><td>Custom per-theme</td><td>None (vanilla JS)</td></tr>
+    <tr><td>Solar System</td><td>Dark</td><td>Per-planet</td><td>System</td><td>Vue 3 + Vite</td></tr>
+</table>
+
+<h3>Voice Modes (Shared Across SCC + Titan Forge)</h3>
+<table>
+    <tr><th>Mode</th><th>Color</th><th>Description</th></tr>
+    <tr><td>Raw</td><td><code>#ef4444</code></td><td>Unfiltered, stream of consciousness</td></tr>
+    <tr><td>Teacher</td><td><code>#22c55e</code></td><td>Clear, structured, patient</td></tr>
+    <tr><td>Philosopher</td><td><code>#3b82f6</code></td><td>Deep, reflective, questioning</td></tr>
+    <tr><td>Prophet</td><td><code>#eab308</code></td><td>Bold, visionary, declarative</td></tr>
+    <tr><td>Mystic</td><td><code>#a855f7</code></td><td>Poetic, metaphorical, layered</td></tr>
+    <tr><td>Companion</td><td><code>#f97316</code></td><td>Warm, conversational, supportive</td></tr>
+    <tr><td>Confessor</td><td><code>#6b7280</code></td><td>Honest, vulnerable, authentic</td></tr>
+    <tr><td>Rebel</td><td><code>#e5e7eb</code></td><td>Provocative, challenging, sharp</td></tr>
+</table>
+
+<h3>Locked Structures (Shared Across All Apps)</h3>
+<table>
+    <tr><th>Structure</th><th>Count</th><th>Status</th></tr>
+    <tr><td>Movement Patterns</td><td>7</td><td><span class="badge badge-locked">LOCKED</span></td></tr>
+    <tr><td>Mobility Big 7</td><td>7</td><td><span class="badge badge-locked">LOCKED</span></td></tr>
+    <tr><td>Six Disciplines</td><td>6</td><td><span class="badge badge-locked">LOCKED</span></td></tr>
+    <tr><td>Three Stages</td><td>3</td><td><span class="badge badge-locked">LOCKED</span></td></tr>
+    <tr><td>TOC (Parts/Chapters)</td><td>9 / 27</td><td><span class="badge badge-gold">CANONICAL</span></td></tr>
+    <tr><td>Voice Modes</td><td>8</td><td><span class="badge badge-gold">ACTIVE</span></td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 9. CODE REFERENCE -->
+<!-- ═══════════════════════════════════════════ -->
+<h2 id="reference">9. Code Reference (Compact)</h2>
+
+<h3>SCC — State Schema</h3>
+<pre>S = {
+    tocs:               {},     // TOC versions (v1, v2) — v1 = 220 items canonical
+    tocNotes:           {},     // Per-chapter notes from gradient panel
+    research:           [],     // Research cards with A/B/C/D blocks
+    decisions:          [],     // {id, date, title, context, status}
+    bottlenecks:        [],     // {id, title, priority}
+    mindmap:            {},     // {nodes:[], edges:[]} — canvas engine
+    documents:          {},     // Per-chapter Quill content
+    htmlFiles:          [],     // 26 entries: {name, path, tag, content, fileType}
+    exercises:          [],     // Synced from matrixData
+    matrixData:         {},     // {nodes:[], edges:[], enums:{}}
+    stageNames:         {},     // Editable per-stage labels
+    vault:              [],     // Knowledge Vault documents
+    savedWorkouts:      [],     // Named saves: {name, items[], date}
+    savedMindmaps:      [],     // Named mindmap saves
+    currentWritingMode: '',     // Active voice mode
+    _versions:          [],     // Last 10 state snapshots
+    _tocCollapse:       {},     // TOC tree collapse state
+    _matrixFilters:     {},     // Matrix checkbox persistence
+    _wordTarget:        null,   // Writing word count target
+    _compression:       50,     // Writing compression slider
+    _technical:         50      // Writing technical depth slider
+}
+
+localStorage keys: 'scc3' (state), 'scc_doc' (Quill editor)
+Password: 'saturno2026'</pre>
+
+<h3>SCC — Key Functions (70+ created across 8 passes)</h3>
+<pre>State:     save() · load() · resetToLastSaved() · saveWithHistory()
+TOC:       loadTOC() · editTOCItem() · syncTOCEverywhere() · toggleTOCCollapse()
+           setTocView() · renderTocNotes() · saveTocNote()
+Writing:   selectWritingChapter() · setWritingMode() · writingCommand() · togglePreview()
+Decisions: initDecisions() · toggleDecision() · deleteDecision() · lockDecision()
+Research:  renderResearch() · toggleResearchExpand() · copyBlock()
+Gallery:   renderGalleryGrid() · openGalleryModal() · handleHTMLUpload() · filterHTMLs()
+Matrix:    buildCytoscape() · runMatrixQuery() · bfsPath() · bfsCluster()
+Taxonomy:  initTaxonomy() · renderTaxonomy() · sortTaxonomy() · openTaxInspector()
+Workout:   initWorkout() · buildWoItemHTML() · saveWorkout() · exportWorkoutPDF()
+Mind Map:  mmWheelZoom() · mmCenterView() · mmResetZoom() · mmDown() · mmFinishConn()
+           mmSetArr() · setMmTool() — Canvas: transform viewport + dot grid + 50-step undo
+Vault:     initVault() · addVaultDoc() · viewVaultDoc() · findXRefs()
+Dashboard: initDashboard()
+Calendar:  handleExcelUpload() · renderCalendarGrid() · exportCalendarPDF()
+Export:    dl() · exportAs() · exportBundle()</pre>
+
+<h3>SCC — File Tree</h3>
+<pre>saturno-command-center/
+├── index.html                    (~4,600 lines — the entire app)
+├── CHANGELOG.md                  (Pass 6-8 changelog + roadmap)
+├── README.md                     (TITAN design system specs)
+├── VICTORY_COMMAND_CENTER_V1_FULL_LOG.md  (70-fix audit)
+├── SATURNO_ECOSYSTEM_GUIDE.html  (this document)
+├── BB_EDITS.md                   (bug fix documentation)
+├── package.json                  (gh-pages deployment config)
+├── data/
+│   ├── movement_matrix.json      (95 nodes, 119 edges)
+│   ├── research.json             (10 research cards)
+│   ├── toc.json                  (v1/v2 structures)
+│   └── *.csv                     (4 source CSVs)
+├── icons/                        (SVG: dropbox, onedrive)
+└── htmls/                        (22 HTML/image files)</pre>
+
+<h3>Titan Forge — File Tree</h3>
+<pre>titan-forge/
+├── index.html           (SATURNO FORGE — dashboard hub)
+├── titan.html           (TITAN V1.2 — AI synthesizer)
+├── writer.html          (APOAPSIS WRITER — chapter editor)
+├── batch-generator.html (BATCH GEN — CSV to PDF)
+├── onboarding.html      (TRITON — identity sequence, LOCKED)
+├── logs.html            (Mission control timeline)
+├── README.md
+└── js/
+    ├── api-config.js    (API key management)
+    └── claude-api.js    (Claude API integration)</pre>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="footer">
+    SATURNO ECOSYSTEM — Full Deployment Guide<br>
+    Built for Gabo Saturno | Saturno Movement<br>
+    The Art of Calisthenics | Victory Belt Publishing<br>
+    February 2, 2026<br><br>
+    Generated by Claude Code (Opus 4.5)<br>
+    ⌘P to save as PDF
+</div>
+
+</body>
+</html>

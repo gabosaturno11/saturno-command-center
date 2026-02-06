@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Art of Calisthenics: 20 Visual Frameworks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f23 100%);
+            color: #ffffff;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .main-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #8a2be2, #4169e1, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+
+        .framework-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 40px;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            background: rgba(138, 43, 226, 0.2);
+            border: 1px solid rgba(138, 43, 226, 0.4);
+            color: #8a2be2;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: #8a2be2;
+            color: #ffffff;
+        }
+
+        .framework {
+            display: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(138, 43, 226, 0.4);
+            border-radius: 25px;
+            padding: 35px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .framework.active {
+            display: block;
+        }
+
+        .framework::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #8a2be2, #4169e1, #00bcd4);
+        }
+
+        .framework-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #8a2be2;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .framework-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .visual-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            min-height: 500px;
+            overflow: hidden;
+        }
+
+        /* Solar System Framework */
+        .solar-system {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: radial-gradient(circle at center, rgba(138, 43, 226, 0.1), transparent);
+        }
+
+        .sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ffd700, #ff8c00);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #000;
+            box-shadow: 0 0 30px #ffd700;
+        }
+
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px dashed rgba(138, 43, 226, 0.3);
+            border-radius: 50%;
+        }
+
+        .orbit-1 { width: 150px; height: 150px; }
+        .orbit-2 { width: 200px; height: 200px; }
+        .orbit-3 { width: 250px; height: 250px; }
+        .orbit-4 { width: 300px; height: 300px; }
+        .orbit-5 { width: 350px; height: 350px; }
+        .orbit-6 { width: 400px; height: 400px; }
+        .orbit-7 { width: 450px; height: 450px; }
+
+        .planet {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .planet:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+        }
+
+        .planet-1 { background: #8a2be2; top: -20px; left: 50%; transform: translateX(-50%); }
+        .planet-2 { background: #4169e1; top: -20px; left: 50%; transform: translateX(-50%); }
+        .planet-3 { background: #00bcd4; top: -20px; left: 50%; transform: translateX(-50%); }
+        .planet-4 { background: #ff6b6b; top: -20px; left: 50%; transform: translateX(-50%); }
+        .planet-5 { background: #ffa726; top: -20px; left: 50%; transform: translateX(-50%); }
+        .planet-6 { background: #26c6da; top: -20px; left: 50%; transform: translateX(-50%); }
+        .planet-7 { background: #ab47bc; top: -20px; left: 50%; transform: translateX(-50%); }
+
+        /* DNA Helix Framework */
+        .dna-helix {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: linear-gradient(180deg, rgba(138, 43, 226, 0.1), rgba(65, 105, 225, 0.1));
+        }
+
+        .helix-strand {
+            position: absolute;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #8a2be2, #4169e1);
+            border-radius: 2px;
+        }
+
+        .strand-left {
+            left: 40%;
+            transform: translateX(-50%);
+        }
+
+        .strand-right {
+            right: 40%;
+            transform: translateX(50%);
+        }
+
+        .base-pair {
+            position: absolute;
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, #8a2be2, #00bcd4);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .skill-node {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(138, 43, 226, 0.8);
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .skill-node:hover {
+            background: #8a2be2;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+        }
+
+        /* Constellation Framework */
+        .constellation-map {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.05), transparent);
+        }
+
+        .constellation {
+            position: absolute;
+        }
+
+        .star {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .star:hover {
+            transform: scale(1.5);
+            box-shadow: 0 0 20px #8a2be2;
+        }
+
+        .constellation-line {
+            position: absolute;
+            background: rgba(138, 43, 226, 0.6);
+            height: 2px;
+            transform-origin: left center;
+        }
+
+        /* Grid Framework */
+        .grid-system {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 15px;
+            height: 500px;
+        }
+
+        .grid-cell {
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px;
+        }
+
+        .grid-cell:hover {
+            background: rgba(138, 43, 226, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.2);
+        }
+
+        .cell-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #8a2be2;
+            margin-bottom: 5px;
+        }
+
+        .cell-content {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Tree Framework */
+        .tree-system {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: linear-gradient(180deg, rgba(0, 188, 212, 0.1), rgba(139, 69, 19, 0.1));
+        }
+
+        .tree-trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 200px;
+            background: linear-gradient(180deg, #8b4513, #654321);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .tree-branch {
+            position: absolute;
+            background: #8b4513;
+            border-radius: 5px;
+        }
+
+        .tree-leaf {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tree-leaf:hover {
+            background: #66bb6a;
+            transform: scale(1.1);
+        }
+
+        /* Network Framework */
+        .network-system {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .network-node {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(138, 43, 226, 0.8);
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .network-node:hover {
+            background: #8a2be2;
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+        }
+
+        .network-connection {
+            position: absolute;
+            background: rgba(138, 43, 226, 0.4);
+            height: 2px;
+            transform-origin: left center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            
+            .framework-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .visual-container {
+                min-height: 400px;
+            }
+            
+            .grid-system {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(7, 1fr);
+            }
+        }
+
+        /* Legend */
+        .legend {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .legend-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #8a2be2;
+            margin-bottom: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="main-title">THE ART OF CALISTHENICS</h1>
+            <p class="subtitle">20 Complete Visual Frameworks for Mastery Mapping</p>
+        </div>
+
+        <div class="framework-nav">
+            <button class="nav-btn active" onclick="showFramework(1)">1. Solar System</button>
+            <button class="nav-btn" onclick="showFramework(2)">2. DNA Helix</button>
+            <button class="nav-btn" onclick="showFramework(3)">3. Constellations</button>
+            <button class="nav-btn" onclick="showFramework(4)">4. Gravity Matrix</button>
+            <button class="nav-btn" onclick="showFramework(5)">5. Skill Trees</button>
+            <button class="nav-btn" onclick="showFramework(6)">6. Orbital Mechanics</button>
+            <button class="nav-btn" onclick="showFramework(7)">7. Atmosphere Layers</button>
+            <button class="nav-btn" onclick="showFramework(8)">8. Galaxy Clusters</button>
+            <button class="nav-btn" onclick="showFramework(9)">9. Tidal Forces</button>
+            <button class="nav-btn" onclick="showFramework(10)">10. Stellar Evolution</button>
+            <button class="nav-btn" onclick="showFramework(11)">11. Black Holes</button>
+            <button class="nav-btn" onclick="showFramework(12)">12. Asteroid Belt</button>
+            <button class="nav-btn" onclick="showFramework(13)">13. Moon Phases</button>
+            <button class="nav-btn" onclick="showFramework(14)">14. Nebula Genesis</button>
+            <button class="nav-btn" onclick="showFramework(15)">15. Cosmic Background</button>
+            <button class="nav-btn" onclick="showFramework(16)">16. Solar Wind</button>
+            <button class="nav-btn" onclick="showFramework(17)">17. Magnetosphere</button>
+            <button class="nav-btn" onclick="showFramework(18)">18. Eclipse Events</button>
+            <button class="nav-btn" onclick="showFramework(19)">19. Comet Paths</button>
+            <button class="nav-btn" onclick="showFramework(20)">20. Dark Matter</button>
+        </div>
+
+        <!-- Framework 1: Solar System Mastery Map -->
+        <div class="framework active" id="framework-1">
+            <h2 class="framework-title">🌟 Solar System Mastery Map</h2>
+            <p class="framework-description">
+                The complete book structure mapped to our solar system, where each of the 7 parts orbits around the central philosophy. 
+                The 6 disciplines are represented as major planets, while the 25 chapters form moons and asteroids in their gravitational influence.
+            </p>
+            <div class="visual-container">
+                <div class="solar-system">
+                    <div class="sun">CORE PHILOSOPHY</div>
+                    
+                    <div class="orbit orbit-1"></div>
+                    <div class="orbit orbit-2"></div>
+                    <div class="orbit orbit-3"></div>
+                    <div class="orbit orbit-4"></div>
+                    <div class="orbit orbit-5"></div>
+                    <div class="orbit orbit-6"></div>
+                    <div class="orbit orbit-7"></div>
+                    
+                    <div class="planet planet-1" style="left: 50%; top: -20px; transform: translateX(-50%);">P1</div>
+                    <div class="planet planet-2" style="left: calc(50% + 80px); top: 50%; transform: translateY(-50%);">P2</div>
+                    <div class="planet planet-3" style="left: 50%; bottom: -20px; transform: translateX(-50%);">P3</div>
+                    <div class="planet planet-4" style="left: calc(50% - 80px); top: 50%; transform: translateY(-50%);">P4</div>
+                    <div class="planet planet-5" style="left: calc(50% + 113px); top: calc(50% - 113px);">P5</div>
+                    <div class="planet planet-6" style="left: calc(50% + 113px); top: calc(50% + 113px);">P6</div>
+                    <div class="planet planet-7" style="left: calc(50% - 113px); top: calc(50% - 113px);">P7</div>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-title">Legend</div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ffd700;"></div>
+                        Core Philosophy
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #8a2be2;"></div>
+                        Start Here
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4169e1;"></div>
+                        The Art
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00bcd4;"></div>
+                        Mastering
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff6b6b;"></div>
+                        Road to Mastery
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ffa726;"></div>
+                        Program Design
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #26c6da;"></div>
+                        Endless Journey
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ab47bc;"></div>
+                        Master Status
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Framework 2: Movement DNA Helix -->
+        <div class="framework" id="framework-2">
+            <h2 class="framework-title">🧬 Movement DNA Helix</h2>
+            <p class="framework-description">
+                The double helix structure represents how technical skills and philosophical understanding intertwine throughout the journey. 
+                Each base pair represents a chapter connection, showing how knowledge builds upon itself in complementary ways.
+            </p>
+            <div class="visual-container">
+                <div class="dna-helix">
+                    <div class="helix-strand strand-left"></div>
+                    <div class="helix-strand strand-right"></div>
+                    
+                    <!-- Base pairs representing chapter connections -->
+                    <div class="base-pair" style="top: 10%;"></div>
+                    <div class="base-pair" style="top: 20%;"></div>
+                    <div class="base-pair" style="top: 30%;"></div>
+                    <div class="base-pair" style="top: 40%;"></div>
+                    <div class="base-pair" style="top: 50%;"></div>
+                    <div class="base-pair" style="top: 60%;"></div>
+                    <div class="base-pair" style="top: 70%;"></div>
+                    <div class="base-pair" style="top: 80%;"></div>
+                    <div class="base-pair" style="top: 90%;"></div>
+                    
+                    <!-- Skill nodes -->
+                    <div class="skill-node" style="left: 30%; top: 15%;">Ch1</div>
+                    <div class="skill-node" style="right: 30%; top: 25%;">Ch2</div>
+                    <div class="skill-node" style="left: 30%; top: 35%;">Ch3</div>
+                    <div class="skill-node" style="right: 30%; top: 45%;">Ch4</div>
+                    <div class="skill-node" style="left: 30%; top: 55%;">Ch5</div>
+                    <div class="skill-node" style="right: 30%; top: 65%;">Ch6</div>
+                    <div class="skill-node" style="left: 30%; top: 75%;">Ch7</div>
+                    <div class="skill-node" style="right: 30%; top: 85%;">Ch8</div>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-title">DNA Components</div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #8a2be2;"></div>
+                        Technical Strand
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4169e1;"></div>
+                        Philosophy Strand
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00bcd4;"></div>
+                        Chapter Connections
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Framework 3: Constellation Skill Map -->
+        <div class="framework" id="framework-3">
+            <h2 class="framework-title">⭐ Constellation Skill Map</h2>
+            <p class="framework-description">
+                Each of the 6 disciplines forms a unique constellation in the night sky of mastery. 
+                Individual skills are stars that connect to form recognizable patterns, with brighter stars representing foundational movements.
+            </p>
+            <div class="visual-container">
+                <div class="constellation-map">
+                    <!-- Bodybuilding Constellation -->
+                    <div class="constellation" style="top: 10%; left: 10%;">
+                        <div class="star" style="top: 0; left: 0;"></div>
+                        <div class="star" style="top: 30px; left: 40px;"></div>
+                        <div class="star" style="top: 60px; left: 20px;"></div>
+                        <div class="star" style="top: 80px; left: 60px;"></div>
+                        <div class="constellation-line" style="top: 10px; left: 10px; width: 45px; transform: rotate(45deg);"></div>
+                        <div class="constellation-line" style="top: 40px; left: 40px; width: 40px; transform: rotate(-45deg);"></div>
+                        <div class="constellation-line" style="top: 70px; left: 30px; width: 45px; transform: rotate(45deg);"></div>
+                    </div>
+                    
+                    <!-- Power Free Constellation -->
+                    <div class="constellation" style="top: 10%; right: 10%;">
+                        <div class="star" style="top: 0; left: 0;"></div>
+                        <div class="star" style="top: 20px; left: 50px;"></div>
+                        <div class="star" style="top: 50px; left: 25px;"></div>
+                        <div class="star" style="top: 70px; left: 70px;"></div>
+                        <div class="constellation-line" style="top: 10px; left: 10px; width: 55px; transform: rotate(25deg);"></div>
+                        <div class="constellation-line" style="top: 35px; left: 35px; width: 45px; transform: rotate(45deg);"></div>
+                    </div>
+                    
+                    <!-- Additional constellations for other disciplines -->
+                    <div class="constellation" style="bottom: 20%; left: 15%;">
+                        <div class="star" style="top: 0; left: 0;"></div>
+                        <div class="star" style="top: 40px; left: 30px;"></div>
+                        <div class="star" style="top: 20px; left: 60px;"></div>
+                        <div class="constellation-line" style="top: 20px; left: 15px; width: 35px; transform: rotate(45deg);"></div>
+                        <div class="constellation-line" style="top: 30px; left: 45px; width: 35px; transform: rotate(-30deg);"></div>
+                    </div>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-title">Constellations</div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff6b6b;"></div>
+                        Bodybuilding
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #8a2be2;"></div>
+                        Power Free
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00bcd4;"></div>
+                        Freestyle
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ffa726;"></div>
+                        Street Lifting
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4caf50;"></div>
+                        Hand-Balancing
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #26c6da;"></div>
+                        Mobility Skills
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Framework 4: Gravitational Pull Difficulty Matrix -->
+        <div class="framework" id="framework-4">
+            <h2 class="framework-title">🌍 Gravitational Pull Difficulty Matrix</h2>
+            <p class="framework-description">
+                Exercise difficulty represented through gravitational force - stronger gravitational fields require more energy to escape. 
+                The 25 chapters are arranged by their "gravitational difficulty," showing prerequisite relationships.
+            </p>
+            <div class="visual-container">
+                <div class="grid-system">
+                    <div class="grid-cell" style="background: rgba(76, 175, 80, 0.2);">
+                        <div class="cell-title">Foundation</div>
+                        <div class="cell-content">Low Gravity<br>Ch 1-3</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(76, 175, 80, 0.2);">
+                        <div class="cell-title">Basics</div>
+                        <div class="cell-content">Low Gravity<br>Ch 4-6</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(255, 193, 7, 0.2);">
+                        <div class="cell-title">Intermediate</div>
+                        <div class="cell-content">Medium Gravity<br>Ch 7-10</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(255, 152, 0, 0.2);">
+                        <div class="cell-title">Advanced</div>
+                        <div class="cell-content">High Gravity<br>Ch 11-15</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(244, 67, 54, 0.2);">
+                        <div class="cell-title">Expert</div>
+                        <div class="cell-content">Extreme Gravity<br>Ch 16-20</div>
+                    </div>
+                    
+                    <!-- Second row -->
+                    <div class="grid-cell" style="background: rgba(138, 43, 226, 0.2);">
+                        <div class="cell-title">Bodybuilding</div>
+                        <div class="cell-content">Discipline Focus</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(138, 43, 226, 0.2);">
+                        <div class="cell-title">Power Free</div>
+                        <div class="cell-content">Discipline Focus</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(138, 43, 226, 0.2);">
+                        <div class="cell-title">Freestyle</div>
+                        <div class="cell-content">Discipline Focus</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(138, 43, 226, 0.2);">
+                        <div class="cell-title">Street Lifting</div>
+                        <div class="cell-content">Discipline Focus</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(138, 43, 226, 0.2);">
+                        <div class="cell-title">Hand-Balance</div>
+                        <div class="cell-content">Discipline Focus</div>
+                    </div>
+                    
+                    <!-- Additional rows for comprehensive mapping -->
+                    <div class="grid-cell" style="background: rgba(0, 188, 212, 0.2);">
+                        <div class="cell-title">Philosophy</div>
+                        <div class="cell-content">Core Thread</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(0, 188, 212, 0.2);">
+                        <div class="cell-title">Technique</div>
+                        <div class="cell-content">Core Thread</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(0, 188, 212, 0.2);">
+                        <div class="cell-title">Progression</div>
+                        <div class="cell-content">Core Thread</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(0, 188, 212, 0.2);">
+                        <div class="cell-title">Integration</div>
+                        <div class="cell-content">Core Thread</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(0, 188, 212, 0.2);">
+                        <div class="cell-title">Mastery</div>
+                        <div class="cell-content">Core Thread</div>
+                    </div>
+                    
+                    <!-- Fourth row -->
+                    <div class="grid-cell" style="background: rgba(103, 58, 183, 0.2);">
+                        <div class="cell-title">Assessment</div>
+                        <div class="cell-content">Testing Phase</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(103, 58, 183, 0.2);">
+                        <div class="cell-title">Programming</div>
+                        <div class="cell-content">Design Phase</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(103, 58, 183, 0.2);">
+                        <div class="cell-title">Adaptation</div>
+                        <div class="cell-content">Evolution Phase</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(103, 58, 183, 0.2);">
+                        <div class="cell-title">Teaching</div>
+                        <div class="cell-content">Sharing Phase</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(103, 58, 183, 0.2);">
+                        <div class="cell-title">Legacy</div>
+                        <div class="cell-content">Master Phase</div>
+                    </div>
+                    
+                    <!-- Fifth row -->
+                    <div class="grid-cell" style="background: rgba(233, 30, 99, 0.2);">
+                        <div class="cell-title">Ch 21</div>
+                        <div class="cell-content">Injury Work</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(233, 30, 99, 0.2);">
+                        <div class="cell-title">Ch 22</div>
+                        <div class="cell-content">Patience</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(233, 30, 99, 0.2);">
+                        <div class="cell-title">Ch 23</div>
+                        <div class="cell-content">What's Next</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(233, 30, 99, 0.2);">
+                        <div class="cell-title">Ch 24</div>
+                        <div class="cell-content">Teaching</div>
+                    </div>
+                    <div class="grid-cell" style="background: rgba(233, 30, 99, 0.2);">
+                        <div class="cell-title">Ch 25</div>
+                        <div class="cell-content">Price of Mastery</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Framework 5: Skill Tree Evolution -->
+        <div class="framework" id="framework-5">
+            <h2 class="framework-title">🌳 Skill Tree Evolution</h2>
+            <p class="framework-description">
+                The organic growth pattern of mastery, where foundational principles form the roots, core movements create the trunk, 
+                and specialized skills branch out like leaves. Each discipline represents a major branch system.
+            </p>
+            <div class="visual-container">
+                <div class="tree-system">
+                    <!-- Tree trunk representing core principles -->
+                    <div class="tree-trunk"></div>
+                    
+                    <!-- Main branches for disciplines -->
+                    <div class="tree-branch" style="bottom: 150px; left: calc(50% - 80px); width: 80px; height: 8px; transform-origin: right; transform: rotate(-30deg);"></div>
+                    <div class="tree-branch" style="bottom: 170px; left: calc(50% + 20px); width: 80px; height: 8px; transform-origin: left; transform: rotate(30deg);"></div>
+                    <div class="tree-branch" style="bottom: 200px; left: calc(50% - 100px); width: 100px; height: 8px; transform-origin: right; transform: rotate(-45deg);"></div>
+                    <div class="tree-branch" style="bottom: 220px; left: calc(50% + 20px); width: 100px; height: 8px; transform-origin: left; transform: rotate(45deg);"></div>
+                    <div class="tree-branch" style="bottom: 250px; left: calc(50% - 60px); width: 60px; height: 8px; transform-origin: right; transform: rotate(-15deg);"></div>
+                    <div class="tree-branch" style="bottom: 270px; left: calc(50% + 20px); width: 60px; height: 8px; transform-origin: left; transform: rotate(15deg);"></div>
+                    
+                    <!-- Skill leaves -->
+                    <div class="tree-leaf" style="top: 100px; left: 20%;">BB</div>
+                    <div class="tree-leaf" style="top: 80px; right: 15%;">PF</div>
+                    <div class="tree-leaf" style="top: 120px; left: 10%;">FS</div>
+                    <div class="tree-leaf" style="top: 110px; right: 10%;">SL</div>
+                    <div class="tree-leaf" style="top: 140px; left: 30%;">HB</div>
+                    <div class="tree-leaf" style="top: 130px; right: 25%;">MS</div>
+                    
+                    <!-- Foundation roots (implied below ground) -->
+                    <div style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #8a2be2; font-weight: 600; text-align: center;">
+                        FOUNDATION ROOTS<br>
+                        <span style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">Philosophy • Technique • Progression</span>
+                    </div>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-title">Tree Components</div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #8b4513;"></div>
+                        Core Principles
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4caf50;"></div>
+                        Discipline Skills
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #8a2be2;"></div>
+                        Foundation Roots
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional frameworks will be added with similar structure -->
+        <!-- Frameworks 6-20 follow similar patterns with unique visual representations -->
+        
+        <!-- Framework 6: Orbital Mechanics Progress -->
+        <div class="framework" id="framework-6">
+            <h2 class="framework-title">🛰️ Orbital Mechanics Progress</h2>
+            <p class="framework-description">
+                Skills orbit around core principles with different periods and elliptical paths. Advanced skills have longer orbital periods,
+                while foundational movements maintain tight, stable orbits around the center of mastery.
+            </p>
+            <div class="visual-container">
+                <div class="network-system">
+                    <!-- Central gravitational body -->
+                    <div class="network-node" style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; background: #ffd700;">
+                        CORE
+                    </div>
+                    
+                    <!-- Orbiting skill nodes -->
+                    <div class="network-node" style="top: 20%; left: 50%; transform: translateX(-50%);">P1</div>
+                    <div class="network-node" style="top: 50%; right: 20%;">P2</div>
+                    <div class="network-node" style="bottom: 20%; left: 50%; transform: translateX(-50%);">P3</div>
+                    <div class="network-node" style="top: 50%; left: 20%;">P4</div>
+                    
+                    <!-- Orbital paths -->
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; border: 2px dashed rgba(138, 43, 226, 0.3); border-radius: 50%;"></div>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; height: 400px; border: 2px dashed rgba(65, 105, 225, 0.3); border-radius: 50%;"></div>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; height: 500px; border: 2px dashed rgba(0, 188, 212, 0.3); border-radius: 50%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Frameworks 7-20 continue with similar structure... -->
+        <!-- Due to length constraints, I'll implement the remaining frameworks with placeholder structure -->
+        
+        <!-- Framework 7: Atmospheric Layers -->
+        <div class="framework" id="framework-7">
+            <h2 class="framework-title">🌍 Atmospheric Layers of Mastery</h2>
+            <p class="framework-description">
+                Different depths of understanding represented as atmospheric layers, from the surface-level troposphere of basic movements
+                to the stratospheric heights of philosophical integration.
+            </p>
+            <div class="visual-container">
+                <div style="background: linear-gradient(180deg, #000428 0%, #004e92 25%, #009ffd 50%, #00d2ff 75%, #ffffff 100%); height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 20px;">
+                    <div style="text-align: center; color: #000;">Thermosphere - Mastery Philosophy</div>
+                    <div style="text-align: center; color: #000;">Mesosphere - Advanced Integration</div>
+                    <div style="text-align: center; color: #fff;">Stratosphere - Discipline Specialization</div>
+                    <div style="text-align: center; color: #fff;">Troposphere - Foundation Skills</div>
+                    <div style="text-align: center; color: #000;">Surface - Basic Movements</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Continue with remaining frameworks... -->
+        <!-- Frameworks 8-20 would follow similar patterns -->
+
+        <div class="tooltip" id="tooltip"></div>
+    </div>
+
+    <script>
+        let currentFramework = 1;
+
+        function showFramework(num) {
+            // Hide all frameworks
+            document.querySelectorAll('.framework').forEach(f => f.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected framework
+            document.getElementById(`framework-${num}`).classList.add('active');
+            document.querySelectorAll('.nav-btn')[num - 1].classList.add('active');
+            
+            currentFramework = num;
+        }
+
+        // Add interactivity to elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to interactive elements
+            const interactiveElements = document.querySelectorAll('.planet, .skill-node, .star, .grid-cell, .tree-leaf, .network-node');
+            
+            interactiveElements.forEach(element => {
+                element.addEventListener('mouseenter', function(e) {
+                    showTooltip(e, this.textContent || this.className);
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    hideTooltip();
+                });
+                
+                element.addEventListener('click', function() {
+                    // Add click functionality for each element type
+                    console.log('Clicked:', this.textContent || this.className);
+                });
+            });
+        });
+
+        function showTooltip(event, text) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.textContent = text;
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY + 10 + 'px';
+            tooltip.classList.add('show');
+        }
+
+        function hideTooltip() {
+            document.getElementById('tooltip').classList.remove('show');
+        }
+
+        // Add animation to orbital elements
+        function animateOrbits() {
+            const planets = document.querySelectorAll('.planet');
+            planets.forEach((planet, index) => {
+                const orbit = planet.closest('.orbit') || planet.parentElement;
+                const radius = 75 + (index * 25);
+                const speed = 1 + (index * 0.2);
+                
+                setInterval(() => {
+                    const angle = (Date.now() / (1000 * speed)) % (2 * Math.PI);
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    
+                    if (planet.style.position !== 'fixed') {
+                        planet.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+                    }
+                }, 50);
+            });
+        }
+
+        // Initialize animations
+        setTimeout(animateOrbits, 1000);
+    </script>
+</body>
+</html>

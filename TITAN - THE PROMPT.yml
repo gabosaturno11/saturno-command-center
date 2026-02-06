@@ -1,0 +1,86 @@
+{
+  "meta_system": {
+    "id": "SATURNO_HUB_FULL_META",
+    "label": "Saturno Hub + Bonus Vault Orchestrator",
+    "role": "Full-stack hub orchestrator — PDF, Media, Pipelines, Bonus Vault, Notion + BEAST API integration",
+    "version": "2.0",
+    "author": "Gabo Saturno x ChatGPT S++++",
+    "status": "Deployable / 48h Emergency Focus Ready"
+  },
+  "input_contract": {
+    "artifact": "PDF, HTML, transcript, prompt, CSV, music config",
+    "goal": "Optional: e.g., 'Rebuild Bonus Vault', 'Deploy Hub Navigation', 'Seed Emergency Tasks', 'Generate PDFs', 'Wire Music Library'",
+    "machine_context": "C1 or C2 (use /detect_machine if unsure)",
+    "hub_links": {
+      "saturno_hub": "https://gabosaturno11.github.io/saturno-hub/",
+      "titan_forge": "https://gabosaturno11.github.io/titan-forge/",
+      "bonus_vault": "TBD",
+      "music_library": "TBD",
+      "batch_generator": "https://gabosaturno11.github.io/titan-forge/batch-generator.html"
+    }
+  },
+  "core_pipeline": [
+    "/detect_machine → sets C1/C2 context",
+    "/validate_artifacts → confirm PDFs, HTMLs, Music config",
+    "/wire_hub_nav → SATURNO HUB + Forge + Synapse + Capture + Bonus + Music",
+    "/sync_beast_api → route all LLM calls through BEAST API, confirm no Anthropic keys in FE",
+    "/bonus_vault_update → add 50 PDFs + 30 interactive tools",
+    "/music_library_config → add tracks, categories, JSON config",
+    "/pdf_maker_integration → wire B12 PDF Maker, batch generate chapter PDFs",
+    "/recalibrate_pipelines → emergency focus kernel → BF25 Bonus Vault / Chapter → Content / Voice-to-Everything",
+    "/notion_sync → Emergency Focus Board + Kernel Hub + LLM Onboarding pages",
+    "/validate_links → confirm all nav links open new tab, config-driven URLs",
+    "/final_report → JSON summary + Markdown instructions + next_actions"
+  ],
+  "output_schema": {
+    "hub_nav": {
+      "SATURNO_HUB": {"url": "https://gabosaturno11.github.io/saturno-hub/", "status": "live", "notes": ""},
+      "TITAN": {"url": "https://gabosaturno11.github.io/titan-forge/titan.html", "status": "live"},
+      "SYNAPSE": {"url": "https://gabosaturno11.github.io/titan-forge/synapse.html", "status": "live"},
+      "CAPTURE": {"url": "https://gabosaturno11.github.io/titan-forge/capture.html", "status": "live"},
+      "BATCH_GENERATOR": {"url": "https://gabosaturno11.github.io/titan-forge/batch-generator.html", "status": "live"},
+      "BONUS_VAULT": {"url": "TBD", "status": "placeholder"},
+      "MUSIC_LIBRARY": {"url": "TBD", "status": "placeholder"}
+    },
+    "bonus_vault_assets": [
+      {"type": "PDF", "count": 50, "source": "local or GDrive"},
+      {"type": "Interactive Tool", "count": 30, "source": "repo or GDrive"}
+    ],
+    "pdf_maker": {"integrated": true, "batch_mode": true, "preset": "bookChapter", "output_zip": "27_chapter_PDFs.zip"},
+    "music_library": {"categories": ["Focused", "Intense", "Flow", "Recovery", "Warmup", "Tutorials", "Long Mixes"], "json_config": true},
+    "pipelines": [
+      {"name": "BF25 Bonus Vault → Comeback Engine", "goal": "48h Revenue / Visibility", "touchpoints": ["email", "IG", "story"]},
+      {"name": "Chapter → 30 Days of Content", "goal": "Book Revenue Bridge", "touchpoints": ["27 chapters → 270 content pieces"]},
+      {"name": "Voice-to-Everything (<5 min)", "goal": "Speed KPI", "touchpoints": ["transcript → audio/video → social snippets"]}
+    ],
+    "notion_pages": [
+      {"name": "Emergency Focus Board", "url": "https://www.notion.so/9f29b6eb27fb4553a1bba9dbc5066725", "tasks_seeded": 10},
+      {"name": "KERNEL_HUB", "url": "https://www.notion.so/2fdc7df3d518810caa93ee29dbb941ee", "sections": 8},
+      {"name": "LLM Onboarding & Orchestration", "url": "https://www.notion.so/2fdc7df3d51881f8aa5fcc81c7276884", "rules": 5, "checklist_items": 7}
+    ],
+    "next_actions": [
+      "Open Bonus Vault page and confirm all PDFs + tools present",
+      "Wire Music Library links and JSON config",
+      "Run B12 PDF Maker → generate chapter PDFs",
+      "Test emergency pipelines: BF25, Chapter → Content, Voice-to-Everything",
+      "Update Notion Emergency Focus Board with any missing 48h tasks"
+    ],
+    "system_summary": "Full Saturno Hub MVP wired with Bonus Vault, Music Library, PDF Maker, BEAST API safety, emergency pipelines, and Notion synchronization."
+  },
+  "execution_rules": {
+    "BEAST_API_ONLY": true,
+    "NO_FRONTEND_KEYS": true,
+    "PLACEHOLDER_URLS": "Clearly labeled",
+    "RESPECT_EXISTING_HUB_UI": true,
+    "DEPLOYMENT_ORDER": [
+      "/detect_machine",
+      "/bonus_vault_update",
+      "/music_library_config",
+      "/pdf_maker_integration",
+      "/wire_hub_nav",
+      "/recalibrate_pipelines",
+      "/notion_sync",
+      "/final_report"
+    ]
+  }
+}
